@@ -38,7 +38,7 @@ const FileUpload: React.FC = () => {
 				const data: string[] = await response.json();
 				const photoUrls = data.map((fileName) => `${webApiUrl}/photos/${fileName}`);
 				setWatermarkedImages(photoUrls);
-			} catch (err: any) {
+			} catch (err) {
 				console.error(err);
 				setError("Failed to load photos");
 			}
@@ -80,7 +80,7 @@ const FileUpload: React.FC = () => {
 
 			setSuccessMessage("File uploaded successfully!");
 			setSelectedFile(null);
-		} catch (error: any) {
+		} catch (error) {
 			console.error("File upload error:", error);
 			setError("File upload failed. Check console for details.");
 			setSuccessMessage(null);
@@ -113,7 +113,7 @@ const FileUpload: React.FC = () => {
 			alert(`Purchase approved mail sent successfully to ${userEmail}!`);
 			setSelectedImage(null);
 			setIsModalOpen(false);
-		} catch (error: any) {
+		} catch (error) {
 			console.error("Error sending mail:", error);
 			alert("Failed to send mail. Check console for details.");
 		}
@@ -192,7 +192,7 @@ const FileUpload: React.FC = () => {
 					}}
 				>
 					<img src={selectedImage || ""} alt="Selected" className="modalImage" />
-					<EmailButtons onApprove={() => selectedImage && sendApproveMail(selectedImage)} onReject={() => {}} />
+					<EmailButtons onApprove={() => selectedImage && sendApproveMail(selectedImage)} />
 				</Box>
 			</Modal>
 		</div>
