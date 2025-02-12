@@ -1,4 +1,4 @@
-<h1 id="top" align="center">Web UI</h1>
+<h1 id="top" align="center">Web UI [v1.0.0]</h1>
 
 <br/>
 
@@ -6,7 +6,7 @@
 
 - Launch web api. Check [`web-api`](https://github.com/staucktion/web-api) repository.
 
-- According to mode: Rename `.env.prod.example` or `.env.dev.example` as `.env` with proper configurations.
+- Modify `.env.example` as `.env` with proper configurations.
 
 ### Development Mode
 
