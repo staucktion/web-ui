@@ -1,6 +1,6 @@
 {
   "name": "bank-ui",
-  "version": "v1.1.0-SNAPSHOT",
+  "version": "v1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
