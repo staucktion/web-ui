@@ -6,7 +6,7 @@
 
 - Launch web api. Check [`web-api`](https://github.com/staucktion/web-api) repository.
 
-- Modify `.env.example` as `.env` with proper configurations.
+- According to mode: Rename `.env.prod.example` or `.env.dev.example` as `.env` with proper configurations.
 
 ### Development Mode
 
