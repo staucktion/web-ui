@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			} catch (error) {
 				console.error("Couldn't fetch user", error);
 				setUser(null);
+				alert("Failed to fetch user details. Check console for details.");
 			}
 		};
 
