@@ -93,7 +93,6 @@ const FileUpload: React.FC = () => {
 				body: JSON.stringify({
 					photoName: fileName,
 					action: "Approve Purchase",
-					email: user.email,
 				}),
 				credentials: "include",
 			});
