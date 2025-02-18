@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Typography, InputBase } from "@mui/material";
-import Header from "./NavBar";
+import Header from "../NavBar/NavBar";
 
-const Content: React.FC = () => {
+const HeroSection: React.FC = () => {
   return (
     <Box
       sx={{
@@ -73,4 +73,4 @@ const Content: React.FC = () => {
   );
 };
 
-export default Content;
+export default HeroSection;
