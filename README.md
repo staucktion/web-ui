@@ -1,4 +1,4 @@
-<h1 id="top" align="center">Web UI [v1.0.1]</h1>
+<h1 id="top" align="center">Web UI [v1.1.0]</h1>
 
 <br/>
 
