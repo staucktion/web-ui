@@ -8,11 +8,11 @@ import { useAuth } from "../../providers/AuthContext.tsx";
 const FileUpload: React.FC = () => {
 	const { user } = useAuth();
 
-	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+	// const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [watermarkedImages, setWatermarkedImages] = useState<string[]>([]);
-	const [error, setError] = useState<string | null>(null);
-	const [successMessage, setSuccessMessage] = useState<string | null>(null);
-	const [isUploading, setIsUploading] = useState<boolean>(false);
+	// const [error, setError] = useState<string | null>(null);
+	// const [successMessage, setSuccessMessage] = useState<string | null>(null);
+	// const [isUploading, setIsUploading] = useState<boolean>(false);
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -28,54 +28,54 @@ const FileUpload: React.FC = () => {
 				setWatermarkedImages(photoUrls);
 			} catch (err) {
 				console.error(err);
-				setError("Failed to load photos");
+				// setError("Failed to load photos");
 			}
 		};
 		fetchWatermarkedImages();
 	}, []);
 
-	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if (event.target.files && event.target.files[0]) {
-			setSelectedFile(event.target.files[0]);
-			setError(null);
-			setSuccessMessage(null);
-		}
-	};
+	// const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	// 	if (event.target.files && event.target.files[0]) {
+	// 		setSelectedFile(event.target.files[0]);
+	// 		setError(null);
+	// 		setSuccessMessage(null);
+	// 	}
+	// };
 
-	const uploadFile = async () => {
-		if (!selectedFile) {
-			setError("Please select a file.");
-			return;
-		}
+	// const uploadFile = async () => {
+	// 	if (!selectedFile) {
+	// 		setError("Please select a file.");
+	// 		return;
+	// 	}
 
-		const formData = new FormData();
-		formData.append("photo", selectedFile);
+	// 	const formData = new FormData();
+	// 	formData.append("photo", selectedFile);
 
-		setIsUploading(true);
+	// 	setIsUploading(true);
 
-		try {
-			const response = await fetch(`${webApiUrl}/photos`, {
-				method: "POST",
-				body: formData,
-			});
+	// 	try {
+	// 		const response = await fetch(`${webApiUrl}/photos`, {
+	// 			method: "POST",
+	// 			body: formData,
+	// 		});
 
-			console.log(response);
+	// 		console.log(response);
 
-			if (!response.ok) {
-				const errorText = await response.text();
-				throw new Error(`File upload failed. Status: ${response.status}, Message: ${errorText}`);
-			}
+	// 		if (!response.ok) {
+	// 			const errorText = await response.text();
+	// 			throw new Error(`File upload failed. Status: ${response.status}, Message: ${errorText}`);
+	// 		}
 
-			setSuccessMessage("File uploaded successfully!");
-			setSelectedFile(null);
-		} catch (error) {
-			console.error("File upload error:", error);
-			setError("File upload failed. Check console for details.");
-			setSuccessMessage(null);
-		} finally {
-			setIsUploading(false);
-		}
-	};
+	// 		setSuccessMessage("File uploaded successfully!");
+	// 		setSelectedFile(null);
+	// 	} catch (error) {
+	// 		console.error("File upload error:", error);
+	// 		setError("File upload failed. Check console for details.");
+	// 		setSuccessMessage(null);
+	// 	} finally {
+	// 		setIsUploading(false);
+	// 	}
+	// };
 
 	const sendApproveMail = async (imgSrc: string) => {
 		if (!user) {
