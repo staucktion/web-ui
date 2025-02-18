@@ -8,7 +8,7 @@ const HeroSection: React.FC = () => {
     <Box
       sx={{
         position: "relative",
-        backgroundImage: `url("${HeroBackground}")`,
+        backgroundImage: `url("${HeroBackground}")`,/** */
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "350px",
