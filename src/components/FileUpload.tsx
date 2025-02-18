@@ -131,7 +131,7 @@ const FileUpload: React.FC = () => {
 
 	return (
 		<div className="container">
-			<div className="uploadBox">
+			{/** <div className="uploadBox">
 				<h2 className="uploadTitle">Upload Your Photo</h2>
 				<p className="emailText">
 					Your email: <strong>{userEmail}</strong>
@@ -154,10 +154,10 @@ const FileUpload: React.FC = () => {
 				</div>
 				{error && <p className="errorMessage">{error}</p>}
 				{successMessage && <p className="successMessage">{successMessage}</p>}
-			</div>
+			</div>*/}
 
-			<div style={{ padding: "20px", borderTop: "1px solid #ddd" }}>
-				<h3>Watermarked Images</h3>
+			<div>
+				{/**<h3>Watermarked Images</h3>*/}
 				<div className="imageGrid">
 					{watermarkedImages.map((imgSrc, index) => (
 						<div key={index} className="imageCard" onClick={() => handleImageClick(imgSrc)}>

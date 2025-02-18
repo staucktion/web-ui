@@ -1,19 +1,25 @@
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Header from "./components/Header";
 import FileUpload from "./components/FileUpload";
+import Herosection from "./components/Herosection"; 
+import NavBarMiddle from "./components/NavBarMiddle";
+
 
 function App() {
 	const themeMode = "light";
 
-	const defaultTheme = createTheme({ palette: { mode: themeMode }, typography: { fontFamily: "Roboto, sans-serif" } });
-
+	const defaultTheme = createTheme({
+		palette: { mode: themeMode },
+		typography: { fontFamily: "Rubik, sans-serif" } // Updated font
+	  });
+	  
 	return (
 		<>
 			<ThemeProvider theme={defaultTheme}>
 				<CssBaseline />
 				<div>
-					<Header />
+					<Herosection/>
+					<NavBarMiddle/>
 					<FileUpload />
 				</div>
 			</ThemeProvider>
