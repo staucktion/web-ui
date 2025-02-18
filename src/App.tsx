@@ -10,7 +10,7 @@ function App() {
 
 	const defaultTheme = createTheme({
 		palette: { mode: themeMode },
-		typography: { fontFamily: "Rubik, sans-serif" } // Updated font
+		typography: { fontFamily: "Rubik, sans-serif" } // Updated font --sans-serif is in
 	  });
 	  
 	return (
