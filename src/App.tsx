@@ -1,7 +1,7 @@
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import FileUpload from "./components/FileUpload/FileUpload";
-import NavBarMiddle from "./components/NavBar/NavBar";
+import NavBarMiddle from "./components/NavBarMiddle/NavBarMiddle";
 import HeroSection from "./components/HeroSection/HeroSection";
 
 
