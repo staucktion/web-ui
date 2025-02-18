@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Typography, InputBase } from "@mui/material";
+import HeroBackground from "../../../public/HeroBackground.jpg"
 import Header from "../NavBar/NavBar";
 
 const HeroSection: React.FC = () => {
@@ -7,7 +8,7 @@ const HeroSection: React.FC = () => {
     <Box
       sx={{
         position: "relative",
-        backgroundImage: 'url("https://st.local.net/HeroBackground.jpg")',
+        backgroundImage: `url("${HeroBackground}")`,/** */
         backgroundSize: "cover",
         backgroundPosition: "center",
         height: "350px",
