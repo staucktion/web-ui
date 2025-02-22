@@ -4,6 +4,7 @@ import "../../styles/Styles.css";
 import EmailButtons from "../EmailButtons/EmailButtons.tsx";
 import { webApiUrl } from "../../env/envVars.tsx";
 import { useAuth } from "../../providers/AuthContext.tsx";
+import ReadAllPhotoResponseDto from "../../dto/photo/ReadAllPhotoResponseDto.ts";
 
 const FileUpload: React.FC = () => {
 	const { user } = useAuth();
@@ -18,8 +19,8 @@ const FileUpload: React.FC = () => {
 				if (!response.ok) {
 					throw new Error("Failed to fetch photos");
 				}
-				const data: string[] = await response.json();
-				const photoUrls = data.map((fileName) => `${webApiUrl}/photos/${fileName}`);
+				const data: ReadAllPhotoResponseDto[] = await response.json();
+				const photoUrls = data.map((instance) => `${webApiUrl}/photos/${instance.id}`);
 				setWatermarkedImages(photoUrls);
 			} catch (err) {
 				console.error(err);
