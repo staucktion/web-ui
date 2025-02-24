@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Box, Avatar, Typography, Button, Tabs, Tab } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import { useAuth } from "../../providers/AuthContext";
 
 const ProfilePage: React.FC = () => {
+	const { user } = useAuth();
+
 	const [selectedTab, setSelectedTab] = useState(0);
 
 	const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -34,7 +37,7 @@ const ProfilePage: React.FC = () => {
 
 			{/* Kullanıcı Adı */}
 			<Typography variant="h4" fontWeight="bold" sx={{ marginBottom: 1 }}>
-				Damla Koklu
+				{user?.username ?? "Guest User"}
 			</Typography>
 
 			{/* Profili Düzenle Butonu */}
