@@ -5,6 +5,7 @@ import EmailButtons from "../EmailButtons/EmailButtons.tsx";
 import { webApiUrl } from "../../env/envVars.tsx";
 import { useAuth } from "../../providers/AuthContext.tsx";
 import ReadAllPhotoResponseDto from "../../dto/photo/ReadAllPhotoResponseDto.ts";
+import redirectWithPost from "../../util/redirectWithPost.ts";
 
 const FileUpload: React.FC = () => {
 	const { user } = useAuth();
@@ -31,7 +32,7 @@ const FileUpload: React.FC = () => {
 
 	const sendApproveMail = async (imgSrc: string) => {
 		if (!user) {
-			alert("Please login to purchase photos.");
+			redirectWithPost("/auth/google");
 			return;
 		}
 		const fileName = imgSrc.split("/").pop();
