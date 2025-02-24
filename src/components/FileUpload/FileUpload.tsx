@@ -13,20 +13,21 @@ const FileUpload: React.FC = () => {
 	const [selectedImage, setSelectedImage] = useState<ReadAllPhotoResponseDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-	useEffect(() => {
-		const fetchWatermarkedImages = async () => {
-			try {
-				const response = await fetch(`${webApiUrl}/photos`);
-				if (!response.ok) {
-					throw new Error("Failed to fetch photos");
-				}
-				const data: ReadAllPhotoResponseDto[] = await response.json();
-				data.forEach((img) => (img.file_path = `${webApiUrl}/photos/${img.id}`));
-				setWatermarkedImages(data);
-			} catch (err) {
-				console.error(err);
+	const fetchWatermarkedImages = async () => {
+		try {
+			const response = await fetch(`${webApiUrl}/photos`);
+			if (!response.ok) {
+				throw new Error("Failed to fetch photos");
 			}
-		};
+			const data: ReadAllPhotoResponseDto[] = await response.json();
+			data.forEach((img) => (img.file_path = `${webApiUrl}/photos/${img.id}`));
+			setWatermarkedImages(data);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
+	useEffect(() => {
 		fetchWatermarkedImages();
 	}, []);
 
@@ -57,6 +58,7 @@ const FileUpload: React.FC = () => {
 			alert(`Purchase approved mail sent successfully to ${user.email}!`);
 			setSelectedImage(null);
 			setIsModalOpen(false);
+			fetchWatermarkedImages(); // refresh list of available images
 		} catch (error) {
 			console.error("Error sending mail:", error);
 			alert("Failed to send mail. Check console for details.");
