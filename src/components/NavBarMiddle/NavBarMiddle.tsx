@@ -39,7 +39,7 @@ const NavBarMiddle: React.FC = () => {
           },
         }}
       >
-        Aucktions
+        Auctions
       </Typography>
 
       <Typography
