@@ -15,9 +15,7 @@ const HeroSection: React.FC = () => {
         width: "100%",
       }}
     >
-      {/* Header (NavBar) */}
-      <Header />
-
+    
       {/* Centered content */}
       <Box
         sx={{
