@@ -59,7 +59,7 @@ const ProfilePage: React.FC = () => {
 
 			{/* Sekmeli Menü (Tabs) - Ortalandı */}
 			<Box sx={{ width: "100%", display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-				<Tabs value={selectedTab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto" centered sx={{ maxWidth: "600px" }}>
+				<Tabs value={selectedTab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto" sx={{ maxWidth: "600px" }}>
 					<Tab
 						label="Highlighted 0"
 						sx={{
