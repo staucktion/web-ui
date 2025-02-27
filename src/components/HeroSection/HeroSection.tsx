@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Typography, InputBase } from "@mui/material";
-import HeroBackground from "../../../public/HeroBackground.jpg"
-import Header from "../NavBar/NavBar";
+import HeroBackground from "/HeroBackground.jpg"
 
 const HeroSection: React.FC = () => {
   return (
