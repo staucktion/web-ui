@@ -4,85 +4,38 @@ import "../../styles/Styles.css";
 import EmailButtons from "../EmailButtons/EmailButtons.tsx";
 import { webApiUrl } from "../../env/envVars.tsx";
 import { useAuth } from "../../providers/AuthContext.tsx";
+import ReadAllPhotoResponseDto from "../../dto/photo/ReadAllPhotoResponseDto.ts";
+import redirectWithPost from "../../util/redirectWithPost.ts";
 
 const FileUpload: React.FC = () => {
 	const { user } = useAuth();
-
-	// const [selectedFile, setSelectedFile] = useState<File | null>(null);
-	const [watermarkedImages, setWatermarkedImages] = useState<string[]>([]);
-	// const [error, setError] = useState<string | null>(null);
-	// const [successMessage, setSuccessMessage] = useState<string | null>(null);
-	// const [isUploading, setIsUploading] = useState<boolean>(false);
-	const [selectedImage, setSelectedImage] = useState<string | null>(null);
+	const [watermarkedImages, setWatermarkedImages] = useState<ReadAllPhotoResponseDto[]>([]);
+	const [selectedImage, setSelectedImage] = useState<ReadAllPhotoResponseDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-	useEffect(() => {
-		const fetchWatermarkedImages = async () => {
-			try {
-				const response = await fetch(`${webApiUrl}/photos`);
-				if (!response.ok) {
-					throw new Error("Failed to fetch photos");
-				}
-				const data: string[] = await response.json();
-				const photoUrls = data.map((fileName) => `${webApiUrl}/photos/${fileName}`);
-				setWatermarkedImages(photoUrls);
-			} catch (err) {
-				console.error(err);
-				// setError("Failed to load photos");
+	const fetchWatermarkedImages = async () => {
+		try {
+			const response = await fetch(`${webApiUrl}/photos`);
+			if (!response.ok) {
+				throw new Error("Failed to fetch photos");
 			}
-		};
+			const data: ReadAllPhotoResponseDto[] = await response.json();
+			data.forEach((img) => (img.file_path = `${webApiUrl}/photos/${img.id}`));
+			setWatermarkedImages(data);
+		} catch (err) {
+			console.error(err);
+		}
+	};
+
+	useEffect(() => {
 		fetchWatermarkedImages();
 	}, []);
 
-	// const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-	// 	if (event.target.files && event.target.files[0]) {
-	// 		setSelectedFile(event.target.files[0]);
-	// 		setError(null);
-	// 		setSuccessMessage(null);
-	// 	}
-	// };
-
-	// const uploadFile = async () => {
-	// 	if (!selectedFile) {
-	// 		setError("Please select a file.");
-	// 		return;
-	// 	}
-
-	// 	const formData = new FormData();
-	// 	formData.append("photo", selectedFile);
-
-	// 	setIsUploading(true);
-
-	// 	try {
-	// 		const response = await fetch(`${webApiUrl}/photos`, {
-	// 			method: "POST",
-	// 			body: formData,
-	// 		});
-
-	// 		console.log(response);
-
-	// 		if (!response.ok) {
-	// 			const errorText = await response.text();
-	// 			throw new Error(`File upload failed. Status: ${response.status}, Message: ${errorText}`);
-	// 		}
-
-	// 		setSuccessMessage("File uploaded successfully!");
-	// 		setSelectedFile(null);
-	// 	} catch (error) {
-	// 		console.error("File upload error:", error);
-	// 		setError("File upload failed. Check console for details.");
-	// 		setSuccessMessage(null);
-	// 	} finally {
-	// 		setIsUploading(false);
-	// 	}
-	// };
-
-	const sendApproveMail = async (imgSrc: string) => {
+	const sendApproveMail = async (img: ReadAllPhotoResponseDto) => {
 		if (!user) {
-			alert("Please login to purchase photos.");
+			redirectWithPost("/auth/google");
 			return;
 		}
-		const fileName = imgSrc.split("/").pop();
 
 		try {
 			const response = await fetch(`${webApiUrl}/mail/send`, {
@@ -91,7 +44,7 @@ const FileUpload: React.FC = () => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					photoName: fileName,
+					photoId: img.id,
 					action: "Approve Purchase",
 				}),
 				credentials: "include",
@@ -105,14 +58,15 @@ const FileUpload: React.FC = () => {
 			alert(`Purchase approved mail sent successfully to ${user.email}!`);
 			setSelectedImage(null);
 			setIsModalOpen(false);
+			fetchWatermarkedImages(); // refresh list of available images
 		} catch (error) {
 			console.error("Error sending mail:", error);
 			alert("Failed to send mail. Check console for details.");
 		}
 	};
 
-	const handleImageClick = (imgSrc: string) => {
-		setSelectedImage(imgSrc);
+	const handleImageClick = (img: ReadAllPhotoResponseDto) => {
+		setSelectedImage(img);
 		setIsModalOpen(true);
 	};
 
@@ -123,43 +77,11 @@ const FileUpload: React.FC = () => {
 
 	return (
 		<div className="container">
-			{/** <div className="uploadBox">
-				<h2 className="uploadTitle">Upload Your Photo</h2>
-				<p className="emailText">
-					{user ? (
-						<>
-							Your email: <strong>{user.email}</strong>
-						</>
-					) : (
-						"Please login to see your email."
-					)}
-				</p>
-				<div className="uploadControls">
-					<label htmlFor="fileInput" className="fileInputLabel">
-						Select File
-					</label>
-					<input id="fileInput" type="file" onChange={handleFileChange} accept="image/*" style={{ display: "none" }} />
-					{selectedFile && (
-						<>
-							<p className="selectedFile">
-								Selected File: <strong>{selectedFile.name}</strong>
-							</p>
-							<button onClick={uploadFile} className="uploadButton" disabled={isUploading}>
-								{isUploading ? "Uploading..." : "Upload"}
-							</button>
-						</>
-					)}
-				</div>
-				{error && <p className="errorMessage">{error}</p>}
-				{successMessage && <p className="successMessage">{successMessage}</p>}
-			</div>*/}
-
 			<div>
-				{/**<h3>Watermarked Images</h3>*/}
 				<div className="imageGrid">
-					{watermarkedImages.map((imgSrc, index) => (
-						<div key={index} className="imageCard" onClick={() => handleImageClick(imgSrc)}>
-							<img src={imgSrc} alt={`Watermarked ${index + 1}`} className="image" />
+					{watermarkedImages.map((img, index) => (
+						<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
+							<img src={img.file_path} alt={`Watermarked ${index + 1}`} className="image" />
 						</div>
 					))}
 				</div>
@@ -189,7 +111,7 @@ const FileUpload: React.FC = () => {
 						outline: "none",
 					}}
 				>
-					<img src={selectedImage || ""} alt="Selected" className="modalImage" />
+					<img src={selectedImage?.file_path || ""} alt="Selected" className="modalImage" />
 					<EmailButtons onApprove={() => selectedImage && sendApproveMail(selectedImage)} />
 				</Box>
 			</Modal>

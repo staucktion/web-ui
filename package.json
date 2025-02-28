@@ -1,6 +1,6 @@
 {
-  "name": "bank-ui",
-  "version": "v1.1.0",
+  "name": "web-ui",
+  "version": "v1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 8004",
@@ -17,6 +17,7 @@
     "axios": "^1.7.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^7.2.0",
     "styled-components": "^6.1.15"
   },
   "devDependencies": {
