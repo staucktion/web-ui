@@ -1,5 +1,5 @@
 {
-  "name": "bank-ui",
+  "name": "web-ui",
   "version": "v1.2.0-SNAPSHOT",
   "type": "module",
   "scripts": {
