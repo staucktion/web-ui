@@ -1,6 +1,6 @@
 {
   "name": "web-ui",
-  "version": "v1.2.0-SNAPSHOT",
+  "version": "v1.3.0-SNAPSHOT",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 8004",
