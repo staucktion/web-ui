@@ -4,13 +4,13 @@ import "../../styles/Styles.css";
 import EmailButtons from "../EmailButtons/EmailButtons.tsx";
 import { webApiUrl } from "../../env/envVars.tsx";
 import { useAuth } from "../../providers/AuthContext.tsx";
-import ReadAllPhotoResponseDto from "../../dto/photo/ReadAllPhotoResponseDto.ts";
+import PhotoDto from "../../dto/photo/PhotoDto.ts";
 import redirectWithPost from "../../util/redirectWithPost.ts";
-
+import getPhotoSrc from "../../util/getPhotoSrc.ts";
 const FileUpload: React.FC = () => {
 	const { user } = useAuth();
-	const [watermarkedImages, setWatermarkedImages] = useState<ReadAllPhotoResponseDto[]>([]);
-	const [selectedImage, setSelectedImage] = useState<ReadAllPhotoResponseDto | null>(null);
+	const [watermarkedImages, setWatermarkedImages] = useState<PhotoDto[]>([]);
+	const [selectedImage, setSelectedImage] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
 	const fetchWatermarkedImages = async () => {
@@ -19,8 +19,8 @@ const FileUpload: React.FC = () => {
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
-			const data: ReadAllPhotoResponseDto[] = await response.json();
-			data.forEach((img) => (img.file_path = `${webApiUrl}/photos/${img.id}`));
+			const data: PhotoDto[] = await response.json();
+			data.forEach((img) => (img.file_path = getPhotoSrc(img)));
 			setWatermarkedImages(data);
 		} catch (err) {
 			console.error(err);
@@ -31,7 +31,7 @@ const FileUpload: React.FC = () => {
 		fetchWatermarkedImages();
 	}, []);
 
-	const sendApproveMail = async (img: ReadAllPhotoResponseDto) => {
+	const sendApproveMail = async (img: PhotoDto) => {
 		if (!user) {
 			redirectWithPost("/auth/google");
 			return;
@@ -65,7 +65,7 @@ const FileUpload: React.FC = () => {
 		}
 	};
 
-	const handleImageClick = (img: ReadAllPhotoResponseDto) => {
+	const handleImageClick = (img: PhotoDto) => {
 		setSelectedImage(img);
 		setIsModalOpen(true);
 	};

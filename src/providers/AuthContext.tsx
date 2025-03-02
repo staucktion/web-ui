@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import UserDto from "../dto/UserDto";
+import UserDto from "../dto/user/UserDto";
 import { webApiUrl } from "../env/envVars";
 
 // Define AuthContext type
