@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Modal } from "@mui/material";
+import { Box, Modal, Typography } from "@mui/material";
 import "../../styles/Styles.css";
 import EmailButtons from "../EmailButtons/EmailButtons.tsx";
 import { webApiUrl } from "../../env/envVars.tsx";
@@ -78,13 +78,19 @@ const FileUpload: React.FC = () => {
 	return (
 		<div className="container">
 			<div>
-				<div className="imageGrid">
-					{watermarkedImages.map((img, index) => (
-						<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
-							<img src={img.file_path} alt={`Watermarked ${index + 1}`} className="image" />
-						</div>
-					))}
-				</div>
+				{watermarkedImages.length > 0 ? (
+					<div className="imageGrid">
+						{watermarkedImages.map((img, index) => (
+							<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
+								<img src={img.file_path} alt={`Watermarked ${index + 1}`} className="image" />
+							</div>
+						))}
+					</div>
+				) : (
+					<div className="noImages">
+						<Typography variant="h6">No images are available right now for purchase.</Typography>
+					</div>
+				)}
 			</div>
 
 			<Modal
