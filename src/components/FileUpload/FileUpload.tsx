@@ -7,8 +7,13 @@ import { useAuth } from "../../providers/AuthContext.tsx";
 import PhotoDto from "../../dto/photo/PhotoDto.ts";
 import redirectWithPost from "../../util/redirectWithPost.ts";
 import getPhotoSrc from "../../util/getPhotoSrc.ts";
+import { useNavigate } from "react-router-dom";
+import { toastWarning, toastSuccess, toastError } from "../../util/toastUtil.ts";
+
 const FileUpload: React.FC = () => {
 	const { user } = useAuth();
+	const navigate = useNavigate();
+
 	const [watermarkedImages, setWatermarkedImages] = useState<PhotoDto[]>([]);
 	const [selectedImage, setSelectedImage] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -37,6 +42,12 @@ const FileUpload: React.FC = () => {
 			return;
 		}
 
+		if (!user.tc_identity_no) {
+			toastWarning("Please update your TC Identity Number first by editing your profile");
+			navigate("/profile");
+			return;
+		}
+
 		try {
 			const response = await fetch(`${webApiUrl}/mail/send`, {
 				method: "POST",
@@ -55,13 +66,13 @@ const FileUpload: React.FC = () => {
 				throw new Error(`Failed to send mail. Status: ${response.status}, Message: ${errorText}`);
 			}
 
-			alert(`Purchase approved mail sent successfully to ${user.email}!`);
+			toastSuccess(`Purchase approved mail sent successfully to ${user.email}!`);
 			setSelectedImage(null);
 			setIsModalOpen(false);
 			fetchWatermarkedImages(); // refresh list of available images
 		} catch (error) {
 			console.error("Error sending mail:", error);
-			alert("Failed to send mail. Check console for details.");
+			toastError("Failed to send mail. Check console for details.");
 		}
 	};
 
