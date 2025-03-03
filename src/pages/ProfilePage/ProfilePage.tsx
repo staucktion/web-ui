@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Avatar, Typography, Button, Tabs, Tab } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAuth } from "../../providers/AuthContext";
-
+import getProfilePictureSrc from "../../util/getProfilePictureSrc";
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
 
@@ -33,6 +33,7 @@ const ProfilePage: React.FC = () => {
 					backgroundColor: "#E0E0E0",
 					marginBottom: 1,
 				}}
+				src={user ? getProfilePictureSrc(user) ?? undefined : undefined}
 			/>
 
 			{/* Kullanıcı Adı */}

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import UserDto from "../dto/UserDto";
+import UserDto from "../dto/user/UserDto";
 import { webApiUrl } from "../env/envVars";
-
+import { toastError } from "../util/toastUtil";
 // Define AuthContext type
 interface AuthContextType {
 	user: UserDto | null;
@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			} catch (error) {
 				console.error("Couldn't fetch user", error);
 				setUser(null);
-				alert("Failed to fetch user details. Check console for details.");
+				toastError("Failed to fetch user details. Check console for details.");
 			}
 		};
 

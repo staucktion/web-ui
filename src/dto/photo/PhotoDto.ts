@@ -1,4 +1,4 @@
-export default interface ReadAllPhotoResponseDto {
+export default interface PhotoDto {
 	id: number;
 	file_path: string;
 	title: string;
