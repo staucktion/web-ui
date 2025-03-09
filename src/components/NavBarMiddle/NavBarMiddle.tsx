@@ -54,7 +54,7 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({
           }}
           onClick={() => requireAuth(() => onAuctionClick())}
         >
-          Vote
+          Auction
         </Typography>
 
         {/* Vote (Metin) */}
@@ -68,7 +68,7 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({
           }}
           onClick={() => requireAuth(() => onVoteClick())}
         >
-          Auction
+          Vote
         </Typography>
       </Box>
 

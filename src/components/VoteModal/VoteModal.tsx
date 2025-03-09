@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -12,32 +12,26 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useNavigate } from "react-router-dom";
 
-interface VoteModalProps {
+interface   VoteModalProps {
   open: boolean;
   onClose: () => void;
   photoUrl: string;
   photographerName?: string;
   onNext?: () => void;
   onPrev?: () => void;
+  children?: React.ReactNode; // children prop'u eklendi
 }
 
 const VoteModal: React.FC<VoteModalProps> = ({
   open,
   onClose,
   photoUrl,
-  photographerName = "Unknown Photographer",
+  photographerName = "Damla Köklü",
   onNext,
   onPrev,
+  children,
 }) => {
   const navigate = useNavigate();
-
-  const handleBidClick = () => {
-    const bidAmount = window.prompt("How much would you like to bid?");
-    if (bidAmount !== null) {
-      console.log("User bid:", bidAmount);
-      // Burada backend çağrısı yapabilir veya başka işlemler gerçekleştirebilirsiniz.
-    }
-  };
 
   return (
     <Modal
@@ -74,7 +68,6 @@ const VoteModal: React.FC<VoteModalProps> = ({
             paddingX: 2,
           }}
         >
-          {/* Sol kısım */}
           <Box display="flex" alignItems="center" gap={2}>
             <IconButton onClick={onClose}>
               <CloseIcon />
@@ -82,9 +75,11 @@ const VoteModal: React.FC<VoteModalProps> = ({
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               {photographerName}
             </Typography>
+            <Button variant="outlined" sx={{ textTransform: "none" }}>
+              Follow
+            </Button>
           </Box>
 
-          {/* Sağ kısım */}
           <Box display="flex" alignItems="center" gap={2}>
             <Button variant="text" sx={{ textTransform: "none" }}>
               Date
@@ -92,16 +87,20 @@ const VoteModal: React.FC<VoteModalProps> = ({
             <Button variant="text" sx={{ textTransform: "none" }}>
               Location
             </Button>
-            {/* Örneğin Bid History gibi başka opsiyonlar da eklenebilir */}
-            <Button variant="text" sx={{ textTransform: "none" }}>
-              Bid History
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ textTransform: "none" }}
+              onClick={() => navigate("/vote")}
+            >
+              Vote
             </Button>
           </Box>
         </Box>
 
         <Divider />
 
-        {/* Orta Kısım: Fotoğraf ve Oklar */}
+        {/* Orta Kısım: Fotoğraf + Oklar */}
         <Box
           sx={{
             flex: 1,
@@ -112,7 +111,6 @@ const VoteModal: React.FC<VoteModalProps> = ({
             overflow: "hidden",
           }}
         >
-          {/* Geri Ok */}
           {onPrev && (
             <IconButton
               onClick={onPrev}
@@ -139,7 +137,6 @@ const VoteModal: React.FC<VoteModalProps> = ({
             }}
           />
 
-          {/* İleri Ok */}
           {onNext && (
             <IconButton
               onClick={onNext}
@@ -156,20 +153,18 @@ const VoteModal: React.FC<VoteModalProps> = ({
           )}
         </Box>
 
-        {/* Alt Kısım: Sarı Bid Butonu */}
+        {/* Alt Kısım */}
         <Box sx={{ p: 2, display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
-            sx={{
-              backgroundColor: "#FFC107", // Sarı renk
-              color: "#000",
-              textTransform: "none",
-            }}
-            onClick={handleBidClick}
+            color="primary"
+            sx={{ textTransform: "none" }}
+            onClick={() => navigate("/vote")}
           >
-            Bid
+            Vote
           </Button>
         </Box>
+
       </Box>
     </Modal>
   );

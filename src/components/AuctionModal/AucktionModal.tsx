@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   Modal,
   Box,
@@ -26,12 +26,19 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
   open,
   onClose,
   photoUrl,
-  photographerName = "Damla Köklü",
+  photographerName = "Unknown Photographer",
   onNext,
   onPrev,
-  children,
+  children, // children prop'u destekleniyor
 }) => {
   const navigate = useNavigate();
+
+  const handleBidClick = () => {
+    const bidAmount = window.prompt("How much would you like to bid?");
+    if (bidAmount !== null) {
+      console.log("User bid:", bidAmount);
+    }
+  };
 
   return (
     <Modal
@@ -75,32 +82,12 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               {photographerName}
             </Typography>
-            <Button variant="outlined" sx={{ textTransform: "none" }}>
-              Follow
-            </Button>
-          </Box>
-
-          <Box display="flex" alignItems="center" gap={2}>
-            <Button variant="text" sx={{ textTransform: "none" }}>
-              Date
-            </Button>
-            <Button variant="text" sx={{ textTransform: "none" }}>
-              Location
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ textTransform: "none" }}
-              onClick={() => navigate("/vote")}
-            >
-              Vote
-            </Button>
           </Box>
         </Box>
 
         <Divider />
 
-        {/* Orta Kısım: Fotoğraf + Oklar */}
+        {/* Orta Kısım */}
         <Box
           sx={{
             flex: 1,
@@ -157,14 +144,19 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
         <Box sx={{ p: 2, display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
-            color="primary"
-            sx={{ textTransform: "none" }}
-            onClick={() => navigate("/vote")}
+            sx={{
+              backgroundColor: "#FFC107",
+              color: "#000",
+              textTransform: "none",
+            }}
+            onClick={handleBidClick}
           >
-            Vote
+            Bid
           </Button>
         </Box>
 
+        {/* children prop'u buraya eklendi */}
+        
       </Box>
     </Modal>
   );
