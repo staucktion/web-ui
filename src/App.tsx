@@ -1,10 +1,14 @@
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom"; 
+import { useAuth } from "./providers/AuthContext";
+import { Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import NavBar from "./components/NavBar/NavBar"; 
-import NavBarProfile from "./components/NavBarProfile/NavBarProfile"; 
+import HomePage from "./pages/HomePage/HomePage";
+import EditProfilePage from "./pages/EditProfilePage/EditProfilePage";
+import PaymentPage from "./pages/PaymentPage/PaymentPage";
+import ValidatorPanel from "./pages/ValidatorPanel/ValidatorPanel"
 
 function App() {
     const themeMode = "light";
@@ -18,25 +22,25 @@ function App() {
         <ThemeProvider theme={defaultTheme}>
             <CssBaseline />
             <Router>
-                <MainLayout /> {/*  Navbar'ın dinamik olarak değişmesi için özel bileşen */}
+                <MainLayout />
             </Router>
         </ThemeProvider>
     );
 }
 
-// Navbar'ın anında değişmesi için özel bileşen
 const MainLayout: React.FC = () => {
-    const location = useLocation(); //Mevcut sayfanın URL'sini alıyoruz.
+    const { user } = useAuth(); 
 
     return (
-        <>
-            {/* Sayfaya göre Navbar değiştir */}
-            {location.pathname === "/profile" ? <NavBarProfile /> : <NavBar />}
-            <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
-        </>
+        <Routes>
+            {/* Kullanıcı giriş yapmamışsa LandingPage, yapmışsa HomePage */}
+            <Route path="/" element={user ? <Navigate to="/home" /> : <LandingPage />} />
+            <Route path="/home" element={user ? <HomePage /> : <Navigate to="/" />} />
+            <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
+            <Route path="/editprofile" element={user ? <EditProfilePage /> : <Navigate to="/" />} /> 
+            <Route path="/payment" element={user ? <PaymentPage /> : <Navigate to="/" />} />
+            <Route path="/validator" element={<ValidatorPanel />} />
+        </Routes>
     );
 };
 

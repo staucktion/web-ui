@@ -1,73 +1,86 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
+import useRequireAuth from "../../Hooks/useRequireAuth";
+import CustomModal from "../CustomModal/CustomModal";
 
-const NavBarMiddle: React.FC = () => {
+interface NavBarMiddleProps {
+  onAuctionClick: () => void;
+  onPhotosClick: () => void;
+  onVoteClick: () => void;
+}
+
+const NavBarMiddle: React.FC<NavBarMiddleProps> = ({
+  onAuctionClick,
+  onPhotosClick,
+  onVoteClick,
+}) => {
+  const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
+
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center" // <-- This centers the items horizontally
-      gap={3}
-      sx={{
-        marginTop: "40px",
-      }}
-    >
-      {/* Home button (black background, white text) */}
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: "#000",
-          color: "#fff",
-          borderRadius: "9999px",
-          textTransform: "none",
-          px: 3,
-          "&:hover": {
-            backgroundColor: "#333",
-          },
-        }}
+    <>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        gap={4}
+        sx={{ marginTop: "40px" }}
       >
-        Home
-      </Button>
+        {/* Purchase (Siyah Buton) */}
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: "#000",
+            color: "#fff",
+            borderRadius: "9999px",
+            textTransform: "none",
+            fontSize: "1.2rem",
+            padding: "15px 30px",
+            height: "55px",
+            "&:hover": { backgroundColor: "#333" },
+          }}
+          onClick={() => requireAuth(() => onPhotosClick())}
+        >
+          Purchase
+        </Button>
 
-      <Typography
-        variant="body1"
-        sx={{
-          color: "#555",
-          cursor: "pointer",
-          "&:hover": {
-            color: "#000",
-          },
-        }}
-      >
-        Auctions
-      </Typography>
+        {/* Auction (Metin) */}
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#555",
+            cursor: "pointer",
+            fontSize: "1.2rem",
+            "&:hover": { color: "#000" },
+          }}
+          onClick={() => requireAuth(() => onAuctionClick())}
+        >
+          Vote
+        </Typography>
 
-      <Typography
-        variant="body1"
-        sx={{
-          color: "#555",
-          cursor: "pointer",
-          "&:hover": {
-            color: "#000",
-          },
-        }}
-      >
-        Vote
-      </Typography>
+        {/* Vote (Metin) */}
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#555",
+            cursor: "pointer",
+            fontSize: "1.2rem",
+            "&:hover": { color: "#000" },
+          }}
+          onClick={() => requireAuth(() => onVoteClick())}
+        >
+          Auction
+        </Typography>
+      </Box>
 
-      <Typography
-        variant="body1"
-        sx={{
-          color: "#555",
-          cursor: "pointer",
-          "&:hover": {
-            color: "#012",
-          },
-        }}
-      >
-        Leader Board
-      </Typography>
-    </Box>
+      {/* Giriş (Login) Modal'ı */}
+      <CustomModal
+        open={open}
+        title="Login or Register?"
+        onClose={handleClose}
+        onConfirm={handleLogin}
+        confirmText="Login with Google"
+      />
+    </>
   );
 };
 
