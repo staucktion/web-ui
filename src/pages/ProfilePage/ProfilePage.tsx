@@ -24,6 +24,8 @@ interface Photo {
   file_path: string;
 }
 
+import getProfilePictureSrc from "../../util/getProfilePictureSrc";
+
 const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate(); // EKLENDİ
