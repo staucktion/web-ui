@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -29,7 +28,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
   photographerName = "Damla Köklü",
   onNext,
   onPrev,
-  children,
+  //children,
 }) => {
   const navigate = useNavigate();
 
