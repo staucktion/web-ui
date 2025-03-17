@@ -1,12 +1,10 @@
 import { CssBaseline } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAuth } from "./providers/AuthContext";
 import { Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import NavBar from "./components/NavBar/NavBar";
-import NavBarProfile from "./components/NavBarProfile/NavBarProfile";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HomePage from "./pages/HomePage/HomePage";
@@ -34,7 +32,6 @@ function App() {
 }
 
 const MainLayout: React.FC = () => {
-	const location = useLocation(); //Mevcut sayfanın URL'sini alıyoruz.
 	const { user } = useAuth();
 
 	return (
