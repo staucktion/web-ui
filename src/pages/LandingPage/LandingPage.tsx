@@ -5,14 +5,14 @@ import NavBarMiddle from "../../components/NavBarMiddle/NavBarMiddle";
 import NavBar from "../../components/NavBar/NavBar";
 
 const LandingPage: React.FC = () => {
-    return (
-        <div>
-            <NavBar/>
-            <HeroSection />
-            <NavBarMiddle />
-            <RandomPhotos />
-        </div>
-    );
+	return (
+		<div>
+			<NavBar />
+			<HeroSection />
+			<NavBarMiddle onAuctionClick={() => {}} onPhotosClick={() => {}} onVoteClick={() => {}} />
+			<RandomPhotos />
+		</div>
+	);
 };
 
 export default LandingPage;
