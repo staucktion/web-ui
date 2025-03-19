@@ -40,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 		socketInstance.on("connect_error", (error) => {
 			console.error("Socket connection error:", error);
-			toastError("Failed to connect to real-time services");
+			//toastError("Failed to connect to real-time services");
 		});
 
 		socketInstance.on("notification", (notification: NotificationDto) => {

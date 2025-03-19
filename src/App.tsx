@@ -41,8 +41,8 @@ const MainLayout: React.FC = () => {
       {/* Normal Users */}
       <Route path="/home" element={user ? <HomePage /> : <Navigate to="/" />} />
       <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
-      <Route path="/editprofile" element={user ? <EditProfilePage /> : <Navigate to="/" />} />
       <Route path="/payment" element={user ? <PaymentPage /> : <Navigate to="/" />} />
+	  <Route path="/editprofile" element={user ? <EditProfilePage /> : <Navigate to="/" />} />
 
       {/* Only for Validator's access*/}
       <Route path="/validator" element={user?.role_id === "4" ? <ValidatorPanel /> : <Navigate to="/" />} />
