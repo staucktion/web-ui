@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Modal,
   Box,
@@ -11,14 +12,14 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useNavigate } from "react-router-dom";
 
-interface   VoteModalProps {
+interface VoteModalProps {
   open: boolean;
   onClose: () => void;
   photoUrl: string;
   photographerName?: string;
   onNext?: () => void;
   onPrev?: () => void;
-  children?: React.ReactNode; // children prop'u eklendi
+  children?: React.ReactNode;
 }
 
 const VoteModal: React.FC<VoteModalProps> = ({
@@ -28,7 +29,6 @@ const VoteModal: React.FC<VoteModalProps> = ({
   photographerName = "Damla Köklü",
   onNext,
   onPrev,
-  //children,
 }) => {
   const navigate = useNavigate();
 
@@ -63,33 +63,67 @@ const VoteModal: React.FC<VoteModalProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingY: 1,
-            paddingX: 2,
+            py: 1,
+            px: 2,
+            background: "linear-gradient(90deg, #ff69b4, #1e90ff)",
           }}
         >
+          {/* Soldaki alan */}
           <Box display="flex" alignItems="center" gap={2}>
-            <IconButton onClick={onClose}>
+            <IconButton onClick={onClose} sx={{ color: "#fff" }}>
               <CloseIcon />
             </IconButton>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
               {photographerName}
             </Typography>
-            <Button variant="outlined" sx={{ textTransform: "none" }}>
+            <Button
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                color: "#fff",
+                borderColor: "#fff",
+                "&:hover": {
+                  borderColor: "#fff",
+                  backgroundColor: "rgba(255,255,255,0.1)",
+                },
+              }}
+            >
               Follow
             </Button>
           </Box>
 
+          {/* Sağdaki alan */}
           <Box display="flex" alignItems="center" gap={2}>
-            <Button variant="text" sx={{ textTransform: "none" }}>
+            <Button
+              variant="text"
+              sx={{
+                textTransform: "none",
+                color: "#fff",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+              }}
+            >
               Date
             </Button>
-            <Button variant="text" sx={{ textTransform: "none" }}>
+            <Button
+              variant="text"
+              sx={{
+                textTransform: "none",
+                color: "#fff",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+              }}
+            >
               Location
             </Button>
             <Button
               variant="contained"
-              color="primary"
-              sx={{ textTransform: "none" }}
+              sx={{
+                textTransform: "none",
+                background: "linear-gradient(90deg, #ff69b4, #1e90ff)",
+                color: "#fff",
+                "&:hover": {
+                  background: "linear-gradient(90deg, #ff85c0, #1eaaff)",
+                },
+              }}
               onClick={() => navigate("/vote")}
             >
               Vote
@@ -119,6 +153,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
                 color: "#fff",
                 backgroundColor: "rgba(0,0,0,0.3)",
                 "&:hover": { backgroundColor: "rgba(0,0,0,0.5)" },
+                zIndex: 10,
               }}
             >
               <ArrowBackIosNewIcon />
@@ -145,6 +180,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
                 color: "#fff",
                 backgroundColor: "rgba(0,0,0,0.3)",
                 "&:hover": { backgroundColor: "rgba(0,0,0,0.5)" },
+                zIndex: 10,
               }}
             >
               <ArrowForwardIosIcon />
@@ -153,17 +189,23 @@ const VoteModal: React.FC<VoteModalProps> = ({
         </Box>
 
         {/* Alt Kısım */}
+        <Divider />
         <Box sx={{ p: 2, display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
-            color="primary"
-            sx={{ textTransform: "none" }}
+            sx={{
+              textTransform: "none",
+              background: "linear-gradient(90deg, #ff69b4, #1e90ff)",
+              color: "#fff",
+              "&:hover": {
+                background: "linear-gradient(90deg, #ff85c0, #1eaaff)",
+              },
+            }}
             onClick={() => navigate("/vote")}
           >
             Vote
           </Button>
         </Box>
-
       </Box>
     </Modal>
   );

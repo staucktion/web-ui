@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Box,
@@ -6,6 +6,8 @@ import {
   Button,
   IconButton,
   Divider,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -35,6 +37,38 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({
   children,
 }) => {
   const navigate = useNavigate();
+
+  // Detail dropdown için state
+  const [detailAnchorEl, setDetailAnchorEl] = useState<null | HTMLElement>(null);
+  const openDetailMenu = Boolean(detailAnchorEl);
+
+  const handleDetailClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setDetailAnchorEl(event.currentTarget);
+  };
+
+  const handleDetailClose = () => {
+    setDetailAnchorEl(null);
+  };
+
+  // Swipe (kaydırma) için kendi mantığımızı yazıyoruz.
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const minSwipeDistance = 50; // Minimum kaydırma mesafesi
+
+  const onTouchStartHandler = (e: React.TouchEvent<HTMLDivElement>) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const onTouchEndHandler = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const distance = touchStartX - touchEndX;
+    if (distance > minSwipeDistance && onNext) {
+      onNext();
+    } else if (distance < -minSwipeDistance && onPrev) {
+      onPrev();
+    }
+    setTouchStartX(null);
+  };
 
   return (
     <Modal
@@ -67,8 +101,8 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingY: 1,
-            paddingX: 2,
+            py: 1,
+            px: 2,
           }}
         >
           {/* Soldaki alan */}
@@ -79,36 +113,48 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               {photographerName}
             </Typography>
-            <Button variant="outlined" sx={{ textTransform: "none" }}>
-              Follow
-            </Button>
+
           </Box>
 
-          {/* Sağdaki alan */}
+          {/* Sağdaki alan: Dropdown "Detail" */}
           <Box display="flex" alignItems="center" gap={2}>
             <Button variant="text" sx={{ textTransform: "none" }}>
               Date
             </Button>
-
-            {/* Like ve Kalp Butonu */}
             <Box display="flex" alignItems="center" gap={1}>
               <Typography variant="body1">Like {likes}</Typography>
               <IconButton color="error" aria-label="like">
                 <FavoriteBorderIcon />
               </IconButton>
             </Box>
-
             <Button variant="text" sx={{ textTransform: "none" }}>
               Location
             </Button>
             <Button
               variant="contained"
-              color="success"
-              sx={{ textTransform: "none" }}
-              onClick={() => navigate("/payment")}
+              sx={{
+                textTransform: "none",
+                background: "linear-gradient(90deg, #ff69b4, #1e90ff)",
+                color: "#fff",
+                "&:hover": {
+                  background: "linear-gradient(90deg, #ff85c0, #1eaaff)",
+                },
+              }}
+              onClick={handleDetailClick}
             >
-              Purchase Now
+              Detail
             </Button>
+            <Menu
+              anchorEl={detailAnchorEl}
+              open={openDetailMenu}
+              onClose={handleDetailClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              <MenuItem>Resolution: 1920 x 1080</MenuItem>
+              <MenuItem>File Size: 2.5 MB</MenuItem>
+              <MenuItem>Format: JPEG</MenuItem>
+            </Menu>
           </Box>
         </Box>
 
@@ -124,6 +170,8 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({
             justifyContent: "center",
             overflow: "hidden",
           }}
+          onTouchStart={onTouchStartHandler}
+          onTouchEnd={onTouchEndHandler}
         >
           {/* Geri Ok */}
           {onPrev && (
