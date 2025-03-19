@@ -18,6 +18,11 @@ import ClearIcon from "@mui/icons-material/Clear";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CategoryIcon from "@mui/icons-material/Category";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+
+//ATTENTION!! PLEASE CHANGE MOCK DATA AND DUMMY CONDITION WITH THE REAL ONES
+//THIS IS ONLY A DEMONSTRATION FOR UI -DK
 
 interface ValidationItem {
   id: number;
@@ -32,11 +37,18 @@ const ValidatorPanel: React.FC = () => {
   const [items, setItems] = useState<ValidationItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [categoryEdits, setCategoryEdits] = useState<{ [key: number]: string }>({});
+  
+  //Pagination
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const itemsPerPage = 3; // Photos per page
 
-  // Dummy condition: false ise hiçbir öğede kategori kısmı gösterilmez.
-  // İhtiyaca göre true yaparsanız; "pending" ve id'si tek olan öğelerde kategori alanı görünür.
-  const dummyCondition = false;
+  //Dummy condition
+  const checkDummyCondition = (item: ValidationItem): boolean => {
+    
+    return item.photoStatus === "pending" && item.id % 2 !== 0;
+  };
 
+  //Mock Data
   useEffect(() => {
     setTimeout(() => {
       const mockData: ValidationItem[] = [
@@ -67,6 +79,25 @@ const ValidatorPanel: React.FC = () => {
           categoryRequest: "City Landscape",
           photoStatus: "pending",
         },
+        {
+          id: 4,
+          photoUrl:
+            "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          locationCategory: "London / Modern",
+          locationUrl: "https://maps.google.com/?q=London",
+          categoryRequest: "Modern Architecture",
+          photoStatus: "pending",
+        },
+        {
+          id: 5,
+          photoUrl:
+            "https://images.unsplash.com/photo-1522770179533-24471fcdba45?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+          locationCategory: "Tokyo / Futuristic",
+          locationUrl: "https://maps.google.com/?q=Tokyo",
+          categoryRequest: "Futuristic Design",
+          photoStatus: "approved",
+        },
+        // İstediğiniz kadar data ekleyebilirsiniz...
       ];
       setItems(mockData);
       setLoading(false);
@@ -106,6 +137,20 @@ const ValidatorPanel: React.FC = () => {
     );
   };
 
+  // Sayfalama işlemleri: gösterilecek öğeleri hesapla
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedItems = items.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => (prev + 1 < totalPages ? prev + 1 : prev));
+  };
+
   if (loading) {
     return (
       <Box
@@ -139,11 +184,8 @@ const ValidatorPanel: React.FC = () => {
       </Typography>
 
       <Grid container spacing={4} justifyContent="center">
-        {items.map((item) => {
-          // Eğer dummyCondition false ise, shouldShowCategory otomatik false olur.
-          // dummyCondition true ise; sadece "pending" statüsünde ve id'si tek olan öğelerde kategori kısmı gösterilir.
-          const shouldShowCategory =
-            dummyCondition && item.photoStatus === "pending" && item.id % 2 !== 0;
+        {displayedItems.map((item) => {
+          const shouldShowCategory = checkDummyCondition(item);
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
               <Paper elevation={6} sx={{ borderRadius: 3, overflow: "hidden" }}>
@@ -234,6 +276,27 @@ const ValidatorPanel: React.FC = () => {
           );
         })}
       </Grid>
+
+      {/* Sayfalama navigasyonu */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mt: 4,
+          gap: 2,
+        }}
+      >
+        <Button onClick={handlePreviousPage} disabled={currentPage === 0}>
+          <ArrowBackIosIcon />
+        </Button>
+        <Typography variant="body1" sx={{ color: "#fff" }}>
+          Page {currentPage + 1} / {totalPages}
+        </Typography>
+        <Button onClick={handleNextPage} disabled={currentPage + 1 === totalPages}>
+          <ArrowForwardIosIcon />
+        </Button>
+      </Box>
     </Box>
   );
 };
