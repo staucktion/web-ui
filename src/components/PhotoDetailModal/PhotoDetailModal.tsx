@@ -13,7 +13,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { useNavigate } from "react-router-dom";
 
 interface PhotoDetailModalProps {
   open: boolean;
@@ -21,6 +20,7 @@ interface PhotoDetailModalProps {
   photoUrl: string;
   photographerName?: string;
   likes?: number;
+  price?: number; // Price props'u eklendi
   onNext?: () => void;
   onPrev?: () => void;
   children?: React.ReactNode;
@@ -32,11 +32,11 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({
   photoUrl,
   photographerName = "Damla Köklü",
   likes = 250,
+  price = 100, // Fiyat varsayılan değeri
   onNext,
   onPrev,
   children,
 }) => {
-  const navigate = useNavigate();
 
   // Detail dropdown için state
   const [detailAnchorEl, setDetailAnchorEl] = useState<null | HTMLElement>(null);
@@ -113,7 +113,6 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               {photographerName}
             </Typography>
-
           </Box>
 
           {/* Sağdaki alan: Dropdown "Detail" */}
@@ -215,6 +214,13 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({
               <ArrowForwardIosIcon />
             </IconButton>
           )}
+        </Box>
+
+        {/* Fiyat Bilgisi */}
+        <Box sx={{ textAlign: "center", padding: "16px 0" }}>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Price: ${price}
+          </Typography>
         </Box>
 
         {/* Alt Kısım: children (ör. EmailButtons vb.) */}
