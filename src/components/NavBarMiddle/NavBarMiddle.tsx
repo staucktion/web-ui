@@ -7,12 +7,14 @@ interface NavBarMiddleProps {
   onAuctionClick: () => void;
   onPhotosClick: () => void;
   onVoteClick: () => void;
+  onCategoriesClick: () => void;
 }
 
 const NavBarMiddle: React.FC<NavBarMiddleProps> = ({
   onAuctionClick,
   onPhotosClick,
   onVoteClick,
+  onCategoriesClick,
 }) => {
   const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
 
@@ -69,6 +71,20 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({
           onClick={() => requireAuth(() => onVoteClick())}
         >
           Vote
+        </Typography>
+
+        {/* Categories (Metin) */}
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#555",
+            cursor: "pointer",
+            fontSize: "1.2rem",
+            "&:hover": { color: "#000" },
+          }}
+          onClick={() => requireAuth(() => onCategoriesClick())}
+        >
+          Categories
         </Typography>
       </Box>
 
