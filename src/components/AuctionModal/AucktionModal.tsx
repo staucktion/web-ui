@@ -10,10 +10,9 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +33,6 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
   photographerName = "Unknown Photographer",
   onNext,
   onPrev,
-  children,
 }) => {
   const navigate = useNavigate();
 
