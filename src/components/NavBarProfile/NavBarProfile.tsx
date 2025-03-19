@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -8,9 +8,11 @@ import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import NotificationsIcon from "@mui/icons-material/Notifications"; 
 import redirectWithPost from "../../util/redirectWithPost";
+import { Box, Typography as MuiTypography } from "@mui/material";
 
 const NavBarProfile: React.FC = () => {
   const navigate = useNavigate(); // Hook for navigation
+  const [notificationsOpen, setNotificationsOpen] = useState(false); // State to toggle notifications panel
 
   // Navigation functions
   const goToHome = () => {
@@ -22,7 +24,7 @@ const NavBarProfile: React.FC = () => {
   };
 
   const handleNotifications = () => {
-    alert("Notifications clicked!"); // Replace with actual notification logic
+    setNotificationsOpen(!notificationsOpen); // Toggle the notifications panel visibility
   };
 
   return (
@@ -52,18 +54,18 @@ const NavBarProfile: React.FC = () => {
           <MoreVertIcon />
         </IconButton>
 
-        {/* Notifications Button - White text only */}
+        {/* Notifications Button */}
         <IconButton sx={{ color: "white", mr: 2 }} onClick={handleNotifications}>
           <NotificationsIcon />
         </IconButton>
 
-        {/* Logout Button - White text only */}
+        {/* Logout Button */}
         <Button
           sx={{
             textTransform: "none",
             color: "white",
             fontSize: "1rem",
-            mr: 2, 
+            mr: 2,
             "&:hover": {
               textDecoration: "underline",
             },
@@ -73,7 +75,7 @@ const NavBarProfile: React.FC = () => {
           Logout
         </Button>
 
-        {/* Home Button - Moved to the right */}
+        {/* Home Button */}
         <Button
           sx={{
             textTransform: "none",
@@ -83,7 +85,7 @@ const NavBarProfile: React.FC = () => {
             fontSize: "1rem",
             padding: "8px 20px",
             height: "45px",
-            marginLeft: "auto", // Moves Home button to the far right
+            marginLeft: "auto", 
             "&:hover": {
               backgroundColor: "#f0f0f0",
             },
@@ -93,6 +95,29 @@ const NavBarProfile: React.FC = () => {
           Home
         </Button>
       </Toolbar>
+
+      {/* Notifications Panel */}
+      {notificationsOpen && (
+        <Box
+          sx={{
+            position: "absolute",
+            top: 56, // Adjusted to make sure it's below the AppBar
+            right: 0,
+            width: "300px", // Fixed width for the notification panel
+            backgroundColor: "white",
+            color: "black",
+            padding: "16px",
+            boxShadow: 3,
+            zIndex: 10,
+          }}
+        >
+          <MuiTypography variant="h6">Notifications</MuiTypography>
+          <Box sx={{ marginTop: 2 }}>
+            <MuiTypography variant="body2">You have a new notification!</MuiTypography>
+            <MuiTypography variant="body2">Another notification is here.</MuiTypography>
+          </Box>
+        </Box>
+      )}
     </AppBar>
   );
 };
