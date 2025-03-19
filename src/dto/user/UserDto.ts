@@ -7,4 +7,5 @@ export default interface UserDto {
 	first_name: string;
 	last_name: string;
 	tc_identity_no: string | null;
+	role_id: string; 
 }

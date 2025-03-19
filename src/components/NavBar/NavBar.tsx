@@ -27,7 +27,7 @@ const NavBar: React.FC = () => {
     setAnchorEl(null);
   };
 
-  // Profile sayfasına yönlendirme fonksiyonu
+  // Directing to Profile Page
   const handleProfileButton = () => {
     if (!user) {
       redirectWithPost("/auth/google");
@@ -59,7 +59,7 @@ const NavBar: React.FC = () => {
         </Typography>
 
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          {/* Boşluk veya marka */}
+          {/* Empty or Brand*/}
         </Typography>
 
         {/* Explore (Dropdown) */}
@@ -103,15 +103,6 @@ const NavBar: React.FC = () => {
             }}
           >
             Something
-          </MenuItem>
-          {/* ValidatorPanel menü öğesi */}
-          <MenuItem
-            onClick={() => {
-              handleExploreClose();
-              navigate("/validator"); // <-- ValidatorPanel sayfasına gider
-            }}
-          >
-            ValidatorPanel
           </MenuItem>
         </Menu>
 
