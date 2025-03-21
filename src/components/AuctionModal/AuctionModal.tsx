@@ -110,7 +110,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 						<Button variant="text" sx={{ textTransform: "none", color: "#fff" }}>
 							Date
 						</Button>
-						<Button variant="text" sx={{ textTransform: "none", color: "#fff" }} onClick={() => window.open(generateLocationUrl(photo), "_blank")}>
+						<Button variant="text" sx={{ textTransform: "none", color: "#fff" }} onClick={() => window.open(generateLocationUrl(photo.category.location), "_blank")}>
 							Location
 						</Button>
 						<Button

@@ -1,5 +1,5 @@
-import PhotoDto from "../dto/photo/PhotoDto";
+import LocationDto from "../dto/location/LocationDto";
 
-export const generateLocationUrl = (photo: PhotoDto) => {
-	return `https://www.google.com/maps/search/?api=1&query=${photo.category.location.latitude},${photo.category.location.longitude}`;
+export const generateLocationUrl = (location: LocationDto) => {
+	return `https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}`;
 };

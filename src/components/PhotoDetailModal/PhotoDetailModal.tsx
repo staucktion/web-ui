@@ -110,7 +110,7 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 								<FavoriteBorderIcon />
 							</IconButton>
 						</Box>
-						<Button variant="text" sx={{ textTransform: "none" }} onClick={() => window.open(generateLocationUrl(photo), "_blank")}>
+						<Button variant="text" sx={{ textTransform: "none" }} onClick={() => window.open(generateLocationUrl(photo.category.location), "_blank")}>
 							Location
 						</Button>
 						<Button

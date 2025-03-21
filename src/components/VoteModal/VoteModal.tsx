@@ -110,7 +110,7 @@ const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, ph
 								color: "#fff",
 								"&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
 							}}
-							onClick={() => window.open(generateLocationUrl(photo), "_blank")}
+							onClick={() => window.open(generateLocationUrl(photo.category.location), "_blank")}
 						>
 							Location
 						</Button>
