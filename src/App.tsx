@@ -1,4 +1,4 @@
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, CircularProgress } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./providers/AuthContext";
@@ -33,6 +33,10 @@ function App() {
 
 const MainLayout: React.FC = () => {
 	const { user } = useAuth();
+
+	if (user === undefined) {
+		return <CircularProgress />;
+	}
 
 	return (
 		<Routes>
