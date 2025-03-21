@@ -1,4 +1,5 @@
 import CategoryDto from "../category/CategoryDto";
+import StatusDto from "../status/StatusDto";
 
 export default interface PhotoDto {
 	id: number;
@@ -14,4 +15,5 @@ export default interface PhotoDto {
 	created_at: Date;
 	updated_at: Date;
 	category: CategoryDto;
+	status: StatusDto;
 }
