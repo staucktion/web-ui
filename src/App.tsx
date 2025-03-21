@@ -13,43 +13,43 @@ import ValidatorPanel from "./pages/ValidatorPanel/ValidatorPanel";
 import CategoriesPage from "./pages/Categories/Categories";
 
 function App() {
-  const themeMode = "light";
+	const themeMode = "light";
 
-  const defaultTheme = createTheme({
-    palette: { mode: themeMode },
-    typography: { fontFamily: "Rubik, sans-serif" },
-  });
+	const defaultTheme = createTheme({
+		palette: { mode: themeMode },
+		typography: { fontFamily: "Rubik, sans-serif" },
+	});
 
-  return (
-    <ThemeProvider theme={defaultTheme}>
-      <CssBaseline />
-      <Router>
-        <MainLayout /> {/* Navbar'ın dinamik olarak değişmesi için özel bileşen */}
-        <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-      </Router>
-    </ThemeProvider>
-  );
+	return (
+		<ThemeProvider theme={defaultTheme}>
+			<CssBaseline />
+			<Router>
+				<MainLayout /> {/* Navbar'ın dinamik olarak değişmesi için özel bileşen */}
+				<ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+			</Router>
+		</ThemeProvider>
+	);
 }
 
 const MainLayout: React.FC = () => {
-  const { user } = useAuth();
+	const { user } = useAuth();
 
-  return (
-    <Routes>
-      {/* If the user is Validator */}
-      <Route path="/" element={user ? (user.role_id === "4" ? <Navigate to="/validator" /> : <Navigate to="/home" />) : <LandingPage />} />
-      
-      {/* Normal Users */}
-      <Route path="/home" element={user ? <HomePage /> : <Navigate to="/" />} />
-      <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
-      <Route path="/payment" element={user ? <PaymentPage /> : <Navigate to="/" />} />
-	  <Route path="/editprofile" element={user ? <EditProfilePage /> : <Navigate to="/" />} />
-	  <Route path="/categories" element={<CategoriesPage />} />
+	return (
+		<Routes>
+			{/* If the user is Validator */}
+			<Route path="/" element={user ? <Navigate to="/home" /> : <LandingPage />} />
 
-      {/* Only for Validator's access*/}
-      <Route path="/validator" element={user?.role_id === "4" ? <ValidatorPanel /> : <Navigate to="/" />} />
-    </Routes>
-  );
+			{/* Normal Users */}
+			<Route path="/home" element={user ? <HomePage /> : <Navigate to="/" />} />
+			<Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
+			<Route path="/payment" element={user ? <PaymentPage /> : <Navigate to="/" />} />
+			<Route path="/editprofile" element={user ? <EditProfilePage /> : <Navigate to="/" />} />
+			<Route path="/categories" element={<CategoriesPage />} />
+
+			{/* Only for Validator's access*/}
+			<Route path="/validator" element={user?.user_role?.role === "validator" ? <ValidatorPanel /> : <Navigate to="/" />} />
+		</Routes>
+	);
 };
 
 export default App;
