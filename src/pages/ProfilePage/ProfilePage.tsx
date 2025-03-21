@@ -16,7 +16,7 @@ const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const [selectedTab, setSelectedTab] = useState(0);
-	const [photos, setPhotos] = useState<PhotoDto[]>([]);
+	const [myPhotos, setMyPhotos] = useState<PhotoDto[]>([]);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [uploading, setUploading] = useState(false);
 	const [categories, setCategories] = useState<CategoryDto[]>([]);
@@ -36,9 +36,9 @@ const ProfilePage: React.FC = () => {
 		setSelectedCategory(event.target.value);
 	};
 
-	const fetchAllPhotos = async () => {
+	const fetchMyPhotos = async () => {
 		try {
-			const response = await fetch(`${webApiUrl}/photos`);
+			const response = await fetch(`${webApiUrl}/photos/my`);
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
@@ -46,7 +46,7 @@ const ProfilePage: React.FC = () => {
 			data.forEach((photo) => {
 				photo.file_path = `${webApiUrl}/photos/${photo.id}`;
 			});
-			setPhotos(data);
+			setMyPhotos(data);
 		} catch (error) {
 			console.error("Error fetching photos:", error);
 		}
@@ -60,7 +60,7 @@ const ProfilePage: React.FC = () => {
 
 	useEffect(() => {
 		if (selectedTab === 0) {
-			fetchAllPhotos();
+			fetchMyPhotos();
 		} else if (selectedTab === 2) {
 			fetchAllCategories();
 		}
@@ -184,8 +184,8 @@ const ProfilePage: React.FC = () => {
 					{/* GALLERY TAB */}
 					{selectedTab === 0 && (
 						<Grid container spacing={2}>
-							{photos.length > 0 ? (
-								photos.map((photo) => (
+							{myPhotos.length > 0 ? (
+								myPhotos.map((photo) => (
 									<Grid item xs={6} sm={4} md={3} key={photo.id}>
 										<Card onClick={() => handlePhotoClick(photo)} sx={{ cursor: "pointer" }}>
 											<CardMedia component="img" image={photo.file_path} alt={`Photo ${photo.id}`} sx={{ height: 140 }} />
