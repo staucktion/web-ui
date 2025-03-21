@@ -1,39 +1,23 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  Box,
-  Typography,
-  Button,
-  IconButton,
-  Divider,
-  Menu,
-  MenuItem,
-  TextField,
-} from "@mui/material";
+import { Modal, Box, Typography, Button, IconButton, Divider, Menu, MenuItem, TextField } from "@mui/material";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useNavigate } from "react-router-dom";
+import { generateLocationUrl } from "../../util/generateLocationUrl";
+import PhotoDto from "../../dto/photo/PhotoDto";
 
 interface AuctionModalProps {
   open: boolean;
   onClose: () => void;
-  photoUrl: string;
-  photographerName?: string;
+	photo: PhotoDto;
   onNext?: () => void;
   onPrev?: () => void;
   children?: React.ReactNode;
 }
 
-const AuctionModal: React.FC<AuctionModalProps> = ({
-  open,
-  onClose,
-  photoUrl,
-  photographerName = "Unknown Photographer",
-  onNext,
-  onPrev,
-}) => {
+const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNext, onPrev }) => {
   const navigate = useNavigate();
 
   // Başlangıçta false olduğundan, bid işlemi sonrasında ödeme sayfasına yönlendirilir.
@@ -79,11 +63,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      BackdropProps={{ style: { backgroundColor: "rgba(0, 0, 0, 0.8)" } }}
-    >
+		<Modal open={open} onClose={onClose} BackdropProps={{ style: { backgroundColor: "rgba(0, 0, 0, 0.8)" } }}>
       <Box
         sx={{
           position: "absolute",
@@ -118,7 +98,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
               <AccessTimeIcon />
             </IconButton>
             <Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
-              {photographerName}
+							{photo.user.username}
             </Typography>
           </Box>
 
@@ -191,7 +171,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
           )}
 
           <img
-            src={photoUrl}
+						src={photo.file_path}
             alt="detail"
             style={{
               display: "block",
@@ -223,13 +203,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({
         {/* Bid Section */}
         <Box sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           <Box sx={{ display: "flex", gap: 2 }}>
-            <TextField
-              label="Enter your bid"
-              type="number"
-              value={bidAmount}
-              onChange={(e) => setBidAmount(e.target.value)}
-              fullWidth
-            />
+						<TextField label="Enter your bid" type="number" value={bidAmount} onChange={(e) => setBidAmount(e.target.value)} fullWidth />
             <Button
               variant="contained"
               sx={{

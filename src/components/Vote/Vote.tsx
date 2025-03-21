@@ -96,14 +96,7 @@ const Vote: React.FC = () => {
 			<CustomModal open={open} title="Login to Vote" onClose={handleClose} onConfirm={handleLogin} confirmText="Login with Google" />
 
 			{/* Vote Modal: Fotoğrafa tıklandığında VoteModal açılıyor */}
-			{selectedPhoto && (
-				<VoteModal
-					open={isModalOpen}
-					onClose={handleCloseModal}
-					photoUrl={selectedPhoto.file_path}
-					//photographerName={selectedImage.photographerName} // varsa
-				/>
-			)}
+			{selectedPhoto && <VoteModal open={isModalOpen} onClose={handleCloseModal} photo={selectedPhoto} />}
 		</div>
 	);
 };

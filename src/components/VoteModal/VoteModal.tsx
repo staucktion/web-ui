@@ -1,36 +1,35 @@
 import React from "react";
-import {
-  Modal,
-  Box,
-  Typography,
-  Button,
-  IconButton,
-  Divider,
-} from "@mui/material";
+import { Modal, Box, Typography, Button, IconButton, Divider } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useNavigate } from "react-router-dom";
+import PhotoDto from "../../dto/photo/PhotoDto";
+import { webApiUrl } from "../../env/envVars";
+import { toastSuccess, toastError } from "../../util/toastUtil";
+import { generateLocationUrl } from "../../util/generateLocationUrl";
 
 interface VoteModalProps {
   open: boolean;
   onClose: () => void;
-  photoUrl: string;
-  photographerName?: string;
+	photo: PhotoDto;
   onNext?: () => void;
   onPrev?: () => void;
   children?: React.ReactNode;
 }
 
-const VoteModal: React.FC<VoteModalProps> = ({
-  open,
-  onClose,
-  photoUrl,
-  photographerName = "Damla Köklü",
-  onNext,
-  onPrev,
-}) => {
-  const navigate = useNavigate();
+const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, photo }) => {
+	const handleVote = async () => {
+		const response = await fetch(`${webApiUrl}/votes/${photo.id}`, {
+			method: "POST",
+			credentials: "include",
+		});
+
+		if (response.ok) {
+			toastSuccess("Voted successfully");
+		} else {
+			toastError("Failed to vote: " + (await response.json()).message);
+		}
+	};
 
   return (
     <Modal
@@ -74,7 +73,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
-              {photographerName}
+							{photo.user.username}
             </Typography>
             <Button
               variant="outlined"
@@ -124,7 +123,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
                   background: "linear-gradient(90deg, #ff85c0, #1eaaff)",
                 },
               }}
-              onClick={() => navigate("/vote")}
+							onClick={handleVote}
             >
               Vote
             </Button>
@@ -161,7 +160,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
           )}
 
           <img
-            src={photoUrl}
+						src={photo.file_path}
             alt="detail"
             style={{
               display: "block",
@@ -201,7 +200,7 @@ const VoteModal: React.FC<VoteModalProps> = ({
                 background: "linear-gradient(90deg, #ff85c0, #1eaaff)",
               },
             }}
-            onClick={() => navigate("/vote")}
+						onClick={handleVote}
           >
             Vote
           </Button>

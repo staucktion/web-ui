@@ -97,7 +97,7 @@ const Auctions: React.FC = () => {
 
 			{/* Auction detay modal'ı: AuctionModal kullanıyoruz */}
 			{selectedPhoto && (
-				<AuctionModal open={isModalOpen} onClose={handleCloseModal} photoUrl={selectedPhoto.file_path}>
+				<AuctionModal open={isModalOpen} onClose={handleCloseModal} photo={selectedPhoto}>
 					<EmailButtons onApprove={() => selectedPhoto && sendApproveMail(selectedPhoto)} />
 				</AuctionModal>
 			)}
