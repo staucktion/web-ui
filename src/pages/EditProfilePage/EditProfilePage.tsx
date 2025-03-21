@@ -33,6 +33,16 @@ const EditProfilePage: React.FC = () => {
 		});
 		if (response.ok) {
 			toastSuccess("Profile updated successfully");
+			formData.forEach((value, key) => {
+				if (user) {
+					if (key === "username") {
+						user.username = value as string;
+					}
+					if (key === "tc_identity_no") {
+						user.tc_identity_no = value as string;
+					}
+				}
+			});
 		} else {
 			toastError("Failed to update profile: " + (await response.json()).message);
 		}
