@@ -16,4 +16,7 @@ export default interface PhotoDto {
 	updated_at: Date;
 	category: CategoryDto;
 	status: StatusDto;
+	is_auctionable: boolean;
+	purchase_now_price?: number;
+	purchased_at?: Date;
 }

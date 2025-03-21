@@ -25,8 +25,7 @@ const ProfilePage: React.FC = () => {
 	// Photo to be displayed in modal
 	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 
-	// Dummy condition: Fotoğrafın id'si çiftse PhotoPurchaseEdit, tekse PhotoUnknown
-	const isPurchaseMode = (photo: PhotoDto): boolean => photo.id % 2 === 0;
+	const isPurchaseMode = (photo: PhotoDto): boolean => !photo.is_auctionable;
 
 	const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
 		setSelectedTab(newValue);
@@ -111,16 +110,6 @@ const ProfilePage: React.FC = () => {
 	};
 
 	const handleCloseModal = () => {
-		setSelectedPhoto(null);
-	};
-
-	const handleSavePhotoEdit = (editedCaption: string) => {
-		console.log("Updated caption/price for photo", selectedPhoto?.id, ":", editedCaption);
-		setSelectedPhoto(null);
-	};
-
-	const handleRejectAuction = () => {
-		console.log("Do not Attend Auction clicked for photo", selectedPhoto?.id);
 		setSelectedPhoto(null);
 	};
 
@@ -256,9 +245,9 @@ const ProfilePage: React.FC = () => {
 			{/* Dummy Condition*/}
 			{selectedPhoto &&
 				(isPurchaseMode(selectedPhoto) ? (
-					<PhotoPurchaseEdit open={true} photo={selectedPhoto} onClose={handleCloseModal} onSave={handleSavePhotoEdit} />
+					<PhotoPurchaseEdit open={true} photo={selectedPhoto} onClose={handleCloseModal} />
 				) : (
-					<PhotoUnknown open={true} photo={selectedPhoto} onClose={handleCloseModal} onReject={handleRejectAuction} />
+					<PhotoUnknown open={true} photo={selectedPhoto} onClose={handleCloseModal} />
 				))}
 		</>
 	);
