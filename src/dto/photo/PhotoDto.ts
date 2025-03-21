@@ -1,3 +1,5 @@
+import CategoryDto from "../category/CategoryDto";
+
 export default interface PhotoDto {
 	id: number;
 	file_path: string;
@@ -11,4 +13,5 @@ export default interface PhotoDto {
 	status_id: number;
 	created_at: Date;
 	updated_at: Date;
+	category: CategoryDto;
 }
