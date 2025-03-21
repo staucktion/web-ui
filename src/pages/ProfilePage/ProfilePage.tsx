@@ -10,26 +10,23 @@ import getProfilePictureSrc from "../../util/getProfilePictureSrc";
 import PhotoPurchaseEdit from "../../components/PhotoPurchaseEdit/PhotoPurchaseEdit";
 import PhotoUnknown from "../../components/PhotoUnknown/PhotoUnknown";
 import CategoryDto from "../../dto/category/CategoryDto";
-interface Photo {
-	id: number;
-	file_path: string;
-}
+import PhotoDto from "../../dto/photo/PhotoDto";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const [selectedTab, setSelectedTab] = useState(0);
-	const [photos, setPhotos] = useState<Photo[]>([]);
+	const [photos, setPhotos] = useState<PhotoDto[]>([]);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [uploading, setUploading] = useState(false);
 	const [categories, setCategories] = useState<CategoryDto[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("");
 
 	// Photo to be displayed in modal
-	const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 
 	// Dummy condition: Fotoğrafın id'si çiftse PhotoPurchaseEdit, tekse PhotoUnknown
-	const isPurchaseMode = (photo: Photo): boolean => photo.id % 2 === 0;
+	const isPurchaseMode = (photo: PhotoDto): boolean => photo.id % 2 === 0;
 
 	const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
 		setSelectedTab(newValue);
@@ -45,7 +42,7 @@ const ProfilePage: React.FC = () => {
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
-			const data: Photo[] = await response.json();
+			const data: PhotoDto[] = await response.json();
 			data.forEach((photo) => {
 				photo.file_path = `${webApiUrl}/photos/${photo.id}`;
 			});
@@ -109,7 +106,7 @@ const ProfilePage: React.FC = () => {
 		}
 	};
 
-	const handlePhotoClick = (photo: Photo) => {
+	const handlePhotoClick = (photo: PhotoDto) => {
 		setSelectedPhoto(photo);
 	};
 
