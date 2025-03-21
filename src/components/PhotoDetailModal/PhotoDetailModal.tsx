@@ -6,6 +6,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import PhotoDto from "../../dto/photo/PhotoDto";
 import getPhotoDetails from "../../util/getPhotoDetails";
+import { generateLocationUrl } from "../../util/generateLocationUrl";
 
 interface PhotoDetailModalProps {
 	open: boolean;
@@ -109,7 +110,7 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 								<FavoriteBorderIcon />
 							</IconButton>
 						</Box>
-						<Button variant="text" sx={{ textTransform: "none" }}>
+						<Button variant="text" sx={{ textTransform: "none" }} onClick={() => window.open(generateLocationUrl(photo), "_blank")}>
 							Location
 						</Button>
 						<Button

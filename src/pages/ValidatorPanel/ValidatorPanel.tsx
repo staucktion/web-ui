@@ -11,6 +11,7 @@ import { webApiUrl } from "../../env/envVars";
 import PhotoDto from "../../dto/photo/PhotoDto";
 import getPhotoSrc from "../../util/getPhotoSrc";
 import { toastError, toastSuccess, toastWarning } from "../../util/toastUtil";
+import { generateLocationUrl } from "../../util/generateLocationUrl";
 
 const ValidatorPanel: React.FC = () => {
 	const [photos, setPhotos] = useState<PhotoDto[]>([]);
@@ -122,12 +123,7 @@ const ValidatorPanel: React.FC = () => {
 										<Box display="flex" alignItems="center" mb={1} gap={1}>
 											<LocationOnIcon color="error" />
 											<Typography variant="body1" fontWeight="bold">
-												<a
-													href={`https://www.google.com/maps/search/?api=1&query=${photo.category.location.latitude},${photo.category.location.longitude}`}
-													target="_blank"
-													rel="noopener noreferrer"
-													style={{ textDecoration: "none", color: "inherit" }}
-												>
+												<a href={generateLocationUrl(photo)} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", color: "inherit" }}>
 													{photo.category.address}
 												</a>
 											</Typography>
