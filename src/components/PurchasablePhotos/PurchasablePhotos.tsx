@@ -9,25 +9,25 @@ import redirectWithPost from "../../util/redirectWithPost.ts";
 import getPhotoSrc from "../../util/getPhotoSrc.ts";
 import { useNavigate } from "react-router-dom";
 import { toastWarning, toastSuccess, toastError } from "../../util/toastUtil.ts";
-import PhotoDetailModal from "../PhotoDetailModal/PhotoDetailModal"; // ✅ Yeni modal import edildi
+import PhotoDetailModal from "../PhotoDetailModal/PhotoDetailModal.tsx"; // ✅ Yeni modal import edildi
 
-const FileUpload: React.FC = () => {
+const PurchasablePhotos: React.FC = () => {
 	const { user } = useAuth();
 	const navigate = useNavigate();
 
-	const [watermarkedImages, setWatermarkedImages] = useState<PhotoDto[]>([]);
-	const [selectedImage, setSelectedImage] = useState<PhotoDto | null>(null);
+	const [purchasablePhotos, setPurchasablePhotos] = useState<PhotoDto[]>([]);
+	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
 	const fetchWatermarkedImages = async () => {
 		try {
-			const response = await fetch(`${webApiUrl}/photos`);
+			const response = await fetch(`${webApiUrl}/photos/purchasable`);
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
 			const data: PhotoDto[] = await response.json();
 			data.forEach((img) => (img.file_path = getPhotoSrc(img)));
-			setWatermarkedImages(data);
+			setPurchasablePhotos(data);
 		} catch (err) {
 			console.error(err);
 		}
@@ -68,7 +68,7 @@ const FileUpload: React.FC = () => {
 			}
 
 			toastSuccess(`Purchase approved mail sent successfully to ${user.email}!`);
-			setSelectedImage(null);
+			setSelectedPhoto(null);
 			setIsModalOpen(false);
 			fetchWatermarkedImages(); // refresh list of available images
 		} catch (error) {
@@ -78,21 +78,21 @@ const FileUpload: React.FC = () => {
 	};
 
 	const handleImageClick = (img: PhotoDto) => {
-		setSelectedImage(img);
+		setSelectedPhoto(img);
 		setIsModalOpen(true);
 	};
 
 	const handleCloseModal = () => {
-		setSelectedImage(null);
+		setSelectedPhoto(null);
 		setIsModalOpen(false);
 	};
 
 	return (
 		<div className="container">
 			<div>
-				{watermarkedImages.length > 0 ? (
+				{purchasablePhotos.length > 0 ? (
 					<div className="imageGrid">
-						{watermarkedImages.map((img, index) => (
+						{purchasablePhotos.map((img, index) => (
 							<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
 								<img src={img.file_path} alt={`Watermarked ${index + 1}`} className="image" />
 							</div>
@@ -106,17 +106,13 @@ const FileUpload: React.FC = () => {
 			</div>
 
 			{/* ✅ `PhotoDetailModal` burada kullanıldı */}
-			{selectedImage && (
-				<PhotoDetailModal
-					open={isModalOpen}
-					onClose={handleCloseModal}
-					photoUrl={selectedImage.file_path}
-				>
-					<EmailButtons onApprove={() => selectedImage && sendApproveMail(selectedImage)} />
+			{selectedPhoto && (
+				<PhotoDetailModal open={isModalOpen} onClose={handleCloseModal} photo={selectedPhoto}>
+					<EmailButtons onApprove={() => selectedPhoto && sendApproveMail(selectedPhoto)} />
 				</PhotoDetailModal>
 			)}
 		</div>
 	);
 };
 
-export default FileUpload;
+export default PurchasablePhotos;

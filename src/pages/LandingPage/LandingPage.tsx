@@ -9,7 +9,7 @@ const LandingPage: React.FC = () => {
 		<div>
 			<NavBar />
 			<HeroSection />
-			<NavBarMiddle onAuctionClick={() => {}} onPhotosClick={() => {}} onVoteClick={() => {}} onCategoriesClick={() => {}} />
+			<NavBarMiddle onAuctionClick={() => {}} onPurchasablePhotosClick={() => {}} onVoteClick={() => {}} onCategoriesClick={() => {}} />
 			<RandomPhotos />
 		</div>
 	);
