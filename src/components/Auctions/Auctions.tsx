@@ -8,7 +8,7 @@ import useRequireAuth from "../../Hooks/useRequireAuth";
 import redirectWithPost from "../../util/redirectWithPost";
 // Login modal için CustomModal hâlâ kullanılıyor (gerekirse de değiştirebilirsiniz)
 // import CustomModal from "../CustomModal/CustomModal";
-import AuctionModal from "../AuctionModal/AucktionModal";
+import AuctionModal from "../AuctionModal/AuctionModal";
 
 const Auctions: React.FC = () => {
 	const { user } = useAuth();
