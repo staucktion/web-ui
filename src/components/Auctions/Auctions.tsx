@@ -14,14 +14,14 @@ const Auctions: React.FC = () => {
 	const { user } = useAuth();
 	const { requireAuth } = useRequireAuth();
 
-	const [watermarkedImages, setWatermarkedImages] = useState<PhotoDto[]>([]);
-	const [selectedImage, setSelectedImage] = useState<PhotoDto | null>(null);
+	const [auctionPhotos, setAuctionPhotos] = useState<PhotoDto[]>([]);
+	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
 	// /photos endpoint’inden veri çekiyoruz
 	const fetchWatermarkedImages = async () => {
 		try {
-			const response = await fetch(`${webApiUrl}/photos`);
+			const response = await fetch(`${webApiUrl}/photos/auction`);
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
@@ -32,7 +32,7 @@ const Auctions: React.FC = () => {
 				img.file_path = `${webApiUrl}/photos/${img.id}`;
 			});
 
-			setWatermarkedImages(data);
+			setAuctionPhotos(data);
 		} catch (err) {
 			console.error(err);
 		}
@@ -63,7 +63,7 @@ const Auctions: React.FC = () => {
 			}
 
 			alert(`Purchase approved mail sent successfully to ${user.email}!`);
-			setSelectedImage(null);
+			setSelectedPhoto(null);
 			setIsModalOpen(false);
 			fetchWatermarkedImages();
 		} catch (error) {
@@ -75,20 +75,20 @@ const Auctions: React.FC = () => {
 	// Resme tıklanınca auth kontrolü ve modal açma
 	const handleImageClick = (img: PhotoDto) => {
 		requireAuth(() => {
-			setSelectedImage(img);
+			setSelectedPhoto(img);
 			setIsModalOpen(true);
 		});
 	};
 
 	const handleCloseModal = () => {
-		setSelectedImage(null);
+		setSelectedPhoto(null);
 		setIsModalOpen(false);
 	};
 
 	return (
 		<div className="container">
 			<div className="imageGrid">
-				{watermarkedImages.map((img, index) => (
+				{auctionPhotos.map((img, index) => (
 					<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
 						<img src={img.file_path} alt={`Auction Photo ${index + 1}`} className="image" />
 					</div>
@@ -96,9 +96,9 @@ const Auctions: React.FC = () => {
 			</div>
 
 			{/* Auction detay modal'ı: AuctionModal kullanıyoruz */}
-			{selectedImage && (
-				<AuctionModal open={isModalOpen} onClose={handleCloseModal} photoUrl={selectedImage.file_path}>
-					<EmailButtons onApprove={() => selectedImage && sendApproveMail(selectedImage)} />
+			{selectedPhoto && (
+				<AuctionModal open={isModalOpen} onClose={handleCloseModal} photoUrl={selectedPhoto.file_path}>
+					<EmailButtons onApprove={() => selectedPhoto && sendApproveMail(selectedPhoto)} />
 				</AuctionModal>
 			)}
 		</div>
