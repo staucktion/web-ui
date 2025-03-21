@@ -1,4 +1,5 @@
 import LocationDto from "../location/LocationDto";
+import StatusDto from "../status/StatusDto";
 
 interface CategoryDto {
 	id: number;
@@ -11,6 +12,7 @@ interface CategoryDto {
 	address: string;
 	valid_radius: number;
 	location: LocationDto;
+	status: StatusDto;
 }
 
 export default CategoryDto;
