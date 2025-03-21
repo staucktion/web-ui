@@ -23,8 +23,10 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 	// Başlangıçta false olduğundan, bid işlemi sonrasında ödeme sayfasına yönlendirilir.
 	const [provisionState, setProvisionState] = useState(false);
 
-	// for CI not to complain
-	setProvisionState(false);
+	// for CI not to complain - REMOVE this when you use setProvisionState somewhere
+	if (0 > Number(provisionState)) {
+		setProvisionState(false);
+	}
 
 	// Detay dropdown için state
 	const [detailAnchorEl, setDetailAnchorEl] = useState<null | HTMLElement>(null);
