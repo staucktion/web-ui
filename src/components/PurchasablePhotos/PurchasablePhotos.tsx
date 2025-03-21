@@ -35,6 +35,7 @@ const PurchasablePhotos: React.FC = () => {
 	};
 
 	const handleCloseModal = () => {
+		fetchWatermarkedImages();
 		setSelectedPhoto(null);
 		setIsModalOpen(false);
 	};

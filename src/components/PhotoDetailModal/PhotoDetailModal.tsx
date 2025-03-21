@@ -56,6 +56,11 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 		setTouchStartX(null);
 	};
 
+	const handlePurchaseSuccess = () => {
+		setIsPurchasing(false);
+		onClose();
+	};
+
 	return (
 		<Modal
 			open={open}
@@ -65,7 +70,7 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 			}}
 		>
 			{isPurchasing ? (
-				<PaymentPage photo={photo} action="purchaseNow" onClose={() => setIsPurchasing(false)} />
+				<PaymentPage photo={photo} action="purchaseNow" onClose={() => setIsPurchasing(false)} onSuccess={handlePurchaseSuccess} />
 			) : (
 				<>
 					<Box
