@@ -1,3 +1,7 @@
+import CategoryDto from "../category/CategoryDto";
+import StatusDto from "../status/StatusDto";
+import UserDto from "../user/UserDto";
+
 export default interface PhotoDto {
 	id: number;
 	file_path: string;
@@ -11,4 +15,10 @@ export default interface PhotoDto {
 	status_id: number;
 	created_at: Date;
 	updated_at: Date;
+	category: CategoryDto;
+	status: StatusDto;
+	is_auctionable: boolean;
+	purchase_now_price?: number;
+	purchased_at?: Date;
+	user: UserDto;
 }

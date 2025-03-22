@@ -13,13 +13,13 @@ const Vote: React.FC = () => {
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
 
 	const [photosToVote, setPhotosToVote] = useState<PhotoDto[]>([]);
-	const [selectedImage, setSelectedImage] = useState<PhotoDto | null>(null);
+	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
 	// Fotoğrafları çekme
 	const fetchPhotosToVote = async () => {
 		try {
-			const response = await fetch(`${webApiUrl}/photos`);
+			const response = await fetch(`${webApiUrl}/photos/vote`);
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
@@ -72,13 +72,13 @@ const Vote: React.FC = () => {
 
 	const handleImageClick = (img: PhotoDto) => {
 		requireAuth(() => {
-			setSelectedImage(img);
+			setSelectedPhoto(img);
 			setIsModalOpen(true);
 		});
 	};
 
 	const handleCloseModal = () => {
-		setSelectedImage(null);
+		setSelectedPhoto(null);
 		setIsModalOpen(false);
 	};
 
@@ -96,14 +96,7 @@ const Vote: React.FC = () => {
 			<CustomModal open={open} title="Login to Vote" onClose={handleClose} onConfirm={handleLogin} confirmText="Login with Google" />
 
 			{/* Vote Modal: Fotoğrafa tıklandığında VoteModal açılıyor */}
-			{selectedImage && (
-				<VoteModal
-					open={isModalOpen}
-					onClose={handleCloseModal}
-					photoUrl={selectedImage.file_path}
-					//photographerName={selectedImage.photographerName} // varsa
-				/>
-			)}
+			{selectedPhoto && <VoteModal open={isModalOpen} onClose={handleCloseModal} photo={selectedPhoto} />}
 		</div>
 	);
 };
