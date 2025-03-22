@@ -1,11 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { Socket, io } from "socket.io-client";
 import UserDto from "../dto/user/UserDto";
 import { webApiUrl } from "../env/envVars";
-import { toastError } from "../util/toastUtil";
+import { toastError, toastSuccess, toastWarning, toastInfo } from "../util/toastUtil";
+import NotificationDto from "../dto/notification/NotificationDto";
 // Define AuthContext type
 interface AuthContextType {
-	user: UserDto | null;
+	/** If user has not fetched yet, it will be undefined
+	 * However, if fetched, it will be UserDto (if user is logged in) or null (if user is not logged in)
+	 */
+	user: UserDto | null | undefined;
 	setUser: (user: UserDto | null) => void;
+	socket: Socket | null;
 }
 
 // Create the AuthContext
@@ -17,7 +23,52 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-	const [user, setUser] = useState<UserDto | null>(null);
+	const [user, setUser] = useState<UserDto | null | undefined>(undefined);
+	const [socket, setSocket] = useState<Socket | null>(null);
+
+	useEffect(() => {
+		const hostname = new URL(webApiUrl).hostname;
+
+		// Initialize socket
+		const socketInstance = io(hostname, {
+			path: "/socket.io",
+			withCredentials: true,
+			transports: ["websocket", "polling"],
+		});
+
+		// Set up socket event listeners
+		socketInstance.on("connect", () => {
+			console.log("Socket connected");
+		});
+
+		socketInstance.on("connect_error", (error) => {
+			console.error("Socket connection error:", error);
+			//toastError("Failed to connect to real-time services");
+		});
+
+		socketInstance.on("notification", (notification: NotificationDto) => {
+			switch (notification.type) {
+				case "success":
+					toastSuccess(notification.message);
+					break;
+				case "warning":
+					toastWarning(notification.message);
+					break;
+				case "info":
+					toastInfo(notification.message);
+					break;
+			}
+		});
+
+		setSocket(socketInstance);
+
+		// Cleanup function
+		return () => {
+			if (socketInstance) {
+				socketInstance.disconnect();
+			}
+		};
+	}, []); // Empty dependency array means this runs once on mount
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -44,7 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		fetchUser();
 	}, []);
 
-	return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
+	return <AuthContext.Provider value={{ user, setUser, socket }}>{children}</AuthContext.Provider>;
 };
 
 // Custom hook to use AuthContext
