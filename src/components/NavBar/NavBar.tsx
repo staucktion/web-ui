@@ -109,6 +109,12 @@ const NavBar: React.FC = () => {
 		}
 	};
 
+	const getUserFirstLetters = (username: string): string => {
+		return username
+			.split(" ")
+			.map((word) => word[0].toUpperCase())
+			.join("");
+	};
 	return (
 		<>
 			<AppBar
@@ -224,7 +230,7 @@ const NavBar: React.FC = () => {
 						}}
 						onClick={handleProfileButton}
 					>
-						{user ? "Profile" : "Login"}
+						{user ? getUserFirstLetters(user?.username) : "Login"}
 					</Button>
 				</Toolbar>
 			</AppBar>
