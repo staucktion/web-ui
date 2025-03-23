@@ -5,6 +5,8 @@ import PhotoDto from "../../dto/photo/PhotoDto";
 import { webApiUrl } from "../../env/envVars";
 import getPhotoSrc from "../../util/getPhotoSrc";
 import CategoryDto from "../../dto/category/CategoryDto";
+import HeroBackground from "/HeroBackground.jpg";
+
 const CategoriesPage: React.FC = () => {
 	const [photos, setPhotos] = useState<PhotoDto[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -50,7 +52,7 @@ const CategoriesPage: React.FC = () => {
 			{/* Header Bölümü */}
 			<Box
 				sx={{
-					backgroundImage: "url('https://via.placeholder.com/1200x400?text=Explore+Categories')",
+					backgroundImage: `url("${HeroBackground}")`,
 					backgroundSize: "cover",
 					backgroundPosition: "center",
 					height: "300px",
