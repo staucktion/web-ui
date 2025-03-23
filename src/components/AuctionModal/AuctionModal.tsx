@@ -103,7 +103,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 							<AccessTimeIcon />
 						</IconButton>
 						<Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
-							{photo.user.username}
+							{photo.user?.username}
 						</Typography>
 					</Box>
 
