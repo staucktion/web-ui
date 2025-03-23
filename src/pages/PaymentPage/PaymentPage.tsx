@@ -67,7 +67,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 	return (
 		<Box
 			sx={{
-				backgroundImage: "url('https://source.unsplash.com/random/1600x900?abstract')",
 				backgroundSize: "cover",
 				backgroundPosition: "center",
 				minHeight: "100vh",
