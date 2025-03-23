@@ -96,11 +96,7 @@ const Auctions: React.FC = () => {
 			</div>
 
 			{/* Auction detay modal'ı: AuctionModal kullanıyoruz */}
-			{selectedPhoto && (
-				<AuctionModal open={isModalOpen} onClose={handleCloseModal} photo={selectedPhoto}>
-					<EmailButtons onApprove={() => selectedPhoto && sendApproveMail(selectedPhoto)} />
-				</AuctionModal>
-			)}
+			{selectedPhoto && <AuctionModal open={isModalOpen} onClose={handleCloseModal} photo={selectedPhoto} />}
 		</div>
 	);
 };

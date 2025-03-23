@@ -14,7 +14,6 @@ interface AuctionModalProps {
 	photo: PhotoDto;
 	onNext?: () => void;
 	onPrev?: () => void;
-	children?: React.ReactNode;
 }
 
 const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNext, onPrev }) => {
