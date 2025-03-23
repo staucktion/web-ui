@@ -9,10 +9,10 @@ import redirectWithPost from "../../util/redirectWithPost";
 import { useNavigate } from "react-router-dom";
 
 interface PaymentPageProps {
-	photo: PhotoDto;
-	action: "purchaseNow" | "auctionBid";
+	photo: PhotoDto | null;
+	action: "purchaseNow" | "provision";
 	onClose: () => void;
-	onSuccess: () => void;
+	onSuccess?: () => void;
 }
 
 const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuccess }) => {
@@ -37,7 +37,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 
 		if (action === "purchaseNow") {
 			try {
-				const response = await fetch(`${webApiUrl}/banks/purchase/now/photo/${photo.id}`, {
+				const response = await fetch(`${webApiUrl}/banks/purchase/now/photo/${photo?.id}`, {
 					method: "POST",
 					body: JSON.stringify({
 						cardNumber,
@@ -51,7 +51,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 
 				if (response.ok) {
 					toastSuccess(`Your purchase has been approved! Please check your email for the purchase details.`);
-					onSuccess();
+					if (onSuccess) onSuccess();
 				} else {
 					toastError(`Failed to purchase photo: ${(await response.json()).message}`);
 				}
@@ -59,8 +59,38 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 				toastError("Failed to purchase photo. Check console for details.");
 				console.error("Error purchasing photo:", error);
 			}
-		} else {
-			alert("TODO: Implement Ahmet :D");
+		} else if (action === "provision") {
+			// alert("Implemented by Ahmet :D, thx for navigation :)");
+			try {
+				const response = await fetch(`${webApiUrl}/banks/approve-user`, {
+					method: "POST",
+					body: JSON.stringify({
+						cardNumber,
+						expirationDate,
+						cvv,
+					}),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+
+				if (response.ok) {
+					toastSuccess("Provision completed successfully. You can now place a bid.");
+					if (onSuccess) onSuccess();
+				} else {
+					const responseJson = await response.json();
+					if (responseJson.message.toLowerCase().includes("missing fields")) {
+						toastError("Provision failed. Please fill in the missing fields.");
+					} else if (responseJson.message.toLowerCase().includes("not enough")) {
+						toastError("Provision failed. Insufficient balance to complete the transaction.");
+					} else {
+						toastError(`Cannot make provision: ${responseJson.message}`);
+					}
+				}
+			} catch (error) {
+				toastError("Failed to make provision. Check console for details.");
+				console.error("Error make provision:", error);
+			}
 		}
 	};
 
