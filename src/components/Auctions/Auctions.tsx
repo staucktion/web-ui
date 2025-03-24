@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import "../../styles/Styles.css";
-import EmailButtons from "../EmailButtons/EmailButtons";
-import { webApiUrl } from "../../env/envVars";
-import { useAuth } from "../../providers/AuthContext";
+import React, { useEffect, useState } from "react";
 import PhotoDto from "../../dto/photo/PhotoDto";
+import { webApiUrl } from "../../env/envVars";
 import useRequireAuth from "../../Hooks/useRequireAuth";
+import { useAuth } from "../../providers/AuthContext";
+import "../../styles/Styles.css";
 import redirectWithPost from "../../util/redirectWithPost";
 // Login modal için CustomModal hâlâ kullanılıyor (gerekirse de değiştirebilirsiniz)
 // import CustomModal from "../CustomModal/CustomModal";

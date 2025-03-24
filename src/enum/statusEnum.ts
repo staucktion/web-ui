@@ -1,0 +1,14 @@
+export enum StatusEnum {
+	WAIT = 1,
+	APPROVE = 2,
+	REJECT = 3,
+	UPLOAD = 4,
+	VOTE = 5,
+	AUCTION = 6,
+	PURCHASABLE = 7,
+	FINISH = 8,
+	SOLD = 9,
+	WAIT_PURCHASE_AFTER_AUCTION = 10,
+	BANNED = 11,
+	ACTIVE = 12,
+}
