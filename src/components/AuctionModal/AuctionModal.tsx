@@ -12,7 +12,7 @@ import { webApiUrl } from "../../env/envVars";
 import PaymentPage from "../../pages/PaymentPage/PaymentPage";
 import { useAuth } from "../../providers/AuthContext";
 import { generateLocationUrl } from "../../util/generateLocationUrl";
-import { toastError, toastWarning } from "../../util/toastUtil";
+import { toastError, toastSuccess, toastWarning } from "../../util/toastUtil";
 
 interface AuctionModalProps {
 	open: boolean;
@@ -51,7 +51,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 
 			setAuctionPhoto(dataAuctionPhoto);
 			setLastBidAmount(dataAuctionPhoto.last_bid_amount);
-			setBidAmount(dataAuctionPhoto.last_bid_amount + 10);
+			setBidAmount(dataAuctionPhoto.last_bid_amount + 100);
 			setBidCount(dataBid.length);
 
 			dataBid?.sort((b, a) => a.bid_amount - b.bid_amount);
@@ -61,8 +61,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		}
 	};
 
-	const handleBidSubmit = () => {
-		console.log(photo);
+	const handleBidSubmit = async () => {
 		if (user?.id === photo.user_id) {
 			toast("Photo is belong to you, you cannot place bid to your photo.");
 			return;
@@ -84,7 +83,26 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			return;
 		}
 
-		// todo successfull bid scenario
+		try {
+			const response = await fetch(`${webApiUrl}/bids/${photo?.id}`, {
+				method: "POST",
+				body: JSON.stringify({
+					bidAmount,
+				}),
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.ok) {
+				toastSuccess(`Successfully place a bid with amount: ${bidAmount}`);
+			} else {
+				toastError(`Failed to place a bid: ${(await response.json()).message}`);
+			}
+		} catch (error) {
+			toastError("Failed to bid. Check console for details.");
+			console.error("Failed to bid:", error);
+		}
 	};
 
 	const onProvisionClose = () => {
