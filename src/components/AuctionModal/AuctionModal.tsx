@@ -48,6 +48,37 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 							fetchInitialData();
 						}
 					});
+
+					socket.on(`finish_auction`, (message: { aucitonPhoto: AuctionPhotoDto; room: string }) => {
+						onClose();
+
+						if (message?.room === roomName) {
+							if (user?.id === message.aucitonPhoto.winner_user_id_1)
+								toastSuccess("Congratulations! You won the auction, make payment to photo as soon as possible to buy it.", {
+									position: "bottom-center",
+									autoClose: false,
+									closeOnClick: false,
+								});
+							else if (user?.id === message.aucitonPhoto.winner_user_id_2)
+								toast("You are the second winner. If the first winner does not purchase the photo from the auction, you would buy it.", {
+									position: "bottom-center",
+									autoClose: false,
+									closeOnClick: false,
+								});
+							else if (user?.id === message.aucitonPhoto.winner_user_id_3)
+								toast("You are the third winner. If the second winner does not purchase the photo from the auction, you would buy it.", {
+									position: "bottom-center",
+									autoClose: false,
+									closeOnClick: false,
+								});
+							else
+								toastWarning("You cannot win the auction.", {
+									position: "bottom-center",
+									autoClose: false,
+									closeOnClick: false,
+								});
+						}
+					});
 				}
 			} catch (err) {
 				console.error(err);

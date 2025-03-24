@@ -47,6 +47,7 @@ const Auctions: React.FC = () => {
 	};
 
 	const handleCloseModal = () => {
+		fetchWatermarkedImages();
 		setSelectedPhoto(null);
 		setIsModalOpen(false);
 	};
