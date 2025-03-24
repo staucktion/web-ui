@@ -87,6 +87,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 
 		dataBid?.sort((b, a) => a.bid_amount - b.bid_amount);
 		if (dataBid?.[0]?.user_id === user?.id) setIsLastBidBelongToCurrentUser(true);
+		else setIsLastBidBelongToCurrentUser(false);
 
 		return dataAuctionPhoto;
 	};
@@ -125,7 +126,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			});
 
 			if (response.ok) {
-				toastSuccess(`Successfully place a bid with amount: ${bidAmount}`);
+				toastSuccess(`Successfully place a bid with amount: ${bidAmount}`, { position: "bottom-center" });
 			} else {
 				toastError(`Failed to place a bid: ${(await response.json()).message}`);
 			}
@@ -133,6 +134,12 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			toastError("Failed to bid. Check console for details.");
 			console.error("Failed to bid:", error);
 		}
+	};
+
+	const onProvisionSuccess = () => {
+		toastSuccess("Provision completed successfully. You can now place a bid.");
+		if (user) user.status_id = StatusEnum.ACTIVE;
+		setIsProvisionModalOpen(false);
 	};
 
 	const onProvisionClose = () => {
@@ -172,7 +179,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			{/* payment modal */}
 			<Modal open={isProvisionModalOpen} onClose={onClose} slotProps={{ backdrop: { style: { backgroundColor: "rgba(0, 0, 0, 0.8)" } } }}>
 				<div>
-					<PaymentPage photo={null} action="provision" onClose={onProvisionClose} />
+					<PaymentPage photo={null} action="provision" onClose={onProvisionClose} onSuccess={onProvisionSuccess} />
 				</div>
 			</Modal>
 
@@ -217,7 +224,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 						</Box>
 						<Box display="flex" alignItems="center" gap={2}>
 							<Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
-								Last Bid {isLastBidBelongToCurrentUser ? "From You" : ""}: {lastBidAmount} ₺
+								{bidCount === 0 ? "Initial Price" : "Last Bid"} {isLastBidBelongToCurrentUser ? "From You" : ""}: {lastBidAmount} ₺
 							</Typography>
 						</Box>
 
@@ -344,7 +351,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 								}}
 								onClick={handleBidSubmit}
 							>
-								Place Bid
+								{user?.status_id !== StatusEnum.ACTIVE ? "Make Provision Before Bid" : "Place Bid"}
 							</Button>
 						</Box>
 						<Typography variant="body2" color="textSecondary" align="center">

@@ -12,7 +12,7 @@ interface PaymentPageProps {
 	photo: PhotoDto | null;
 	action: "purchaseNow" | "provision";
 	onClose: () => void;
-	onSuccess?: () => void;
+	onSuccess: () => void;
 }
 
 const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuccess }) => {
@@ -51,7 +51,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 
 				if (response.ok) {
 					toastSuccess(`Your purchase has been approved! Please check your email for the purchase details.`);
-					if (onSuccess) onSuccess();
+					onSuccess();
 				} else {
 					toastError(`Failed to purchase photo: ${(await response.json()).message}`);
 				}
@@ -75,8 +75,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 				});
 
 				if (response.ok) {
-					toastSuccess("Provision completed successfully. You can now place a bid.");
-					if (onSuccess) onSuccess();
+					onSuccess();
 				} else {
 					const responseJson = await response.json();
 					if (responseJson.message.toLowerCase().includes("missing fields")) {
@@ -131,9 +130,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 					</Grid>
 					<Grid item xs={6}>
 						<TextField label="CVV" variant="outlined" fullWidth value={cvv} onChange={(e) => setCvv(e.target.value)} />
-					</Grid>
-					<Grid item xs={12}>
-						<TextField label="Name on the card" variant="outlined" fullWidth />
 					</Grid>
 				</Grid>
 				<Button
