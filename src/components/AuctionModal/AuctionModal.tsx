@@ -23,7 +23,7 @@ interface AuctionModalProps {
 }
 
 const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNext, onPrev }) => {
-	const { user } = useAuth();
+	const { user, socket } = useAuth();
 	const [auctionPhoto, setAuctionPhoto] = useState<AuctionPhotoDto | null>(null);
 	const [lastBidAmount, setLastBidAmount] = useState<number>(0);
 	const [bidAmount, setBidAmount] = useState<number>(0);
@@ -32,33 +32,63 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 	const [isLastBidBelongToCurrentUser, setIsLastBidBelongToCurrentUser] = useState<boolean>(false);
 
 	useEffect(() => {
-		fetchData();
+		let dataAuctionPhoto: AuctionPhotoDto;
+		const init = async () => {
+			try {
+				dataAuctionPhoto = await fetchInitialData();
+
+				// ws implementation
+				if (socket) {
+					const roomName = `auction_photo_id_${dataAuctionPhoto?.id}`;
+					console.log(`[INFO] WS: joining room: ${roomName}`);
+					socket.emit("joinRoom", roomName);
+
+					socket.on(`new_bid`, (bidMessage: BidResponseDto & { room: string }) => {
+						if (bidMessage?.room === roomName) {
+							fetchInitialData();
+						}
+					});
+				}
+			} catch (err) {
+				console.error(err);
+			}
+		};
+
+		init();
+
+		// Cleanup function
+		return () => {
+			// console.log("component unmount, will leave the ws room");
+			if (socket && dataAuctionPhoto) {
+				const roomName = `auction_photo_id_${dataAuctionPhoto.id}`;
+				socket.emit("leaveRoom", roomName);
+				console.log(`[INFO] WS: leaving room: ${roomName}`);
+			}
+		};
 	}, []);
 
-	const fetchData = async () => {
-		try {
-			const responseAuctionPhoto = await fetch(`${webApiUrl}/auctions/photos/${photo.id}`);
-			if (!responseAuctionPhoto.ok) {
-				throw new Error("Failed to fetch auction photo");
-			}
-			const dataAuctionPhoto: AuctionPhotoDto = await responseAuctionPhoto.json();
-
-			const responseBid = await fetch(`${webApiUrl}/bids/${dataAuctionPhoto.id}`);
-			if (!responseBid.ok) {
-				throw new Error("Failed to fetch auction photo");
-			}
-			const dataBid: BidResponseDto[] = await responseBid.json();
-
-			setAuctionPhoto(dataAuctionPhoto);
-			setLastBidAmount(dataAuctionPhoto.last_bid_amount);
-			setBidAmount(dataAuctionPhoto.last_bid_amount + 100);
-			setBidCount(dataBid.length);
-
-			dataBid?.sort((b, a) => a.bid_amount - b.bid_amount);
-			if (dataBid?.[0]?.user_id === user?.id) setIsLastBidBelongToCurrentUser(true);
-		} catch (err) {
-			console.error(err);
+	const fetchInitialData = async (): Promise<AuctionPhotoDto> => {
+		const responseAuctionPhoto = await fetch(`${webApiUrl}/auctions/photos/${photo.id}`);
+		if (!responseAuctionPhoto.ok) {
+			throw new Error("Failed to fetch auction photo");
 		}
+		const dataAuctionPhoto = await responseAuctionPhoto.json();
+
+		const responseBid = await fetch(`${webApiUrl}/bids/${dataAuctionPhoto.id}`);
+		if (!responseBid.ok) {
+			throw new Error("Failed to fetch auction photo");
+		}
+		const dataBid: BidResponseDto[] = await responseBid.json();
+
+		setAuctionPhoto(dataAuctionPhoto);
+		setLastBidAmount(dataAuctionPhoto.last_bid_amount);
+		setBidAmount(dataAuctionPhoto.last_bid_amount + 100);
+		setBidCount(dataBid.length);
+
+		dataBid?.sort((b, a) => a.bid_amount - b.bid_amount);
+		if (dataBid?.[0]?.user_id === user?.id) setIsLastBidBelongToCurrentUser(true);
+
+		return dataAuctionPhoto;
 	};
 
 	const handleBidSubmit = async () => {
