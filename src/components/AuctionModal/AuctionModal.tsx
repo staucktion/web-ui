@@ -62,6 +62,12 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 	};
 
 	const handleBidSubmit = () => {
+		console.log(photo);
+		if (user?.id === photo.user_id) {
+			toast("Photo is belong to you, you cannot place bid to your photo.");
+			return;
+		}
+
 		if (user?.status_id !== StatusEnum.ACTIVE) {
 			toastWarning("You need to make provision before place a bid.");
 			setIsProvisionModalOpen(true);
@@ -197,9 +203,9 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 								anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
 								transformOrigin={{ vertical: "top", horizontal: "right" }}
 							>
-								<MenuItem>Resolution: 1920 x 1080</MenuItem>
-								<MenuItem>File Size: 2.5 MB</MenuItem>
-								<MenuItem>Format: JPEG</MenuItem>
+								<MenuItem>Title: {photo.title}</MenuItem>
+								<MenuItem>Vote Count: {photo.vote_count}</MenuItem>
+								<MenuItem>Device Info: {photo.device_info}</MenuItem>
 							</Menu>
 						</Box>
 					</Box>
