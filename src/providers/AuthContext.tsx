@@ -4,6 +4,8 @@ import UserDto from "../dto/user/UserDto";
 import { webApiUrl } from "../env/envVars";
 import { toastError, toastSuccess, toastWarning, toastInfo } from "../util/toastUtil";
 import NotificationDto from "../dto/notification/NotificationDto";
+import { markNotificationSeen } from "../util/markNotificationSeen";
+
 // Define AuthContext type
 interface AuthContextType {
 	/** If user has not fetched yet, it will be undefined
@@ -62,6 +64,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 					toastInfo(notification.message);
 					break;
 			}
+
+			void markNotificationSeen(notification.id);
 		});
 
 		setSocket(socketInstance);

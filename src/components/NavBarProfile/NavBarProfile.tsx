@@ -11,6 +11,7 @@ import redirectWithPost from "../../util/redirectWithPost";
 import { Box, Typography as MuiTypography } from "@mui/material";
 import NotificationDto from "../../dto/notification/NotificationDto";
 import { webApiUrl } from "../../env/envVars";
+import { markNotificationSeen } from "../../util/markNotificationSeen";
 
 const NavBarProfile: React.FC = () => {
 	const navigate = useNavigate(); // Hook for navigation
@@ -39,6 +40,16 @@ const NavBarProfile: React.FC = () => {
 	useEffect(() => {
 		fetchNotifications();
 	}, []);
+
+	useEffect(() => {
+		if (notificationsOpen && notifications.length > 0) {
+			notifications.forEach((notification) => {
+				if (notification.seen_at === null) {
+					void markNotificationSeen(notification.id);
+				}
+			});
+		}
+	}, [notificationsOpen, notifications]);
 
 	return (
 		<AppBar
