@@ -14,6 +14,7 @@ import { useAuth } from "../../providers/AuthContext.tsx";
 import redirectWithPost from "../../util/redirectWithPost.ts";
 import { Modal, Box } from "@mui/material";
 import { toastSuccess } from "../../util/toastUtil.ts";
+import UserDto from "../../dto/user/UserDto.ts";
 
 const CountdownModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
 	const [timeLeft, setTimeLeft] = React.useState(300); // 5 dakika = 300 saniye
@@ -110,12 +111,19 @@ const NavBar: React.FC = () => {
 		}
 	};
 
-	const getUserFirstLetters = (username: string): string => {
-		return username
-			.split(" ")
-			.map((word) => word[0].toUpperCase())
-			.join("");
+	const getDisplayName = (user: UserDto): string => {
+		if (user.user_role?.role === "validator") {
+			return "Vld";
+		} else if (user.user_role?.role === "admin") {
+			return "Adm";
+		} else {
+			return user.username
+				.split(" ")
+				.map((word) => word[0].toUpperCase())
+				.join("");
+		}
 	};
+
 	return (
 		<>
 			<AppBar
@@ -231,7 +239,7 @@ const NavBar: React.FC = () => {
 						}}
 						onClick={handleProfileButton}
 					>
-						{user ? getUserFirstLetters(user?.username) : "Login"}
+						{user ? getDisplayName(user) : "Login"}
 					</Button>
 				</Toolbar>
 			</AppBar>
