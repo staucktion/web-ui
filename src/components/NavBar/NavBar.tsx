@@ -13,6 +13,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useAuth } from "../../providers/AuthContext.tsx";
 import redirectWithPost from "../../util/redirectWithPost.ts";
 import { Modal, Box } from "@mui/material";
+import { toastSuccess } from "../../util/toastUtil.ts";
 
 const CountdownModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
 	const [timeLeft, setTimeLeft] = React.useState(300); // 5 dakika = 300 saniye
@@ -109,6 +110,12 @@ const NavBar: React.FC = () => {
 		}
 	};
 
+	const getUserFirstLetters = (username: string): string => {
+		return username
+			.split(" ")
+			.map((word) => word[0].toUpperCase())
+			.join("");
+	};
 	return (
 		<>
 			<AppBar
@@ -203,7 +210,7 @@ const NavBar: React.FC = () => {
 					</Button>
 
 					{/* Overflow menü */}
-					<IconButton sx={{ color: "white", mr: 1 }} onClick={() => alert("Overflow menu clicked!")}>
+					<IconButton sx={{ color: "white", mr: 1 }} onClick={() => toastSuccess("Dummy.", { position: "bottom-center" })}>
 						<MoreVertIcon />
 					</IconButton>
 
@@ -224,7 +231,7 @@ const NavBar: React.FC = () => {
 						}}
 						onClick={handleProfileButton}
 					>
-						{user ? "Profile" : "Login"}
+						{user ? getUserFirstLetters(user?.username) : "Login"}
 					</Button>
 				</Toolbar>
 			</AppBar>

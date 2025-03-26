@@ -12,4 +12,5 @@ export default interface UserDto {
 		id: number;
 		role: string;
 	};
+	status_id: number;
 }

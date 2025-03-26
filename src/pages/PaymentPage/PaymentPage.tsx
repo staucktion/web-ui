@@ -9,8 +9,8 @@ import redirectWithPost from "../../util/redirectWithPost";
 import { useNavigate } from "react-router-dom";
 
 interface PaymentPageProps {
-	photo: PhotoDto;
-	action: "purchaseNow" | "auctionBid";
+	photo: PhotoDto | null;
+	action: "purchaseNow" | "provision";
 	onClose: () => void;
 	onSuccess: () => void;
 }
@@ -37,7 +37,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 
 		if (action === "purchaseNow") {
 			try {
-				const response = await fetch(`${webApiUrl}/banks/purchase/now/photo/${photo.id}`, {
+				const response = await fetch(`${webApiUrl}/banks/purchase/now/photo/${photo?.id}`, {
 					method: "POST",
 					body: JSON.stringify({
 						cardNumber,
@@ -59,15 +59,43 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 				toastError("Failed to purchase photo. Check console for details.");
 				console.error("Error purchasing photo:", error);
 			}
-		} else {
-			alert("TODO: Implement Ahmet :D");
+		} else if (action === "provision") {
+			// alert("Implemented by Ahmet :D, thx for navigation :)");
+			try {
+				const response = await fetch(`${webApiUrl}/banks/approve-user`, {
+					method: "POST",
+					body: JSON.stringify({
+						cardNumber,
+						expirationDate,
+						cvv,
+					}),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+
+				if (response.ok) {
+					onSuccess();
+				} else {
+					const responseJson = await response.json();
+					if (responseJson.message.toLowerCase().includes("missing fields")) {
+						toastError("Provision failed. Please fill in the missing fields.");
+					} else if (responseJson.message.toLowerCase().includes("not enough")) {
+						toastError("Provision failed. Insufficient balance to complete the transaction.");
+					} else {
+						toastError(`Cannot make provision: ${responseJson.message}`);
+					}
+				}
+			} catch (error) {
+				toastError("Failed to make provision. Check console for details.");
+				console.error("Error make provision:", error);
+			}
 		}
 	};
 
 	return (
 		<Box
 			sx={{
-				backgroundImage: "url('https://source.unsplash.com/random/1600x900?abstract')",
 				backgroundSize: "cover",
 				backgroundPosition: "center",
 				minHeight: "100vh",
@@ -102,9 +130,6 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 					</Grid>
 					<Grid item xs={6}>
 						<TextField label="CVV" variant="outlined" fullWidth value={cvv} onChange={(e) => setCvv(e.target.value)} />
-					</Grid>
-					<Grid item xs={12}>
-						<TextField label="Name on the card" variant="outlined" fullWidth />
 					</Grid>
 				</Grid>
 				<Button

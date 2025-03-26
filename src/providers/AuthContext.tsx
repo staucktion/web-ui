@@ -46,6 +46,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 			//toastError("Failed to connect to real-time services");
 		});
 
+		// socketInstance.onAny((event, ...args) => {
+		// 	console.log(`Received event: ${event}`, args);
+		// });
+
 		socketInstance.on("notification", (notification: NotificationDto) => {
 			switch (notification.type) {
 				case "success":
