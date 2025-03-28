@@ -1,7 +1,8 @@
-import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import React, { useState } from "react";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 import CustomModal from "../CustomModal/CustomModal";
+import CustomNavButton from "../CustomNavButton/CustomNavButton";
 
 interface NavBarMiddleProps {
 	onAuctionClick: () => void;
@@ -12,72 +13,33 @@ interface NavBarMiddleProps {
 
 const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasablePhotosClick, onVoteClick, onCategoriesClick }) => {
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
+	const [activeTab, setActiveTab] = useState<string>("");
+
+	const handleClick = (tab: string, action: () => void) => {
+		requireAuth(() => {
+			setActiveTab(tab);
+			action();
+		});
+	};
 
 	return (
 		<>
 			<Box display="flex" alignItems="center" justifyContent="center" gap={4} sx={{ marginTop: "40px" }}>
-				{/* Purchase (Siyah Buton) */}
-				<Button
-					variant="contained"
-					sx={{
-						backgroundColor: "#000",
-						color: "#fff",
-						borderRadius: "9999px",
-						textTransform: "none",
-						fontSize: "1.2rem",
-						padding: "15px 30px",
-						height: "55px",
-						"&:hover": { backgroundColor: "#333" },
-					}}
-					onClick={() => requireAuth(() => onPurchasablePhotosClick())}
-				>
+				<CustomNavButton isActive={activeTab === "purchase"} onClick={() => handleClick("purchase", onPurchasablePhotosClick)}>
 					Purchase
-				</Button>
-
-				{/* Auction (Metin) */}
-				<Typography
-					variant="body1"
-					sx={{
-						color: "#555",
-						cursor: "pointer",
-						fontSize: "1.2rem",
-						"&:hover": { color: "#000" },
-					}}
-					onClick={() => requireAuth(() => onAuctionClick())}
-				>
+				</CustomNavButton>
+				<CustomNavButton isActive={activeTab === "auction"} onClick={() => handleClick("auction", onAuctionClick)}>
 					Auction
-				</Typography>
-
-				{/* Vote (Metin) */}
-				<Typography
-					variant="body1"
-					sx={{
-						color: "#555",
-						cursor: "pointer",
-						fontSize: "1.2rem",
-						"&:hover": { color: "#000" },
-					}}
-					onClick={() => requireAuth(() => onVoteClick())}
-				>
+				</CustomNavButton>
+				<CustomNavButton isActive={activeTab === "vote"} onClick={() => handleClick("vote", onVoteClick)}>
 					Vote
-				</Typography>
-
-				{/* Categories (Metin) */}
-				<Typography
-					variant="body1"
-					sx={{
-						color: "#555",
-						cursor: "pointer",
-						fontSize: "1.2rem",
-						"&:hover": { color: "#000" },
-					}}
-					onClick={() => requireAuth(() => onCategoriesClick())}
-				>
+				</CustomNavButton>
+				<CustomNavButton isActive={activeTab === "categories"} onClick={() => handleClick("categories", onCategoriesClick)}>
 					Categories
-				</Typography>
+				</CustomNavButton>
 			</Box>
 
-			{/* Giriş (Login) Modal'ı */}
+			{/* Login Modal */}
 			<CustomModal open={open} title="Login or Register?" onClose={handleClose} onConfirm={handleLogin} confirmText="Login with Google" />
 		</>
 	);
