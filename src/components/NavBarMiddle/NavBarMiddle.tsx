@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 import CustomModal from "../CustomModal/CustomModal";
 import CustomNavButton from "../CustomNavButton/CustomNavButton";
+import { useAuth } from "../../providers/AuthContext";
 
 interface NavBarMiddleProps {
 	onAuctionClick: () => void;
@@ -12,8 +13,9 @@ interface NavBarMiddleProps {
 }
 
 const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasablePhotosClick, onVoteClick, onCategoriesClick }) => {
+	const { user } = useAuth();
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
-	const [activeTab, setActiveTab] = useState<string>("");
+	const [activeTab, setActiveTab] = useState<string>(user === null ? "" : "purchase");
 
 	const handleClick = (tab: string, action: () => void) => {
 		requireAuth(() => {
