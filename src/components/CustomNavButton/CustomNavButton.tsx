@@ -8,7 +8,7 @@ interface CustomNavButtonProps {
 	onClick: () => void;
 }
 
-const StyledButton = styled(Button)<CustomNavButtonProps>`
+const StyledButton = styled(Button).withConfig({ shouldForwardProp: (prop) => prop !== "isActive" })<CustomNavButtonProps>`
 	color: ${(props) => (props.isActive ? "#fff" : "#555")};
 	background-color: ${(props) => (props.isActive ? "#000" : "transparent")};
 	border-radius: 50px;
