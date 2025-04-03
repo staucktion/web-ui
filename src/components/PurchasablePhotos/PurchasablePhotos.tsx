@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Typography } from "@mui/material";
 import "../../styles/Styles.css";
-import { webApiUrl } from "../../env/envVars.tsx";
-import PhotoDto from "../../dto/photo/PhotoDto.ts";
-import getPhotoSrc from "../../util/getPhotoSrc.ts";
-import PhotoDetailModal from "../PhotoDetailModal/PhotoDetailModal.tsx";
+import { webApiUrl } from "../../env/envVars";
+import PhotoDto from "../../dto/photo/PhotoDto";
+import getPhotoSrc from "../../util/getPhotoSrc";
+import PhotoDetailModal from "../PhotoDetailModal/PhotoDetailModal";
 
 const PurchasablePhotos: React.FC = () => {
 	const [purchasablePhotos, setPurchasablePhotos] = useState<PhotoDto[]>([]);

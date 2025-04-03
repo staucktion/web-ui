@@ -10,7 +10,7 @@ import PhotoDto from "../../dto/photo/PhotoDto";
 import { StatusEnum } from "../../enum/statusEnum";
 import { webApiUrl } from "../../env/envVars";
 import PaymentPage from "../../pages/PaymentPage/PaymentPage";
-import { useAuth } from "../../providers/AuthContext";
+import { useAuth } from "../../providers/AuthHook";
 import { generateLocationUrl } from "../../util/generateLocationUrl";
 import { toastError, toastSuccess, toastWarning } from "../../util/toastUtil";
 
@@ -96,6 +96,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 				console.log(`[INFO] WS: leaving room: ${roomName}`);
 			}
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const fetchInitialData = async (): Promise<AuctionPhotoDto> => {
@@ -200,7 +201,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			const remainingTimeInHours = Math.floor(remainingTimeInMinutes / 60);
 			const remainingTimeInDays = Math.floor(remainingTimeInHours / 24);
 			const remainingSeconds = remainingTimeInSeconds % 60;
-			let timeRemaining = `${remainingTimeInDays} days ${remainingTimeInHours % 24} hours ${remainingTimeInMinutes % 60} minutes ${remainingSeconds} seconds.`;
+			const timeRemaining = `${remainingTimeInDays} days ${remainingTimeInHours % 24} hours ${remainingTimeInMinutes % 60} minutes ${remainingSeconds} seconds.`;
 			toast(`Time remaining: ${timeRemaining}`);
 		}
 	};

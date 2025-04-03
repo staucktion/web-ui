@@ -1,4 +1,4 @@
-import { webApiUrl } from "../env/envVars.tsx";
+import { webApiUrl } from "../env/envVars";
 
 export default function redirectWithPost(path: string, params?: Record<string, string>): void {
 	const url = `${webApiUrl}${path}`;

@@ -1,7 +1,7 @@
 import { CssBaseline, CircularProgress } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./providers/AuthContext";
+import { useAuth } from "./providers/AuthHook";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import { ToastContainer } from "react-toastify";

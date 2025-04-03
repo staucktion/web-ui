@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import RootProvider from "./providers/RootProvider.tsx";
+import App from "./App";
+import RootProvider from "./providers/RootProvider";
 
 createRoot(document.getElementById("root")!).render(
 	<RootProvider>

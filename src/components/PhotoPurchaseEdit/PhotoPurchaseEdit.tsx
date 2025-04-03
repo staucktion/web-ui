@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Box, TextField, Typography, IconButton } from "@mui/material";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import PhotoDto from "../../dto/photo/PhotoDto";
-import { webApiUrl } from "../../env/envVars.tsx";
+import { webApiUrl } from "../../env/envVars";
 import { toastError, toastSuccess } from "../../util/toastUtil";
 interface PhotoPurchaseEditProps {
 	open: boolean;

@@ -2,7 +2,7 @@ import React from "react";
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 import { SecondaryButton } from "../SecondaryButton/SecondaryButton.styled";
 import redirectWithPost from "../../util/redirectWithPost";
-import { useAuth } from "../../providers/AuthContext";
+import { useAuth } from "../../providers/AuthHook";
 
 const Header: React.FC = () => {
 	const { user } = useAuth();
