@@ -27,7 +27,7 @@ jobs:
             git pull origin master
 
             echo "🐳 Rebuilding and restarting Docker Compose service..."
-            cd ../docker-config
+            cd ${{ secrets.PROJECT_ROOT_DIR }}/docker-config
             docker compose -p st up -d --build ${{ github.event.repository.name }}
 
             echo "🩺 Scheduling background health check in 5 minute..."
