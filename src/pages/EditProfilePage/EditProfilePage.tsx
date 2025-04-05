@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Paper, Typography, Avatar, Box, TextField, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { useAuth } from "../../providers/AuthContext";
+import { useAuth } from "../../providers/AuthHook";
 import NavBarEditProfile from "../../components/NavBarEditProfile/NavBarEditProfile";
 import { webApiUrl } from "../../env/envVars";
 import { toastError } from "../../util/toastUtil";

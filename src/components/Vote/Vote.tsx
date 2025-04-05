@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Styles.css";
 import { webApiUrl } from "../../env/envVars";
-// import { useAuth } from "../../providers/AuthContext";
+// import { useAuth } from "../../providers/AuthHook";
 import PhotoDto from "../../dto/photo/PhotoDto";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 // import redirectWithPost from "../../util/redirectWithPost";

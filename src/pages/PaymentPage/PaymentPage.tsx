@@ -4,7 +4,7 @@ import PhotoDto from "../../dto/photo/PhotoDto";
 import { toastSuccess, toastError } from "../../util/toastUtil";
 import { toastWarning } from "../../util/toastUtil";
 import { webApiUrl } from "../../env/envVars";
-import { useAuth } from "../../providers/AuthContext";
+import { useAuth } from "../../providers/AuthHook";
 import redirectWithPost from "../../util/redirectWithPost";
 import { useNavigate } from "react-router-dom";
 

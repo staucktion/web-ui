@@ -10,12 +10,12 @@ import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { useAuth } from "../../providers/AuthContext.tsx";
-import redirectWithPost from "../../util/redirectWithPost.ts";
+import { useAuth } from "../../providers/AuthHook";
+import redirectWithPost from "../../util/redirectWithPost";
 import { Modal, Box } from "@mui/material";
-import { toastSuccess } from "../../util/toastUtil.ts";
-import UserDto from "../../dto/user/UserDto.ts";
-import { checkUserRole } from "../../util/checkUserRole.ts";
+import { toastSuccess } from "../../util/toastUtil";
+import UserDto from "../../dto/user/UserDto";
+import { checkUserRole } from "../../util/checkUserRole";
 
 const CountdownModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
 	const [timeLeft, setTimeLeft] = React.useState(300); // 5 dakika = 300 saniye

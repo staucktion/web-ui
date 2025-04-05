@@ -1,23 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import { Socket, io } from "socket.io-client";
 import UserDto from "../dto/user/UserDto";
 import { webApiUrl } from "../env/envVars";
 import { toastError, toastSuccess, toastWarning, toastInfo } from "../util/toastUtil";
 import NotificationDto from "../dto/notification/NotificationDto";
 import { markNotificationSeen } from "../util/markNotificationSeen";
-
-// Define AuthContext type
-interface AuthContextType {
-	/** If user has not fetched yet, it will be undefined
-	 * However, if fetched, it will be UserDto (if user is logged in) or null (if user is not logged in)
-	 */
-	user: UserDto | null | undefined;
-	setUser: (user: UserDto | null) => void;
-	socket: Socket | null;
-}
-
-// Create the AuthContext
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from "./AuthHook";
 
 // AuthProvider component with props type
 interface AuthProviderProps {
@@ -104,13 +92,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	}, []);
 
 	return <AuthContext.Provider value={{ user, setUser, socket }}>{children}</AuthContext.Provider>;
-};
-
-// Custom hook to use AuthContext
-export const useAuth = (): AuthContextType => {
-	const context = useContext(AuthContext);
-	if (!context) {
-		throw new Error("useAuth must be used within an AuthProvider");
-	}
-	return context;
 };

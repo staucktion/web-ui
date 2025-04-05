@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 import CustomModal from "../CustomModal/CustomModal";
 import CustomNavButton from "../CustomNavButton/CustomNavButton";
-import { useAuth } from "../../providers/AuthContext";
+import { useAuth } from "../../providers/AuthHook";
 
 interface NavBarMiddleProps {
 	onAuctionClick: () => void;

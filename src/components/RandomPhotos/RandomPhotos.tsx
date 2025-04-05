@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Styles.css";
-import EmailButtons from "../EmailButtons/EmailButtons.tsx";
-import { webApiUrl } from "../../env/envVars.tsx";
-import { useAuth } from "../../providers/AuthContext.tsx";
+import EmailButtons from "../EmailButtons/EmailButtons";
+import { webApiUrl } from "../../env/envVars";
+import { useAuth } from "../../providers/AuthHook";
 import PhotoDto from "../../dto/photo/PhotoDto";
-import useRequireAuth from "../../Hooks/useRequireAuth.tsx";
-import redirectWithPost from "../../util/redirectWithPost.ts";
-import CustomModal from "../CustomModal/CustomModal"; // Import the reusable modal
+import useRequireAuth from "../../Hooks/useRequireAuth";
+import redirectWithPost from "../../util/redirectWithPost";
+import CustomModal from "../CustomModal/CustomModal";
 
 const RandomPhotos: React.FC = () => {
 	const { user } = useAuth();
@@ -39,6 +39,7 @@ const RandomPhotos: React.FC = () => {
 
 	useEffect(() => {
 		fetchWatermarkedImages();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const sendApproveMail = async (img: PhotoDto) => {
