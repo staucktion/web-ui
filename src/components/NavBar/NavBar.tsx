@@ -15,6 +15,7 @@ import redirectWithPost from "../../util/redirectWithPost.ts";
 import { Modal, Box } from "@mui/material";
 import { toastSuccess } from "../../util/toastUtil.ts";
 import UserDto from "../../dto/user/UserDto.ts";
+import { checkUserRole } from "../../util/checkUserRole.ts";
 
 const CountdownModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
 	const [timeLeft, setTimeLeft] = React.useState(300); // 5 dakika = 300 saniye
@@ -112,9 +113,9 @@ const NavBar: React.FC = () => {
 	};
 
 	const getDisplayName = (user: UserDto): string => {
-		if (user.user_role?.role === "validator") {
+		if (checkUserRole(user, "validator", true)) {
 			return "Vld";
-		} else if (user.user_role?.role === "admin") {
+		} else if (checkUserRole(user, "admin", true)) {
 			return "Adm";
 		} else {
 			return user.username
@@ -191,7 +192,7 @@ const NavBar: React.FC = () => {
 						>
 							Something
 						</MenuItem>
-						{user?.user_role?.role === "validator" && (
+						{checkUserRole(user, "validator") && (
 							<MenuItem
 								onClick={() => {
 									handleExploreClose();

@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import EditProfilePage from "./pages/EditProfilePage/EditProfilePage";
 import ValidatorPanel from "./pages/ValidatorPanel/ValidatorPanel";
 import CategoriesPage from "./pages/Categories/Categories";
+import { checkUserRole } from "./util/checkUserRole";
 
 function App() {
 	const themeMode = "light";
@@ -49,7 +50,7 @@ const MainLayout: React.FC = () => {
 			<Route path="/categories" element={<CategoriesPage />} />
 
 			{/* Only for Validator's access*/}
-			<Route path="/validator" element={user?.user_role?.role === "validator" ? <ValidatorPanel /> : <Navigate to="/" />} />
+			<Route path="/validator" element={checkUserRole(user, "validator") ? <ValidatorPanel /> : <Navigate to="/" />} />
 		</Routes>
 	);
 };
