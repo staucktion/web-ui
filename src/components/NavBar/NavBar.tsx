@@ -192,17 +192,29 @@ const NavBar: React.FC = () => {
 						>
 							Something
 						</MenuItem>
-						{checkUserRole(user, "validator") && (
-							<MenuItem
-								onClick={() => {
-									handleExploreClose();
-									navigate("/validator");
-								}}
-							>
-								Validator Panel
-							</MenuItem>
+						
+						{checkUserRole(user, "validator") && !checkUserRole(user, "admin") && (
+						<MenuItem
+							onClick={() => {
+							handleExploreClose();
+							navigate("/validator");
+							}}
+						>
+							Validator Panel
+						</MenuItem>
 						)}
-					</Menu>
+
+						{checkUserRole(user, "admin") && (
+						<MenuItem
+							onClick={() => {
+							handleExploreClose();
+							navigate("/admin");
+							}}
+						>
+							Admin Panel
+						</MenuItem>
+						)}
+						</Menu>
 
 					{/* License */}
 					<Button
