@@ -11,6 +11,7 @@ import EditProfilePage from "./pages/EditProfilePage/EditProfilePage";
 import ValidatorPanel from "./pages/ValidatorPanel/ValidatorPanel";
 import CategoriesPage from "./pages/Categories/Categories";
 import { checkUserRole } from "./util/checkUserRole";
+import AdminPanel from "./pages/AdminPanel/AdminPanel";
 
 function App() {
 	const themeMode = "light";
@@ -34,6 +35,8 @@ function App() {
 const MainLayout: React.FC = () => {
 	const { user } = useAuth();
 
+  console.log("User object:", user);
+
 	if (user === undefined) {
 		return <CircularProgress />;
 	}
@@ -51,6 +54,9 @@ const MainLayout: React.FC = () => {
 
 			{/* Only for Validator's access*/}
 			<Route path="/validator" element={checkUserRole(user, "validator") ? <ValidatorPanel /> : <Navigate to="/" />} />
+
+      {/* Only for Admin's access*/}
+			<Route path="/admin" element={checkUserRole(user, "admin") ? <AdminPanel /> : <Navigate to="/" />} />
 		</Routes>
 	);
 };
