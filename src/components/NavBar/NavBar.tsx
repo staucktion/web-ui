@@ -193,7 +193,7 @@ const NavBar: React.FC = () => {
 							Something
 						</MenuItem>
 						
-						{checkUserRole(user, "validator") && !checkUserRole(user, "admin") && (
+						{checkUserRole(user, "validator") && (
 						<MenuItem
 							onClick={() => {
 							handleExploreClose();
