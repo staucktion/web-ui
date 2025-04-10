@@ -22,17 +22,17 @@ import { webApiUrl } from "../../env/envVars";
 import UserDto from "../../dto/user/UserDto";
 
 const AdminPanel: React.FC = () => {
-	const [voterCommission, setVoterCommission] = useState(10);
-	const [photographerCommission, setPhotographerCommission] = useState(15);
+	const [voterCommission, setVoterCommission] = useState<number | null>(10);
+	const [photographerCommission, setPhotographerCommission] = useState<number | null>(15);
 	const [timerActive, setTimerActive] = useState(true);
 
 	const [users, setUsers] = useState<UserDto[]>([]);
 	const [roleSelections, setRoleSelections] = useState<{ [key: number]: string }>({});
 	const [banSelections, setBanSelections] = useState<{ [key: number]: boolean }>({});
 
-	const [voteDuration, setVoteDuration] = useState(1);
-	const [auctionDuration, setAuctionDuration] = useState(1);
-	const [purchaseDuration, setPurchaseDuration] = useState(1);
+	const [voteDuration, setVoteDuration] = useState<number | null>(1);
+	const [auctionDuration, setAuctionDuration] = useState<number | null>(1);
+	const [purchaseDuration, setPurchaseDuration] = useState<number | null>(1);
 	const [voteUnit, setVoteUnit] = useState("day");
 	const [auctionUnit, setAuctionUnit] = useState("day");
 	const [purchaseUnit, setPurchaseUnit] = useState("day");
@@ -67,11 +67,16 @@ const AdminPanel: React.FC = () => {
 		fetchAllUsers();
 	}, []);
 
-	const handleCommissionChange = (setter: React.Dispatch<React.SetStateAction<number>>, value: string) => {
+	const handleVoterCommissionChange = (value: string) => {
 		const numericValue = parseFloat(value);
-		if (!isNaN(numericValue)) {
-			setter(numericValue);
-		}
+		if (!isNaN(numericValue)) setVoterCommission(numericValue);
+		else setVoterCommission(null);
+	};
+
+	const handlePhotographerCommissionChange = (value: string) => {
+		const numericValue = parseFloat(value);
+		if (!isNaN(numericValue)) setPhotographerCommission(numericValue);
+		else setPhotographerCommission(null);
 	};
 
 	const handleTimerToggle = async () => {
@@ -147,37 +152,48 @@ const AdminPanel: React.FC = () => {
 	};
 
 	return (
-		<Box sx={{ backgroundColor: "#000", color: "#fff", minHeight: "100vh", p: 5 }}>
+		<Box sx={{ backgroundColor: "#000", color: "#fff", pt: 5, px: 5 }}>
 			<Typography variant="h3" gutterBottom>
 				Admin Panel
 			</Typography>
-			<Typography variant="subtitle1" color="#aaa" gutterBottom>
-				Manage users and update system settings.
-			</Typography>
 
-			<Box sx={{ backgroundColor: "#111", p: 4, borderRadius: 2, mb: 5 }}>
+			<Box sx={{ backgroundColor: "#111", p: 2, borderRadius: 2, mb: 5 }}>
 				<Typography variant="h5" gutterBottom>
 					System Settings
 				</Typography>
-				<Box display="flex" flexWrap="wrap" gap={4} mt={2}>
-					<TextField
-						label="Voter Commission (%)"
-						type="number"
-						value={voterCommission}
-						onChange={(e) => handleCommissionChange(setVoterCommission, e.target.value)}
-						InputProps={{ inputProps: { max: 100 } }}
-						sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
-						fullWidth
-					/>
-					<TextField
-						label="Photographer Commission (%)"
-						type="number"
-						value={photographerCommission}
-						onChange={(e) => handleCommissionChange(setPhotographerCommission, e.target.value)}
-						InputProps={{ inputProps: { min: 0, max: 100 } }}
-						sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
-						fullWidth
-					/>
+				<br />
+				<Box sx={{ backgroundColor: "#1A1A1A", p: 2, borderRadius: 2, mb: 5 }}>
+					<Box display="flex" flexWrap="wrap" gap={4} mt={2}>
+						<TextField
+							label="Voter Commission (%)"
+							type="number"
+							value={voterCommission}
+							onChange={(e) => handleVoterCommissionChange(e.target.value)}
+							sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
+							fullWidth
+						/>
+						<TextField
+							label="Photographer Commission (%)"
+							type="number"
+							value={photographerCommission}
+							onChange={(e) => handlePhotographerCommissionChange(e.target.value)}
+							sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
+							fullWidth
+						/>
+
+						<Button
+							variant="contained"
+							// onClick={}
+							sx={{
+								backgroundColor: "red",
+								"&:hover": { backgroundColor: "darkred" },
+							}}
+						>
+							save
+						</Button>
+					</Box>
+				</Box>
+				<Box sx={{ backgroundColor: "#1A1A1A", p: 2, borderRadius: 2 }}>
 					<FormControlLabel
 						control={
 							<Switch
@@ -191,51 +207,66 @@ const AdminPanel: React.FC = () => {
 								}}
 							/>
 						}
-						label="Timer Active"
-						sx={{ color: "#fff" }}
+						label="Global Timer Activation"
+						sx={{ color: "#fff", mb: 2 }}
 					/>
-					{[
-						{
-							label: "Vote Duration",
-							value: voteDuration,
-							unit: voteUnit,
-							setValue: setVoteDuration,
-							setUnit: setVoteUnit,
-						},
-						{
-							label: "Auction Duration",
-							value: auctionDuration,
-							unit: auctionUnit,
-							setValue: setAuctionDuration,
-							setUnit: setAuctionUnit,
-						},
-						{
-							label: "Purchase Duration",
-							value: purchaseDuration,
-							unit: purchaseUnit,
-							setValue: setPurchaseDuration,
-							setUnit: setPurchaseUnit,
-						},
-					].map((item, i) => (
-						<Box key={i} display="flex" gap={2} flexDirection="row" alignItems="center">
-							<TextField
-								label={item.label}
-								type="number"
-								value={item.value}
-								onChange={(e) => item.setValue(parseInt(e.target.value, 10))}
-								InputProps={{ inputProps: { min: 0 } }}
-								sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, width: 150 }}
-							/>
-							<FormControl sx={{ minWidth: 120 }}>
-								<InputLabel sx={{ color: "#fff" }}>Unit</InputLabel>
-								<Select value={item.unit} label="Unit" onChange={(e) => item.setUnit(e.target.value)} sx={{ color: "#fff", borderColor: "#555" }}>
-									<MenuItem value="day">Day</MenuItem>
-									<MenuItem value="hour">Hour</MenuItem>
-									<MenuItem value="minute">Minute</MenuItem>
-								</Select>
-							</FormControl>
-						</Box>
-					))}
+
+					<Box display="flex" flexWrap="wrap" gap={4} mt={2}>
+						{[
+							{
+								label: "Vote Duration",
+								value: voteDuration,
+								unit: voteUnit,
+								setValue: setVoteDuration,
+								setUnit: setVoteUnit,
+							},
+							{
+								label: "Auction Duration",
+								value: auctionDuration,
+								unit: auctionUnit,
+								setValue: setAuctionDuration,
+								setUnit: setAuctionUnit,
+							},
+							{
+								label: "Purchase Duration",
+								value: purchaseDuration,
+								unit: purchaseUnit,
+								setValue: setPurchaseDuration,
+								setUnit: setPurchaseUnit,
+							},
+						].map((item, i) => (
+							<Box key={i} display="flex" gap={2} flexDirection="row" alignItems="center">
+								<TextField
+									label={item.label}
+									type="number"
+									value={item.value}
+									onChange={(e) => item.setValue(parseInt(e.target.value, 10))}
+									sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, width: 150 }}
+								/>
+								<FormControl sx={{ minWidth: 120 }}>
+									<InputLabel sx={{ color: "#fff" }}>Unit</InputLabel>
+									<Select value={item.unit} label="Unit" onChange={(e) => item.setUnit(e.target.value)} sx={{ color: "#fff", borderColor: "#555" }}>
+										<MenuItem value="day">Day</MenuItem>
+										<MenuItem value="hour">Hour</MenuItem>
+										<MenuItem value="minute">Minute</MenuItem>
+									</Select>
+								</FormControl>
+							</Box>
+						))}
+					</Box>
+
+					<br />
+
+					<Button
+						variant="contained"
+						// onClick={}
+						sx={{
+							backgroundColor: "red",
+							"&:hover": { backgroundColor: "darkred" },
+						}}
+					>
+						save
+					</Button>
 				</Box>
 			</Box>
 
