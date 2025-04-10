@@ -9,7 +9,6 @@ import {
   Select,
   InputLabel,
   FormControl,
-  Button,
   Table,
   TableHead,
   TableRow,
@@ -17,29 +16,19 @@ import {
   TableBody,
   TableContainer,
   Paper,
+  Button,
 } from "@mui/material";
 import { webApiUrl } from "../../env/envVars";
-
-// Kullanıcı tipi: user_role artık { role: string } nesnesi olarak varsayılmıştır.
-type User = {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  user_role: { role: string } | string;
-  tc_identity_no: string;
-};
+import UserDto from "../../dto/user/UserDto";
 
 const AdminPanel: React.FC = () => {
-  // Sistem ayarları ve diğer state'ler
   const [voterCommission, setVoterCommission] = useState(10);
   const [photographerCommission, setPhotographerCommission] = useState(15);
   const [timerActive, setTimerActive] = useState(true);
-  
-  const [users, setUsers] = useState<User[]>([]);
-  // Her kullanıcı için rol seçimini tutan state (key: user id, value: selected role)
+
+  const [users, setUsers] = useState<UserDto[]>([]);
   const [roleSelections, setRoleSelections] = useState<{ [key: number]: string }>({});
+  const [banSelections, setBanSelections] = useState<{ [key: number]: boolean }>({});
 
   const [voteDuration, setVoteDuration] = useState(1);
   const [auctionDuration, setAuctionDuration] = useState(1);
@@ -48,27 +37,31 @@ const AdminPanel: React.FC = () => {
   const [auctionUnit, setAuctionUnit] = useState("day");
   const [purchaseUnit, setPurchaseUnit] = useState("day");
 
-  // Rol seçenekleri
   const roleOptions = ["admin", "photographer", "voter"];
 
-  // API'den kullanıcıları çekme fonksiyonu
   const fetchAllUsers = async () => {
     try {
-      const response = await fetch(`${webApiUrl}/admin/users`, {
-        // Gerekirse auth token veya diğer header bilgilerini ekleyin.
-      });
+      const response = await fetch(`${webApiUrl}/admin/users`);
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
-      const data: User[] = await response.json();
+      const data: UserDto[] = await response.json();
       setUsers(data);
-      // Her kullanıcı için başlangıç rolü, user_role nesnesinin role değeri olarak ayarlanıyor.
-      const initialSelections = data.reduce((acc, user) => {
+      const initialRoleSelections = data.reduce((acc, user) => {
         const role =
-          typeof user.user_role === "object" ? user.user_role.role : user.user_role;
-        return { ...acc, [user.id]: role };
+          user.user_role && typeof user.user_role === "object"
+            ? user.user_role.role
+            : "";
+        return { ...acc, [Number(user.id)]: role };
       }, {} as { [key: number]: string });
-      setRoleSelections(initialSelections);
+      setRoleSelections(initialRoleSelections);
+
+
+      const initialBanSelections = data.reduce((acc, user) => {
+        const banned = "banned" in user ? Boolean((user as UserDto & { banned: boolean }).banned) : false;
+        return { ...acc, [Number(user.id)]: banned };
+      }, {} as { [key: number]: boolean });      
+      setBanSelections(initialBanSelections);
     } catch (err) {
       console.error(err);
     }
@@ -78,7 +71,6 @@ const AdminPanel: React.FC = () => {
     fetchAllUsers();
   }, []);
 
-  // Komisyon güncelleme fonksiyonu
   const handleCommissionChange = (
     setter: React.Dispatch<React.SetStateAction<number>>,
     value: string
@@ -89,15 +81,76 @@ const AdminPanel: React.FC = () => {
     }
   };
 
-  // Seçim değiştiğinde rol değerini state'e aktarır
-  const handleRoleSelectChange = (userId: number, newRole: string) => {
-    setRoleSelections((prev) => ({ ...prev, [userId]: newRole }));
+  const handleTimerToggle = async () => {
+    const newTimerState = !timerActive;
+    setTimerActive(newTimerState);
+
+    try {
+      const response = await fetch(`${webApiUrl}/admin/settings/timer`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ timerActive: newTimerState }),
+      });
+      if (!response.ok) {
+        throw new Error("Timer Active güncelleme isteği başarısız oldu");
+      }
+      const result = await response.json();
+      console.log("Timer güncellendi", result);
+    } catch (error) {
+      console.error("Timer Active güncellenemedi:", error);
+    }
   };
 
-  // "Change" butonu tıklandığında, seçilen rolü güncelleme işlemi tetiklenir (şimdilik console.log ile)
-  const handleRoleUpdate = (userId: number) => {
-    console.log(`Update role for user ${userId} to ${roleSelections[userId]}`);
-    // Burada update API çağrısı ekleyebilirsiniz.
+  const handleRoleChange = async (userId: number, newRole: string) => {
+    setRoleSelections((prev) => ({
+      ...prev,
+      [userId]: newRole,
+    }));
+
+    try {
+      const response = await fetch(`${webApiUrl}/admin/users/${userId}/role`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (!response.ok) {
+        throw new Error("Role update failed");
+      }
+      const result = await response.json();
+      console.log("Role updated:", result);
+    } catch (error) {
+      console.error("Role update error:", error);
+    }
+  };
+
+  const handleBanToggle = async (userId: number) => {
+    // Yeni yasaklama durumu
+    const newBanState = !banSelections[userId];
+    setBanSelections((prev) => ({
+      ...prev,
+      [userId]: newBanState,
+    }));
+
+    try {
+      const response = await fetch(`${webApiUrl}/admin/users/${userId}/ban`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ banned: newBanState }),
+      });
+      if (!response.ok) {
+        throw new Error("Ban update failed");
+      }
+      const result = await response.json();
+      console.log("Ban updated:", result);
+    } catch (error) {
+      console.error("Ban update error:", error);
+    }
   };
 
   return (
@@ -109,7 +162,6 @@ const AdminPanel: React.FC = () => {
         Manage users and update system settings.
       </Typography>
 
-      {/* Sistem Ayarları */}
       <Box sx={{ backgroundColor: "#111", p: 4, borderRadius: 2, mb: 5 }}>
         <Typography variant="h5" gutterBottom>
           System Settings
@@ -119,10 +171,8 @@ const AdminPanel: React.FC = () => {
             label="Voter Commission (%)"
             type="number"
             value={voterCommission}
-            onChange={(e) =>
-              handleCommissionChange(setVoterCommission, e.target.value)
-            }
-            InputProps={{ inputProps: { min: 0, max: 100 } }}
+            onChange={(e) => handleCommissionChange(setVoterCommission, e.target.value)}
+            InputProps={{ inputProps: { max: 100 } }}
             sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
             fullWidth
           />
@@ -141,7 +191,7 @@ const AdminPanel: React.FC = () => {
             control={
               <Switch
                 checked={timerActive}
-                onChange={() => setTimerActive((prev) => !prev)}
+                onChange={handleTimerToggle}
                 sx={{
                   "& .MuiSwitch-switchBase.Mui-checked": { color: "red" },
                   "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
@@ -181,7 +231,7 @@ const AdminPanel: React.FC = () => {
                 label={item.label}
                 type="number"
                 value={item.value}
-                onChange={(e) => item.setValue(parseInt(e.target.value))}
+                onChange={(e) => item.setValue(parseInt(e.target.value, 10))}
                 InputProps={{ inputProps: { min: 0 } }}
                 sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, width: 150 }}
               />
@@ -203,7 +253,6 @@ const AdminPanel: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Kullanıcı Tablosu */}
       <TableContainer component={Paper} sx={{ backgroundColor: "#111" }}>
         <Table>
           <TableHead>
@@ -212,39 +261,51 @@ const AdminPanel: React.FC = () => {
               <TableCell sx={{ color: "#fff" }}>Username</TableCell>
               <TableCell sx={{ color: "#fff" }}>Name</TableCell>
               <TableCell sx={{ color: "#fff" }}>Email</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Current Role</TableCell>
               <TableCell sx={{ color: "#fff" }}>TC Identity</TableCell>
-              <TableCell sx={{ color: "#fff" }}>Action</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Role</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Ban</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell sx={{ color: "#fff" }}>{user.id}</TableCell>
-                <TableCell sx={{ color: "#fff" }}>{user.username}</TableCell>
-                <TableCell sx={{ color: "#fff" }}>
-                  {user.first_name} {user.last_name}
-                </TableCell>
-                <TableCell sx={{ color: "#fff" }}>{user.email}</TableCell>
-                <TableCell sx={{ color: "#fff" }}>
-                  {user.user_role && typeof user.user_role === "object"
-                    ? user.user_role.role || "Unknown"
-                    : user.user_role}
-                </TableCell>
-                <TableCell sx={{ color: "#fff" }}>{user.tc_identity_no}</TableCell>
-                <TableCell>
-                  <Box display="flex" alignItems="center">
-                    <FormControl variant="standard" sx={{ minWidth: 120, mr: 1 }}>
-                      <InputLabel sx={{ color: "#fff" }}>Role</InputLabel>
+            {users.map((user) => {
+              const userIdStr = String(user.id);
+              return (
+                <TableRow key={userIdStr}>
+                  <TableCell sx={{ color: "#fff" }}>{userIdStr}</TableCell>
+                  <TableCell sx={{ color: "#fff" }}>{user.username}</TableCell>
+                  <TableCell sx={{ color: "#fff" }}>
+                    {user.first_name} {user.last_name}
+                  </TableCell>
+                  <TableCell sx={{ color: "#fff" }}>{user.email}</TableCell>
+                  <TableCell sx={{ color: "#fff" }}>{user.tc_identity_no || "-"}</TableCell>
+                  <TableCell>
+                    <FormControl
+                      variant="outlined"
+                      sx={{
+                        minWidth: 120,
+                        "& .MuiOutlinedInput-root": {
+                          backgroundColor: "#222",
+                          borderColor: "#555",
+                          borderRadius: "4px",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#555",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "#888",
+                        },
+                        "& .MuiSvgIcon-root": {
+                          color: "#fff" },
+                        "& .MuiInputLabel-root": {
+                          color: "#aaa" },
+                      }}
+                    >
+                      <InputLabel sx={{ color: "#aaa" }}>Role</InputLabel>
                       <Select
-                        value={roleSelections[user.id] || ""}
-                        onChange={(e) =>
-                          handleRoleSelectChange(user.id, e.target.value)
-                        }
-                        sx={{ 
-                          color: "#fff", 
-                          "& .MuiInputBase-root": { color: "#fff" },
-                        }}
+                        label="Role"
+                        value={roleSelections[Number(user.id)] || ""}
+                        onChange={(e) => handleRoleChange(Number(user.id), e.target.value)}
+                        sx={{ color: "#fff" }}
                       >
                         {roleOptions.map((roleOption) => (
                           <MenuItem key={roleOption} value={roleOption}>
@@ -253,25 +314,22 @@ const AdminPanel: React.FC = () => {
                         ))}
                       </Select>
                     </FormControl>
+                  </TableCell>
+                  <TableCell>
                     <Button
-                      size="small"
-                      variant="outlined"
-                      onClick={() => handleRoleUpdate(user.id)}//dummy
+                      variant="contained"
+                      onClick={() => handleBanToggle(Number(user.id))}
                       sx={{
-                        color: "#fff",
-                        borderColor: "#555",
-                        "&:hover": {
-                          borderColor: "#888",
-                          backgroundColor: "#222",
-                        },
+                        backgroundColor: "red",
+                        "&:hover": { backgroundColor: "darkred" },
                       }}
                     >
-                      Change
+                      {banSelections[Number(user.id)] ? "Unban" : "Ban"}
                     </Button>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
