@@ -16,6 +16,7 @@ import {
   TableBody,
   TableContainer,
   Paper,
+  Button,
 } from "@mui/material";
 import { webApiUrl } from "../../env/envVars";
 import UserDto from "../../dto/user/UserDto";
@@ -72,7 +73,6 @@ const AdminPanel: React.FC = () => {
     }
   };
 
-  
   const handleTimerToggle = async () => {
     const newTimerState = !timerActive;
     setTimerActive(newTimerState);
@@ -95,6 +95,45 @@ const AdminPanel: React.FC = () => {
     }
   };
 
+  const handleRoleChange = async (userId: number, newRole: string) => {
+    setRoleSelections((prev) => ({
+      ...prev,
+      [userId]: newRole,
+    }));
+
+    try {
+      const response = await fetch(`${webApiUrl}/admin/users/${userId}/role`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (!response.ok) {
+        throw new Error("Role update failed");
+      }
+      const result = await response.json();
+      console.log("Role updated:", result);
+    } catch (error) {
+      console.error("Role update error:", error);
+    }
+  };
+
+  const handleBanUser = async (userId: number) => {
+    try {
+      const response = await fetch(`${webApiUrl}/admin/users/${userId}/ban`, {
+        method: "POST",
+      });
+      if (!response.ok) {
+        throw new Error("Ban request failed");
+      }
+      const result = await response.json();
+      console.log("User banned:", result);
+    } catch (error) {
+      console.error("Ban error:", error);
+    }
+  };
+
   return (
     <Box sx={{ backgroundColor: "#000", color: "#fff", minHeight: "100vh", p: 5 }}>
       <Typography variant="h3" gutterBottom>
@@ -114,7 +153,7 @@ const AdminPanel: React.FC = () => {
             type="number"
             value={voterCommission}
             onChange={(e) => handleCommissionChange(setVoterCommission, e.target.value)}
-            InputProps={{ inputProps: { min: 0, max: 100 } }}
+            InputProps={{ inputProps: { max: 100 } }}
             sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
             fullWidth
           />
@@ -125,7 +164,7 @@ const AdminPanel: React.FC = () => {
             onChange={(e) =>
               handleCommissionChange(setPhotographerCommission, e.target.value)
             }
-            InputProps={{ inputProps: { min: 0, max: 100 } }}
+            InputProps={{ inputProps: { max: 100 } }}
             sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
             fullWidth
           />
@@ -145,53 +184,6 @@ const AdminPanel: React.FC = () => {
             label="Timer Active"
             sx={{ color: "#fff" }}
           />
-          {[
-            {
-              label: "Vote Duration",
-              value: voteDuration,
-              unit: voteUnit,
-              setValue: setVoteDuration,
-              setUnit: setVoteUnit,
-            },
-            {
-              label: "Auction Duration",
-              value: auctionDuration,
-              unit: auctionUnit,
-              setValue: setAuctionDuration,
-              setUnit: setAuctionUnit,
-            },
-            {
-              label: "Purchase Duration",
-              value: purchaseDuration,
-              unit: purchaseUnit,
-              setValue: setPurchaseDuration,
-              setUnit: setPurchaseUnit,
-            },
-          ].map((item, i) => (
-            <Box key={i} display="flex" gap={2} flexDirection="row" alignItems="center">
-              <TextField
-                label={item.label}
-                type="number"
-                value={item.value}
-                onChange={(e) => item.setValue(parseInt(e.target.value))}
-                InputProps={{ inputProps: { min: 0 } }}
-                sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, width: 150 }}
-              />
-              <FormControl sx={{ minWidth: 120 }}>
-                <InputLabel sx={{ color: "#fff" }}>Unit</InputLabel>
-                <Select
-                  value={item.unit}
-                  label="Unit"
-                  onChange={(e) => item.setUnit(e.target.value)}
-                  sx={{ color: "#fff", borderColor: "#555" }}
-                >
-                  <MenuItem value="day">Day</MenuItem>
-                  <MenuItem value="hour">Hour</MenuItem>
-                  <MenuItem value="minute">Minute</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
-          ))}
         </Box>
       </Box>
 
@@ -205,6 +197,7 @@ const AdminPanel: React.FC = () => {
               <TableCell sx={{ color: "#fff" }}>Email</TableCell>
               <TableCell sx={{ color: "#fff" }}>TC Identity</TableCell>
               <TableCell sx={{ color: "#fff" }}>Role</TableCell>
+              <TableCell sx={{ color: "#fff" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -214,45 +207,16 @@ const AdminPanel: React.FC = () => {
                 <TableRow key={userIdStr}>
                   <TableCell sx={{ color: "#fff" }}>{userIdStr}</TableCell>
                   <TableCell sx={{ color: "#fff" }}>{user.username}</TableCell>
-                  <TableCell sx={{ color: "#fff" }}>
-                    {user.first_name} {user.last_name}
-                  </TableCell>
+                  <TableCell sx={{ color: "#fff" }}>{user.first_name} {user.last_name}</TableCell>
                   <TableCell sx={{ color: "#fff" }}>{user.email}</TableCell>
                   <TableCell sx={{ color: "#fff" }}>{user.tc_identity_no || "-"}</TableCell>
                   <TableCell>
-                    <FormControl
-                      variant="outlined"
-                      sx={{
-                        minWidth: 120,
-                        "& .MuiOutlinedInput-root": {
-                          backgroundColor: "#222",
-                          borderColor: "#555",
-                          borderRadius: "4px",
-                        },
-                        "& .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#555",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                          borderColor: "#888",
-                        },
-                        "& .MuiSvgIcon-root": {
-                          color: "#fff",
-                        },
-                        "& .MuiInputLabel-root": {
-                          color: "#aaa",
-                        },
-                      }}
-                    >
+                    <FormControl variant="outlined" sx={{ minWidth: 120 }}>
                       <InputLabel sx={{ color: "#aaa" }}>Role</InputLabel>
                       <Select
                         label="Role"
                         value={roleSelections[Number(user.id)] || ""}
-                        onChange={(e) =>
-                          setRoleSelections((prev) => ({
-                            ...prev,
-                            [Number(user.id)]: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => handleRoleChange(Number(user.id), e.target.value)}
                         sx={{ color: "#fff" }}
                       >
                         {roleOptions.map((roleOption) => (
@@ -262,6 +226,15 @@ const AdminPanel: React.FC = () => {
                         ))}
                       </Select>
                     </FormControl>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleBanUser(Number(user.id))}
+                    >
+                      Ban
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

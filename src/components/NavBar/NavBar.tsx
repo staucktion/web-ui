@@ -156,10 +156,12 @@ const NavBar: React.FC = () => {
 						{/* Boşluk veya marka */}
 					</Typography>
 
-					{/* Explore (Dropdown) */}
-					<Button
-						id="explore-button"
-						aria-controls={open ? "explore-menu" : undefined}
+					{/* Control (Dropdown) */}
+					{(checkUserRole(user, "admin") || checkUserRole(user, "validator")) && (
+  <>
+						<Button
+						id="control-panel-button"
+						aria-controls={open ? "control-panel-menu" : undefined}
 						aria-haspopup="true"
 						aria-expanded={open ? "true" : undefined}
 						onClick={handleExploreClick}
@@ -172,49 +174,40 @@ const NavBar: React.FC = () => {
 							padding: "12px 25px",
 							height: "50px",
 						}}
-					>
-						Explore
-					</Button>
-					<Menu id="explore-menu" anchorEl={anchorEl} open={open} onClose={handleExploreClose} MenuListProps={{ "aria-labelledby": "explore-button" }}>
-						<MenuItem
-							onClick={() => {
-								handleExploreClose();
-								navigate("/photos");
-							}}
 						>
-							Photos
-						</MenuItem>
-						<MenuItem
-							onClick={() => {
-								handleExploreClose();
-								navigate("/something");
-							}}
+						Control Panel
+						</Button>
+						<Menu
+						id="control-panel-menu"
+						anchorEl={anchorEl}
+						open={open}
+						onClose={handleExploreClose}
+						MenuListProps={{ "aria-labelledby": "control-panel-button" }}
 						>
-							Something
-						</MenuItem>
-						
 						{checkUserRole(user, "validator") && (
-						<MenuItem
+							<MenuItem
 							onClick={() => {
-							handleExploreClose();
-							navigate("/validator");
+								handleExploreClose();
+								navigate("/validator");
 							}}
-						>
+							>
 							Validator Panel
-						</MenuItem>
+							</MenuItem>
 						)}
 
 						{checkUserRole(user, "admin") && (
-						<MenuItem
+							<MenuItem
 							onClick={() => {
-							handleExploreClose();
-							navigate("/admin");
+								handleExploreClose();
+								navigate("/admin");
 							}}
-						>
+							>
 							Admin Panel
-						</MenuItem>
+							</MenuItem>
 						)}
 						</Menu>
+					</>
+					)}
 
 					{/* License */}
 					<Button
