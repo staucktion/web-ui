@@ -56,11 +56,11 @@ const AdminPanel: React.FC = () => {
       }, {} as { [key: number]: string });
       setRoleSelections(initialRoleSelections);
 
-      // Eğer user nesnesinde banned bilgisi varsa onu al, yoksa false varsay
+
       const initialBanSelections = data.reduce((acc, user) => {
-        const banned = user.hasOwnProperty("banned") ? Boolean((user as any).banned) : false;
+        const banned = "banned" in user ? Boolean((user as UserDto & { banned: boolean }).banned) : false;
         return { ...acc, [Number(user.id)]: banned };
-      }, {} as { [key: number]: boolean });
+      }, {} as { [key: number]: boolean });      
       setBanSelections(initialBanSelections);
     } catch (err) {
       console.error(err);
