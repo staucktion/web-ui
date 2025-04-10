@@ -65,6 +65,7 @@ const AdminPanel: React.FC = () => {
 
 	useEffect(() => {
 		fetchAllUsers();
+		// fetchConfigs();
 	}, []);
 
 	const handleVoterCommissionChange = (value: string) => {
@@ -158,12 +159,11 @@ const AdminPanel: React.FC = () => {
 			</Typography>
 
 			<Box sx={{ backgroundColor: "#111", p: 2, borderRadius: 2, mb: 5 }}>
-				<Typography variant="h5" gutterBottom>
+				<Typography variant="h5" gutterBottom sx={{ mb: 2 }}>
 					System Settings
 				</Typography>
-				<br />
-				<Box sx={{ backgroundColor: "#1A1A1A", p: 2, borderRadius: 2, mb: 5 }}>
-					<Box display="flex" flexWrap="wrap" gap={4} mt={2}>
+				<Box sx={{ backgroundColor: "#1A1A1A", p: 2, borderRadius: 2, mb: 3 }}>
+					<Box mt={2}>
 						<TextField
 							label="Voter Commission (%)"
 							type="number"
@@ -177,9 +177,28 @@ const AdminPanel: React.FC = () => {
 							type="number"
 							value={photographerCommission}
 							onChange={(e) => handlePhotographerCommissionChange(e.target.value)}
-							sx={{ input: { color: "#fff" }, label: { color: "#aaa" } }}
+							sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, mt: 3 }}
 							fullWidth
 						/>
+
+						<FormControlLabel
+							control={
+								<Switch
+									checked={timerActive}
+									onChange={handleTimerToggle}
+									sx={{
+										"& .MuiSwitch-switchBase.Mui-checked": { color: "red" },
+										"& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+											backgroundColor: "red",
+										},
+									}}
+								/>
+							}
+							label="Global Timer Activation"
+							sx={{ color: "#fff", my: 2 }}
+						/>
+
+						<br />
 
 						<Button
 							variant="contained"
@@ -194,23 +213,6 @@ const AdminPanel: React.FC = () => {
 					</Box>
 				</Box>
 				<Box sx={{ backgroundColor: "#1A1A1A", p: 2, borderRadius: 2 }}>
-					<FormControlLabel
-						control={
-							<Switch
-								checked={timerActive}
-								onChange={handleTimerToggle}
-								sx={{
-									"& .MuiSwitch-switchBase.Mui-checked": { color: "red" },
-									"& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-										backgroundColor: "red",
-									},
-								}}
-							/>
-						}
-						label="Global Timer Activation"
-						sx={{ color: "#fff", mb: 2 }}
-					/>
-
 					<Box display="flex" flexWrap="wrap" gap={4} mt={2}>
 						{[
 							{
