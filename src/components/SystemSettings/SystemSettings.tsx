@@ -111,26 +111,9 @@ const SystemSettings: React.FC = () => {
 		else setPhotographerCommission(null);
 	};
 
-	const handleTimerToggle = async () => {
-		const newTimerState = !timerActive;
-		setTimerActive(newTimerState);
-
-		try {
-			const response = await fetch(`${webApiUrl}/admin/settings/timer`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ timerActive: newTimerState }),
-			});
-			if (!response.ok) {
-				throw new Error("Timer Active güncelleme isteği başarısız oldu");
-			}
-			const result = await response.json();
-			console.log("Timer güncellendi", result);
-		} catch (error) {
-			console.error("Timer Active güncellenemedi:", error);
-		}
+	const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.checked;
+		setTimerActive(value);
 	};
 
 	const handeUnitChange = (e: SelectChangeEvent, setter: React.Dispatch<React.SetStateAction<UnitType>>) => {
