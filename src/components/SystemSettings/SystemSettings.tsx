@@ -237,7 +237,7 @@ const SystemSettings: React.FC = () => {
 									}}
 								/>
 							}
-							label="Global Timer Activation"
+							label="Global Timer Job Activation"
 							sx={{ color: "#fff", my: 2 }}
 						/>
 
