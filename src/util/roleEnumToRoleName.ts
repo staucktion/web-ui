@@ -13,5 +13,7 @@ export const roleEnumToRoleName = (role: RoleEnum | string) => {
 		case "":
 		case RoleEnum.USER:
 			return "USER";
+		default:
+			return "UNKNOWN_ROLE";
 	}
 };
