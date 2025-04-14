@@ -32,12 +32,14 @@ const AdminUsers: React.FC = () => {
 	const handleRoleChange = async (userId: number, newRole: RoleEnum | string) => {
 		if (newRole === "USER") newRole = null;
 
-		const previousRole = users.find((user) => user.id === userId)?.role_id;
+		const user = users.find((user) => user.id === userId);
 
-		if (!previousRole) {
+		if (!user) {
 			toastError("User not found");
 			return;
 		}
+
+		const previousRole = user.role_id;
 
 		setUsers(users.map((user) => (user.id === userId ? { ...user, role_id: newRole as RoleEnum } : user)));
 
@@ -50,28 +52,30 @@ const AdminUsers: React.FC = () => {
 				body: JSON.stringify({ role_id: newRole }),
 			});
 			if (!response.ok) {
-				throw new Error("Role update failed");
+				const errorMessage = await response.json();
+				throw new Error(errorMessage.message);
 			}
 			const result = await response.json();
 			console.log("Role updated:", result);
 			toastSuccess(`User role successfully updated to ${roleEnumToRoleName(newRole)}`);
 		} catch (error) {
 			console.error("Role update error:", error);
-			toastError(`User role update failed. ${getVisibleErrorMessage(error)}`);
+			toastError(`User role update failed: ${getVisibleErrorMessage(error)}`);
 			setUsers(users.map((user) => (user.id === userId ? { ...user, role_id: previousRole } : user)));
 		}
 	};
 
 	const handleBanToggle = async (userId: number) => {
-		const previousStatus = users.find((user) => user.id === userId)?.status_id;
+		const user = users.find((user) => user.id === userId);
 
-		if (!previousStatus) {
+		if (!user) {
 			toastError("User not found");
 			return;
 		}
 
+		const previousStatus = user.status_id;
+
 		const newStatus = previousStatus === StatusEnum.BANNED ? StatusEnum.ACTIVE : StatusEnum.BANNED;
-		console.log(newStatus);
 		setUsers(users.map((user) => (user.id === userId ? { ...user, status_id: newStatus } : user)));
 
 		try {
@@ -83,14 +87,15 @@ const AdminUsers: React.FC = () => {
 				body: JSON.stringify({ status_id: newStatus }),
 			});
 			if (!response.ok) {
-				throw new Error("Ban update failed");
+				const errorMessage = await response.json();
+				throw new Error(errorMessage.message);
 			}
 			const result = await response.json();
 			console.log("Ban updated:", result);
 			toastSuccess(`User status successfully updated to ${StatusEnum[newStatus]}`);
 		} catch (error) {
 			console.error("Ban update error:", error);
-			toastError(`User status update failed. ${getVisibleErrorMessage(error)}`);
+			toastError(`User status update failed: ${getVisibleErrorMessage(error)}`);
 			setUsers(users.map((user) => (user.id === userId ? { ...user, status_id: previousStatus } : user)));
 		}
 	};
