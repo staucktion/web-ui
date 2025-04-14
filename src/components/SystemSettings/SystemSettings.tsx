@@ -97,6 +97,7 @@ const SystemSettings: React.FC = () => {
 	useEffect(() => {
 		fetchConfigs();
 		fetchDurations();
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- FC equivalent of componentDidMount
 	}, []);
 
 	const handleVoterCommissionChange = (value: string) => {
