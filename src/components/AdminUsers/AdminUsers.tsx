@@ -2,13 +2,14 @@ import { Button, FormControl, InputLabel, MenuItem, Paper, Select, Table, TableB
 import React, { useEffect, useState } from "react";
 import UserDto from "../../dto/user/UserDto";
 import { webApiUrl } from "../../env/envVars";
+import { RoleEnum } from "../../enum/roleEnum";
+import { toastError, toastSuccess } from "../../util/toastUtil";
+import { StatusEnum } from "../../enum/statusEnum";
+import { getVisibleErrorMessage } from "../../util/getVisibleErrorMessage";
+import { roleEnumToRoleName } from "../../util/roleEnumToRoleName";
 
 const AdminUsers: React.FC = () => {
 	const [users, setUsers] = useState<UserDto[]>([]);
-	const [roleSelections, setRoleSelections] = useState<{ [key: number]: string }>({});
-	const [banSelections, setBanSelections] = useState<{ [key: number]: boolean }>({});
-
-	const roleOptions = ["admin", "photographer", "voter"];
 
 	const fetchAllUsers = async () => {
 		try {
@@ -17,20 +18,10 @@ const AdminUsers: React.FC = () => {
 				throw new Error("Failed to fetch users");
 			}
 			const data: UserDto[] = await response.json();
-			setUsers(data);
-			const initialRoleSelections = data.reduce((acc, user) => {
-				const role = user.user_role && typeof user.user_role === "object" ? user.user_role.role : "";
-				return { ...acc, [Number(user.id)]: role };
-			}, {} as { [key: number]: string });
-			setRoleSelections(initialRoleSelections);
-
-			const initialBanSelections = data.reduce((acc, user) => {
-				const banned = "banned" in user ? Boolean((user as UserDto & { banned: boolean }).banned) : false;
-				return { ...acc, [Number(user.id)]: banned };
-			}, {} as { [key: number]: boolean });
-			setBanSelections(initialBanSelections);
+			setUsers(data.sort((a, b) => Number(a.id) - Number(b.id)));
 		} catch (err) {
 			console.error(err);
+			toastError("Failed to fetch users");
 		}
 	};
 
@@ -38,53 +29,69 @@ const AdminUsers: React.FC = () => {
 		fetchAllUsers();
 	}, []);
 
-	const handleRoleChange = async (userId: number, newRole: string) => {
-		setRoleSelections((prev) => ({
-			...prev,
-			[userId]: newRole,
-		}));
+	const handleRoleChange = async (userId: number, newRole: RoleEnum | string) => {
+		if (newRole === "USER") newRole = null;
+
+		const previousRole = users.find((user) => user.id === userId)?.role_id;
+
+		if (!previousRole) {
+			toastError("User not found");
+			return;
+		}
+
+		setUsers(users.map((user) => (user.id === userId ? { ...user, role_id: newRole as RoleEnum } : user)));
 
 		try {
-			const response = await fetch(`${webApiUrl}/admin/users/${userId}/role`, {
-				method: "PUT",
+			const response = await fetch(`${webApiUrl}/admin/users/${userId}`, {
+				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ role: newRole }),
+				body: JSON.stringify({ role_id: newRole }),
 			});
 			if (!response.ok) {
 				throw new Error("Role update failed");
 			}
 			const result = await response.json();
 			console.log("Role updated:", result);
+			toastSuccess(`User role successfully updated to ${roleEnumToRoleName(newRole)}`);
 		} catch (error) {
 			console.error("Role update error:", error);
+			toastError(`User role update failed. ${getVisibleErrorMessage(error)}`);
+			setUsers(users.map((user) => (user.id === userId ? { ...user, role_id: previousRole } : user)));
 		}
 	};
 
 	const handleBanToggle = async (userId: number) => {
-		// Yeni yasaklama durumu
-		const newBanState = !banSelections[userId];
-		setBanSelections((prev) => ({
-			...prev,
-			[userId]: newBanState,
-		}));
+		const previousStatus = users.find((user) => user.id === userId)?.status_id;
+
+		if (!previousStatus) {
+			toastError("User not found");
+			return;
+		}
+
+		const newStatus = previousStatus === StatusEnum.BANNED ? StatusEnum.ACTIVE : StatusEnum.BANNED;
+		console.log(newStatus);
+		setUsers(users.map((user) => (user.id === userId ? { ...user, status_id: newStatus } : user)));
 
 		try {
-			const response = await fetch(`${webApiUrl}/admin/users/${userId}/ban`, {
-				method: "POST",
+			const response = await fetch(`${webApiUrl}/admin/users/${userId}`, {
+				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ banned: newBanState }),
+				body: JSON.stringify({ status_id: newStatus }),
 			});
 			if (!response.ok) {
 				throw new Error("Ban update failed");
 			}
 			const result = await response.json();
 			console.log("Ban updated:", result);
+			toastSuccess(`User status successfully updated to ${StatusEnum[newStatus]}`);
 		} catch (error) {
 			console.error("Ban update error:", error);
+			toastError(`User status update failed. ${getVisibleErrorMessage(error)}`);
+			setUsers(users.map((user) => (user.id === userId ? { ...user, status_id: previousStatus } : user)));
 		}
 	};
 
@@ -139,10 +146,15 @@ const AdminUsers: React.FC = () => {
 										}}
 									>
 										<InputLabel sx={{ color: "#aaa" }}>Role</InputLabel>
-										<Select label="Role" value={roleSelections[Number(user.id)] || ""} onChange={(e) => handleRoleChange(Number(user.id), e.target.value)} sx={{ color: "#fff" }}>
-											{roleOptions.map((roleOption) => (
-												<MenuItem key={roleOption} value={roleOption}>
-													{roleOption}
+										<Select
+											label="Role"
+											value={user.role_id || "USER"}
+											onChange={(e) => handleRoleChange(Number(user.id), e.target.value as unknown as RoleEnum)}
+											sx={{ color: "#fff" }}
+										>
+											{Object.entries(RoleEnum).map(([key, value]) => (
+												<MenuItem key={key} value={value || "USER"}>
+													{key}
 												</MenuItem>
 											))}
 										</Select>
@@ -157,7 +169,7 @@ const AdminUsers: React.FC = () => {
 											"&:hover": { backgroundColor: "darkred" },
 										}}
 									>
-										{banSelections[Number(user.id)] ? "Unban" : "Ban"}
+										{user.status_id === StatusEnum.BANNED ? "Unban" : "Ban"}
 									</Button>
 								</TableCell>
 							</TableRow>
