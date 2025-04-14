@@ -12,6 +12,7 @@ import ValidatorPanel from "./pages/ValidatorPanel/ValidatorPanel";
 import CategoriesPage from "./pages/Categories/Categories";
 import { checkUserRole } from "./util/checkUserRole";
 import AdminPanel from "./pages/AdminPanel/AdminPanel";
+import { toastError, toastSuccess } from "./util/toastUtil";
 
 function App() {
 	const themeMode = "light";
@@ -35,7 +36,21 @@ function App() {
 const MainLayout: React.FC = () => {
 	const { user } = useAuth();
 
-  console.log("User object:", user);
+	const urlParams = new URLSearchParams(window.location.search);
+	const error = urlParams.get("error");
+	const success = urlParams.get("success");
+
+	if (error) {
+		toastError(error);
+		window.history.replaceState({}, "", window.location.pathname);
+	}
+
+	if (success) {
+		toastSuccess(success);
+		window.history.replaceState({}, "", window.location.pathname);
+	}
+
+	console.log("User object:", user);
 
 	if (user === undefined) {
 		return <CircularProgress />;
@@ -55,7 +70,7 @@ const MainLayout: React.FC = () => {
 			{/* Only for Validator's access*/}
 			<Route path="/validator" element={checkUserRole(user, "validator") ? <ValidatorPanel /> : <Navigate to="/" />} />
 
-      {/* Only for Admin's access*/}
+			{/* Only for Admin's access*/}
 			<Route path="/admin" element={checkUserRole(user, "admin") ? <AdminPanel /> : <Navigate to="/" />} />
 		</Routes>
 	);
