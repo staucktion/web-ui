@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 interface PaymentPageProps {
 	photo: PhotoDto | null;
-	action: "purchaseNow" | "provision";
+	action: "purchaseNow" | "provision" | "purchaseAfterAuction";
 	onClose: () => void;
 	onSuccess: () => void;
 }
@@ -78,17 +78,40 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 					onSuccess();
 				} else {
 					const responseJson = await response.json();
-					if (responseJson.message.toLowerCase().includes("missing fields")) {
-						toastError("Provision failed. Please fill in the missing fields.");
-					} else if (responseJson.message.toLowerCase().includes("not enough")) {
-						toastError("Provision failed. Insufficient balance to complete the transaction.");
-					} else {
-						toastError(`Cannot make provision: ${responseJson.message}`);
-					}
+					if (responseJson.message.toLowerCase().includes("missing fields")) toastError("Provision failed. Please fill in the missing fields.");
+					else if (responseJson.message.toLowerCase().includes("not enough")) toastError("Provision failed. Insufficient balance to complete the transaction.");
+					else if (responseJson.message.toLowerCase().includes("credentials")) toastError("Purchased failed. Invalid credentials.");
+					else toastError(`Cannot make provision: ${responseJson.message}`);
 				}
 			} catch (error) {
 				toastError("Failed to make provision. Check console for details.");
 				console.error("Error make provision:", error);
+			}
+		} else if (action === "purchaseAfterAuction") {
+			try {
+				const response = await fetch(`${webApiUrl}/banks/purchase/auction/photo/${photo?.id}`, {
+					method: "POST",
+					body: JSON.stringify({
+						cardNumber,
+						expirationDate,
+						cvv,
+					}),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+				if (response.ok) {
+					onSuccess();
+				} else {
+					const responseJson = await response.json();
+					if (responseJson.message.toLowerCase().includes("missing fields")) toastError("Provision failed. Please fill in the missing fields.");
+					else if (responseJson.message.toLowerCase().includes("not enough")) toastError("Provision failed. Insufficient balance to complete the transaction.");
+					else if (responseJson.message.toLowerCase().includes("credentials")) toastError("Purchased failed. Invalid credentials.");
+					else toastError(`Cannot purchase photo: ${responseJson.message}`);
+				}
+			} catch (error) {
+				toastError("Failed to purchase after auction. Check console for details.");
+				console.error("Error purchase after auction:", error);
 			}
 		}
 	};
