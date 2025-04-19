@@ -97,6 +97,7 @@ const SystemSettings: React.FC = () => {
 	useEffect(() => {
 		fetchConfigs();
 		fetchDurations();
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- FC equivalent of componentDidMount
 	}, []);
 
 	const handleVoterCommissionChange = (value: string) => {
@@ -197,10 +198,6 @@ const SystemSettings: React.FC = () => {
 
 	return (
 		<>
-			<Typography variant="h3" gutterBottom>
-				Admin Panel
-			</Typography>
-
 			<Box sx={{ backgroundColor: "#111", p: 2, borderRadius: 2, mb: 5 }}>
 				<Typography variant="h5" gutterBottom sx={{ mb: 2 }}>
 					System Settings
