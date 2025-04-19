@@ -11,6 +11,7 @@ import PhotoPurchaseEdit from "../../components/PhotoPurchaseEdit/PhotoPurchaseE
 import PhotoUnknown from "../../components/PhotoUnknown/PhotoUnknown";
 import CategoryDto from "../../dto/category/CategoryDto";
 import PhotoDto from "../../dto/photo/PhotoDto";
+import PendingPurchase from "../PendingPurchase/PendingPurchase";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -168,6 +169,7 @@ const ProfilePage: React.FC = () => {
 						<Tab label="Gallery" />
 						<Tab label="Statistics" />
 						<Tab label="Upload" />
+						<Tab label="Pending Purchase"/>
 					</Tabs>
 
 					{/* GALLERY TAB */}
@@ -238,6 +240,13 @@ const ProfilePage: React.FC = () => {
 								{uploading ? "Uploading..." : "Upload"}
 							</Button>
 						</>
+					)}
+
+					{/* pending purchase tab */}
+		            {selectedTab === 3 && (
+						<Box sx={{ marginTop: 2 }}>
+							<PendingPurchase />
+						</Box>
 					)}
 				</Paper>
 			</Container>
