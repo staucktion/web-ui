@@ -58,6 +58,7 @@ const PendingPurchase: React.FC = () => {
 		if (user) {
 			init();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- FC equivalent of componentDidMount
 	}, [user]);
 
 	const handleOpenModal = (photo: PhotoDto) => {
