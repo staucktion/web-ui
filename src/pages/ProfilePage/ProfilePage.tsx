@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Box, Avatar, Typography, Button, Tabs, Tab, Grid, Paper, Container, Card, CardMedia, FormControl, Select, MenuItem, InputLabel, SelectChangeEvent } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useAuth } from "../../providers/AuthHook";
-import NavBarProfile from "../../components/NavBarProfile/NavBarProfile";
-import { webApiUrl } from "../../env/envVars";
+import EditIcon from "@mui/icons-material/Edit";
+import { Avatar, Box, Button, Card, CardMedia, Container, FormControl, Grid, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Tab, Tabs, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import getProfilePictureSrc from "../../util/getProfilePictureSrc";
+import NavBarProfile from "../../components/NavBarProfile/NavBarProfile";
 import PhotoPurchaseEdit from "../../components/PhotoPurchaseEdit/PhotoPurchaseEdit";
 import PhotoUnknown from "../../components/PhotoUnknown/PhotoUnknown";
 import CategoryDto from "../../dto/category/CategoryDto";
 import PhotoDto from "../../dto/photo/PhotoDto";
+import { webApiUrl } from "../../env/envVars";
+import { useAuth } from "../../providers/AuthHook";
+import getProfilePictureSrc from "../../util/getProfilePictureSrc";
+import PendingPurchase from "../PendingPurchase/PendingPurchase";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -147,7 +148,7 @@ const ProfilePage: React.FC = () => {
 							margin: "0 auto 20px auto",
 						}}
 					/>
-					<Typography variant="h4" fontWeight="bold" sx={{ marginBottom: 2 }}>
+					<Typography variant="h4" fontWeight="bold" sx={{ marginBottom: 2, maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
 						{user?.username ?? "Guest User"}
 					</Typography>
 					<Button
@@ -168,6 +169,7 @@ const ProfilePage: React.FC = () => {
 						<Tab label="Gallery" />
 						<Tab label="Statistics" />
 						<Tab label="Upload" />
+						<Tab label="Pending Purchase" />
 					</Tabs>
 
 					{/* GALLERY TAB */}
@@ -238,6 +240,13 @@ const ProfilePage: React.FC = () => {
 								{uploading ? "Uploading..." : "Upload"}
 							</Button>
 						</>
+					)}
+
+					{/* pending purchase tab */}
+					{selectedTab === 3 && (
+						<Box sx={{ marginTop: 2 }}>
+							<PendingPurchase />
+						</Box>
 					)}
 				</Paper>
 			</Container>
