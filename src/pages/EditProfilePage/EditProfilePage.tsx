@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { Container, Paper, Typography, Avatar, Box, TextField, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { useAuth } from "../../providers/AuthHook";
+import { Avatar, Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
+import React, { useState } from "react";
 import NavBarEditProfile from "../../components/NavBarEditProfile/NavBarEditProfile";
 import { webApiUrl } from "../../env/envVars";
-import { toastError } from "../../util/toastUtil";
-import { toastSuccess } from "../../util/toastUtil";
+import { useAuth } from "../../providers/AuthHook";
+import { toastError, toastSuccess } from "../../util/toastUtil";
 
 const EditProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -83,7 +82,7 @@ const EditProfilePage: React.FC = () => {
 					>
 						{username ? username.charAt(0).toUpperCase() : "U"} {/* ✅ Avatar Updates */}
 					</Avatar>
-					<Typography variant="h4" fontWeight="bold" sx={{ marginBottom: 2 }}>
+					<Typography variant="h4" fontWeight="bold" sx={{ marginBottom: 2, maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
 						{username || "User"} {/* ✅ Display Live Updated Username */}
 					</Typography>
 					<Box
