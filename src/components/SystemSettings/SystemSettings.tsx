@@ -256,7 +256,7 @@ const SystemSettings: React.FC = () => {
 					<Box display="flex" flexWrap="wrap" gap={4} mt={2}>
 						{[
 							{
-								label: "Starter Duration",
+								label: "Auction Frequency",
 								value: durationStarter,
 								unit: unitStarter,
 								setValue: setDurationStarter,

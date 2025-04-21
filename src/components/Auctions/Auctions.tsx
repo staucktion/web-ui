@@ -3,9 +3,8 @@ import PhotoDto from "../../dto/photo/PhotoDto";
 import { webApiUrl } from "../../env/envVars";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 import "../../styles/Styles.css";
-// Login modal için CustomModal hâlâ kullanılıyor (gerekirse de değiştirebilirsiniz)
-// import CustomModal from "../CustomModal/CustomModal";
 import AuctionModal from "../AuctionModal/AuctionModal";
+import { Typography } from "@mui/material";
 
 const Auctions: React.FC = () => {
 	const { requireAuth } = useRequireAuth();
@@ -54,12 +53,20 @@ const Auctions: React.FC = () => {
 
 	return (
 		<div className="container">
-			<div className="imageGrid">
-				{auctionPhotos.map((img, index) => (
-					<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
-						<img src={img.file_path} alt={`Auction Photo ${index + 1}`} className="image" />
+			<div>
+				{auctionPhotos.length > 0 ? (
+					<div className="imageGrid">
+						{auctionPhotos.map((img, index) => (
+							<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
+								<img src={img.file_path} alt={`Auction Photo ${index + 1}`} className="image" />
+							</div>
+						))}
 					</div>
-				))}
+				) : (
+					<div className="noImages">
+						<Typography variant="h6">No images are being auctioned right now.</Typography>
+					</div>
+				)}
 			</div>
 
 			{/* Auction detay modal'ı: AuctionModal kullanıyoruz */}
