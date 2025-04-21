@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/Styles.css";
 import { webApiUrl } from "../../env/envVars";
-// import { useAuth } from "../../providers/AuthHook";
 import PhotoDto from "../../dto/photo/PhotoDto";
 import useRequireAuth from "../../Hooks/useRequireAuth";
-// import redirectWithPost from "../../util/redirectWithPost";
 import CustomModal from "../CustomModal/CustomModal";
-import VoteModal from "../VoteModal/VoteModal"; // VoteModal dosyanızın yolu
+import VoteModal from "../VoteModal/VoteModal";
+import { Typography } from "@mui/material";
 
 const Vote: React.FC = () => {
-	// const { user } = useAuth();
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
 
 	const [photosToVote, setPhotosToVote] = useState<PhotoDto[]>([]);
@@ -40,36 +38,6 @@ const Vote: React.FC = () => {
 		fetchPhotosToVote();
 	}, []);
 
-	// Oy gönderme (Vote işlemi örneği)
-	// const sendVote = async (img: PhotoDto) => {
-	// 	if (!user) {
-	// 		redirectWithPost("/auth/google");
-	// 		return;
-	// 	}
-
-	// 	try {
-	// 		const response = await fetch(`${webApiUrl}/mail/send`, {
-	// 			method: "POST",
-	// 			headers: { "Content-Type": "application/json" },
-	// 			body: JSON.stringify({ photoId: img.id, action: "Vote" }),
-	// 			credentials: "include",
-	// 		});
-
-	// 		if (!response.ok) {
-	// 			const errorText = await response.text();
-	// 			throw new Error(`Failed to send vote. Status: ${response.status}, Message: ${errorText}`);
-	// 		}
-
-	// 		alert(`Vote registered successfully from ${user.email}!`);
-	// 		setSelectedImage(null);
-	// 		setIsModalOpen(false);
-	// 		fetchPhotosToVote();
-	// 	} catch (error) {
-	// 		console.error("Error sending vote:", error);
-	// 		alert("Failed to send vote. Check console for details.");
-	// 	}
-	// };
-
 	const handleImageClick = (img: PhotoDto) => {
 		requireAuth(() => {
 			setSelectedPhoto(img);
@@ -84,12 +52,20 @@ const Vote: React.FC = () => {
 
 	return (
 		<div className="container">
-			<div className="imageGrid">
-				{photosToVote.map((img, index) => (
-					<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
-						<img src={img.file_path} alt={`Vote Photo ${index + 1}`} className="image" />
+			<div>
+				{photosToVote.length > 0 ? (
+					<div className="imageGrid">
+						{photosToVote.map((img, index) => (
+							<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
+								<img src={img.file_path} alt={`Vote Photo ${index + 1}`} className="image" />
+							</div>
+						))}
 					</div>
-				))}
+				) : (
+					<div className="noImages">
+						<Typography variant="h6">No images are in voting process right now.</Typography>
+					</div>
+				)}
 			</div>
 
 			{/* Giriş (Login) Modal'ı */}
