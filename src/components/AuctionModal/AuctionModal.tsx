@@ -53,30 +53,14 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 						onClose();
 
 						if (message?.room === roomName) {
-							if (user?.id === message.aucitonPhoto.winner_user_id_1)
-								toastSuccess("Congratulations! You won the auction, make payment to photo as soon as possible to buy it.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
+							if (user?.id === message.aucitonPhoto.winner_user_id_1) toastSuccess("Congratulations! You won the auction, make payment to photo as soon as possible to buy it.");
 							else if (user?.id === message.aucitonPhoto.winner_user_id_2)
-								toast("You are the second winner. If the first winner does not purchase the photo from the auction, you would buy it.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
+								toast("You are the second winner. If the first winner does not purchase the photo from the auction, you would buy it.");
 							else if (user?.id === message.aucitonPhoto.winner_user_id_3)
-								toast("You are the third winner. If the second winner does not purchase the photo from the auction, you would buy it.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
-							else
-								toastWarning("You cannot win the auction.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
+								toast("You are the third winner. If the second winner does not purchase the photo from the auction, you would buy it.");
+							else 
+
+							 toastWarning("You cannot win the auction.");
 						}
 					});
 				}
@@ -158,7 +142,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			});
 
 			if (response.ok) {
-				toastSuccess(`Successfully place a bid with amount: ${bidAmount}`, { position: "bottom-center" });
+				toastSuccess(`Bid placed successfully with an amount of ${bidAmount}.`);
 			} else {
 				toastError(`Failed to place a bid: ${(await response.json()).message}`);
 			}
