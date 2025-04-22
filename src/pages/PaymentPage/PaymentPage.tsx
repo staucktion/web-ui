@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 interface PaymentPageProps {
 	photo: PhotoDto | null;
-	action: "purchaseNow" | "provision" | "purchaseAfterAuction";
+	action: "purchaseNow" | "provision" | "purchaseAfterAuction" | "profit";
 	onClose: () => void;
 	onSuccess: () => void;
 }
@@ -112,6 +112,25 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 			} catch (error) {
 				toastError("Failed to purchase after auction. Check console for details.");
 				console.error("Error purchase after auction:", error);
+			}
+		} else if (action === "profit") {
+			try {
+				const response = await fetch(`${webApiUrl}/banks/withdraw-profit`, {
+					method: "POST",
+					body: JSON.stringify({
+						cardNumber,
+						expirationDate,
+						cvv,
+					}),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+				if (response.ok) onSuccess();
+				else toastError(`Withdrawal was unsuccessful.`);
+			} catch (error) {
+				toastError(`Withdrawal was unsuccessful.`);
+				console.error("Withdrawal was unsuccessful:", error);
 			}
 		}
 	};
