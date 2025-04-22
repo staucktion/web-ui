@@ -2,7 +2,7 @@ import { Box, Button, CircularProgress, Modal, Typography } from "@mui/material"
 import React, { useEffect, useState } from "react";
 import ProfitResponseDto from "../../dto/profit/ProfitResponseDto";
 import { webApiUrl } from "../../env/envVars";
-import { toastError, toastSuccess } from "../../util/toastUtil";
+import { toastSuccess } from "../../util/toastUtil";
 import PaymentPage from "../PaymentPage/PaymentPage";
 
 const ProfitPage: React.FC = () => {
@@ -42,7 +42,7 @@ const ProfitPage: React.FC = () => {
 		init();
 		setIsPaymentModalOpen(false);
 	};
-	
+
 	const handleCloseModal = () => {
 		setIsPaymentModalOpen(false);
 		init();
