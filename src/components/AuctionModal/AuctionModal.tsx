@@ -60,7 +60,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 								toast("You are the second winner. If the first winner does not purchase the photo from the auction, you would buy it.");
 							else if (user?.id === message.aucitonPhoto.winner_user_id_3)
 								toast("You are the third winner. If the second winner does not purchase the photo from the auction, you would buy it.");
-							else if (!myPhotos.some((photo) => photo.id === dataAuctionPhoto.photo_id)) toastWarning("You cannot win the auction.");
+							else if (!myPhotos.some((photo) => photo.id === dataAuctionPhoto.photo_id)) toastWarning("You did not win the auction.");
 							else toastWarning("Auction is over.");
 						}
 					});
