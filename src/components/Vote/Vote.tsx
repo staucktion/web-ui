@@ -60,11 +60,11 @@ const Vote: React.FC = () => {
 		<div className="container">
 			<div>
 				{Object.keys(photosToVote).length > 0 ? (
-					Object.keys(photosToVote).map((key) => (
-						<React.Fragment key={key}>
-							<Typography variant="h6">{photosToVote[+key][0].category.name}</Typography>
-							<div className="imageGrid" key={key}>
-								{photosToVote[+key].map((img, index) => (
+					Object.keys(photosToVote).map((category_id) => (
+						<React.Fragment key={category_id}>
+							<Typography variant="h6">{photosToVote[+category_id][0].category.name}</Typography>
+							<div className="imageGrid" key={category_id}>
+								{photosToVote[+category_id].map((img, index) => (
 									<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
 										<img src={img.file_path} alt={`Vote Photo ${index + 1}`} className="image" />
 									</div>
