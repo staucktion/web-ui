@@ -51,7 +51,7 @@ const ProfitPage: React.FC = () => {
 	return (
 		<>
 			<Typography variant="h6" color="textSecondary" mt={2}>
-				You can withdraw money from the profit you make by selling photos and voting on sold photos.
+				You can withdraw money from the profit you make by selling photos and voting on photos that were auctioned based on your vote.
 			</Typography>
 
 			{loading && (
