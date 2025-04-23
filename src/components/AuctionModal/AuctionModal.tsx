@@ -33,9 +33,11 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 
 	useEffect(() => {
 		let dataAuctionPhoto: AuctionPhotoDto;
+		let myPhotos: PhotoDto[];
 		const init = async () => {
 			try {
-				dataAuctionPhoto = await fetchInitialData();
+				dataAuctionPhoto = await fetchAuctionPhotoData();
+				myPhotos = await fetchMyPhotos();
 
 				// ws implementation
 				if (socket) {
@@ -45,7 +47,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 
 					socket.on(`new_bid`, (bidMessage: BidResponseDto & { room: string }) => {
 						if (bidMessage?.room === roomName) {
-							fetchInitialData();
+							fetchAuctionPhotoData();
 						}
 					});
 
@@ -53,30 +55,13 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 						onClose();
 
 						if (message?.room === roomName) {
-							if (user?.id === message.aucitonPhoto.winner_user_id_1)
-								toastSuccess("Congratulations! You won the auction, make payment to photo as soon as possible to buy it.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
+							if (user?.id === message.aucitonPhoto.winner_user_id_1) toastSuccess("Congratulations! You won the auction, make payment to photo as soon as possible to buy it.");
 							else if (user?.id === message.aucitonPhoto.winner_user_id_2)
-								toast("You are the second winner. If the first winner does not purchase the photo from the auction, you would buy it.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
+								toast("You are the second winner. If the first winner does not purchase the photo from the auction, you would buy it.");
 							else if (user?.id === message.aucitonPhoto.winner_user_id_3)
-								toast("You are the third winner. If the second winner does not purchase the photo from the auction, you would buy it.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
-							else
-								toastWarning("You cannot win the auction.", {
-									position: "bottom-center",
-									autoClose: false,
-									closeOnClick: false,
-								});
+								toast("You are the third winner. If the second winner does not purchase the photo from the auction, you would buy it.");
+							else if (!myPhotos.some((photo) => photo.id === dataAuctionPhoto.photo_id)) toastWarning("You did not win the auction.");
+							else toastWarning("Auction is over.");
 						}
 					});
 				}
@@ -99,7 +84,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const fetchInitialData = async (): Promise<AuctionPhotoDto> => {
+	const fetchAuctionPhotoData = async (): Promise<AuctionPhotoDto> => {
 		const responseAuctionPhoto = await fetch(`${webApiUrl}/auctions/photos/${photo.id}`);
 		if (!responseAuctionPhoto.ok) {
 			throw new Error("Failed to fetch auction photo");
@@ -122,6 +107,13 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		else setIsLastBidBelongToCurrentUser(false);
 
 		return dataAuctionPhoto;
+	};
+
+	const fetchMyPhotos = async (): Promise<PhotoDto[]> => {
+		const responseMyPhotos = await fetch(`${webApiUrl}/photos/my/all`);
+		if (!responseMyPhotos.ok) throw new Error("Failed to fetch photo data");
+		const myPhotos: PhotoDto[] = await responseMyPhotos.json();
+		return myPhotos;
 	};
 
 	const handleBidSubmit = async () => {
@@ -158,7 +150,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			});
 
 			if (response.ok) {
-				toastSuccess(`Successfully place a bid with amount: ${bidAmount}`, { position: "bottom-center" });
+				toastSuccess(`Bid placed successfully with an amount of ${bidAmount}.`);
 			} else {
 				toastError(`Failed to place a bid: ${(await response.json()).message}`);
 			}

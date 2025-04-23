@@ -284,7 +284,7 @@ const SystemSettings: React.FC = () => {
 								setUnit: setUnitPurchase,
 							},
 						].map((item, i) => (
-							<Box key={i} display="flex" gap={2} flexDirection="row" alignItems="center">
+							<Box key={i} display="flex" gap={2} flexDirection="row" sx={{ mr: 5 }}>
 								<TextField
 									label={item.label}
 									type="number"
@@ -292,9 +292,9 @@ const SystemSettings: React.FC = () => {
 									onChange={(e) => handleDurationChange(e, item.setValue)}
 									sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, width: 150 }}
 								/>
-								<FormControl sx={{ minWidth: 120 }}>
-									<InputLabel sx={{ color: "#fff" }}>Unit</InputLabel>
-									<Select value={item.unit ?? ""} label="Unit" onChange={(e) => handeUnitChange(e, item.setUnit)} sx={{ color: "#fff", borderColor: "#555" }}>
+								<FormControl sx={{ minWidth: 170 }}>
+									<InputLabel sx={{ color: "#aaa" }}>{item.label} Unit</InputLabel>
+									<Select value={item.unit ?? ""} label={`${item.label} Unit`} onChange={(e) => handeUnitChange(e, item.setUnit)} sx={{ color: "#fff", borderColor: "#555" }}>
 										<MenuItem value="day">Day</MenuItem>
 										<MenuItem value="hour">Hour</MenuItem>
 										<MenuItem value="minute">Minute</MenuItem>
