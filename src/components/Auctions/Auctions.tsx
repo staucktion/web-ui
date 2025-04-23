@@ -9,7 +9,7 @@ import { Typography } from "@mui/material";
 const Auctions: React.FC = () => {
 	const { requireAuth } = useRequireAuth();
 
-	const [auctionPhotos, setAuctionPhotos] = useState<PhotoDto[]>([]);
+	const [auctionPhotos, setAuctionPhotos] = useState<Record<number, PhotoDto[]>>({});
 	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -20,11 +20,17 @@ const Auctions: React.FC = () => {
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
-			const data: PhotoDto[] = await response.json();
+			const data: Record<number, PhotoDto[]> = await response.json();
 
-			// Her fotoğrafın file_path'ini oluşturuyoruz
-			data.forEach((img) => {
-				img.file_path = `${webApiUrl}/photos/${img.id}`;
+			Object.keys(data).forEach((key) => {
+				data[+key].forEach((img) => {
+					img.file_path = `${webApiUrl}/photos/${img.id}`;
+				});
+				data[+key].sort((a, b) => b.vote_count - a.vote_count);
+
+				if (data[+key].length === 0) {
+					delete data[+key];
+				}
 			});
 
 			setAuctionPhotos(data);
@@ -54,14 +60,19 @@ const Auctions: React.FC = () => {
 	return (
 		<div className="container">
 			<div>
-				{auctionPhotos.length > 0 ? (
-					<div className="imageGrid">
-						{auctionPhotos.map((img, index) => (
-							<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
-								<img src={img.file_path} alt={`Auction Photo ${index + 1}`} className="image" />
+				{Object.keys(auctionPhotos).length > 0 ? (
+					Object.keys(auctionPhotos).map((category_id) => (
+						<>
+							<Typography variant="h6">{auctionPhotos[+category_id][0].category.name}</Typography>
+							<div className="imageGrid" key={category_id}>
+								{auctionPhotos[+category_id].map((img, index) => (
+									<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
+										<img src={img.file_path} alt={`Auction Photo ${index + 1}`} className="image" />
+									</div>
+								))}
 							</div>
-						))}
-					</div>
+						</>
+					))
 				) : (
 					<div className="noImages">
 						<Typography variant="h6">No images are being auctioned right now.</Typography>
