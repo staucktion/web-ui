@@ -61,7 +61,7 @@ const Vote: React.FC = () => {
 			<div>
 				{Object.keys(photosToVote).length > 0 ? (
 					Object.keys(photosToVote).map((key) => (
-						<>
+						<React.Fragment key={key}>
 							<Typography variant="h6">{photosToVote[+key][0].category.name}</Typography>
 							<div className="imageGrid" key={key}>
 								{photosToVote[+key].map((img, index) => (
@@ -70,7 +70,7 @@ const Vote: React.FC = () => {
 									</div>
 								))}
 							</div>
-						</>
+						</React.Fragment>
 					))
 				) : (
 					<div className="noImages">

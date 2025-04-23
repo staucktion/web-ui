@@ -62,7 +62,7 @@ const Auctions: React.FC = () => {
 			<div>
 				{Object.keys(auctionPhotos).length > 0 ? (
 					Object.keys(auctionPhotos).map((category_id) => (
-						<>
+						<React.Fragment key={category_id}>
 							<Typography variant="h6">{auctionPhotos[+category_id][0].category.name}</Typography>
 							<div className="imageGrid" key={category_id}>
 								{auctionPhotos[+category_id].map((img, index) => (
@@ -71,7 +71,7 @@ const Auctions: React.FC = () => {
 									</div>
 								))}
 							</div>
-						</>
+						</React.Fragment>
 					))
 				) : (
 					<div className="noImages">
