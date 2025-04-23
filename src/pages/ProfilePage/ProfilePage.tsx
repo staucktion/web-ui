@@ -12,6 +12,7 @@ import { webApiUrl } from "../../env/envVars";
 import { useAuth } from "../../providers/AuthHook";
 import getProfilePictureSrc from "../../util/getProfilePictureSrc";
 import PendingPurchase from "../PendingPurchase/PendingPurchase";
+import ProfitPage from "../ProfitPage/ProfitPage";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -170,6 +171,7 @@ const ProfilePage: React.FC = () => {
 						<Tab label="Statistics" />
 						<Tab label="Upload" />
 						<Tab label="Pending Purchase" />
+						<Tab label="Profit" />
 					</Tabs>
 
 					{/* GALLERY TAB */}
@@ -246,6 +248,13 @@ const ProfilePage: React.FC = () => {
 					{selectedTab === 3 && (
 						<Box sx={{ marginTop: 2 }}>
 							<PendingPurchase />
+						</Box>
+					)}
+
+					{/* profit tab */}
+					{selectedTab === 4 && (
+						<Box sx={{ marginTop: 2 }}>
+							<ProfitPage />
 						</Box>
 					)}
 				</Paper>
