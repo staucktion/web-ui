@@ -4,6 +4,7 @@ import useRequireAuth from "../../Hooks/useRequireAuth";
 import CustomModal from "../CustomModal/CustomModal";
 import CustomNavButton from "../CustomNavButton/CustomNavButton";
 import { useAuth } from "../../providers/AuthHook";
+import { useNavigate } from "react-router-dom";
 
 interface NavBarMiddleProps {
 	onAuctionClick: () => void;
@@ -16,6 +17,7 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasab
 	const { user } = useAuth();
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
 	const [activeTab, setActiveTab] = useState<string>(user === null ? "" : "purchase");
+	const navigate = useNavigate();
 
 	const handleClick = (tab: string, action: () => void) => {
 		requireAuth(() => {
@@ -42,7 +44,28 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasab
 			</Box>
 
 			{/* Login Modal */}
-			<CustomModal open={open} title="Login or Register?" onClose={handleClose} onConfirm={handleLogin} confirmText="Login with Google" />
+			<CustomModal
+        open={open}
+        title="Login or Register?"
+        onClose={handleClose}
+
+        // Login with Google 
+        onPrimary={handleLogin}
+        primaryText="Login with Google"
+
+        // Register
+        onSecondary={() => {
+          handleClose();
+          navigate("/register");
+        }}
+        secondaryText="Register"
+        simpleLoginText="Login" 
+        
+        onSimpleLogin={() => {
+          handleClose();
+          navigate("/login");
+        }}
+      />
 		</>
 	);
 };

@@ -3,7 +3,7 @@ import React from "react";
 import SystemSettings from "../../components/SystemSettings/SystemSettings";
 import AdminUsers from "../../components/AdminUsers/AdminUsers";
 import EndedAuctions from "../../components/EndedAuctions/EndedAuctions";
-import VoteToAuctionPercentage from "../../components/VoteToAuctionPercentage/VoteToAuctionPercentage";
+
 
 const AdminPanel: React.FC = () => {
 	return (
@@ -13,7 +13,7 @@ const AdminPanel: React.FC = () => {
       </Typography>
 
       <SystemSettings />
-	  <VoteToAuctionPercentage />
+	  
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>

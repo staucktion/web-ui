@@ -11,6 +11,7 @@ const Header: React.FC = () => {
 		redirectWithPost("/auth/google");
 	};
 
+
 	const handleLogout = () => {
 		redirectWithPost("/auth/logout");
 	};
