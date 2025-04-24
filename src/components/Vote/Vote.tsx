@@ -10,7 +10,7 @@ import { Typography } from "@mui/material";
 const Vote: React.FC = () => {
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
 
-	const [photosToVote, setPhotosToVote] = useState<PhotoDto[]>([]);
+	const [photosToVote, setPhotosToVote] = useState<Record<number, PhotoDto[]>>({});
 	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -21,11 +21,17 @@ const Vote: React.FC = () => {
 			if (!response.ok) {
 				throw new Error("Failed to fetch photos");
 			}
-			const data: PhotoDto[] = await response.json();
+			const data: Record<number, PhotoDto[]> = await response.json();
 
-			// Her fotoğraf için file_path oluşturuluyor.
-			data.forEach((img) => {
-				img.file_path = `${webApiUrl}/photos/${img.id}`;
+			Object.keys(data).forEach((key) => {
+				data[+key].forEach((img) => {
+					img.file_path = `${webApiUrl}/photos/${img.id}`;
+				});
+				data[+key].sort(() => Math.random() - 0.5);
+
+				if (data[+key].length === 0) {
+					delete data[+key];
+				}
 			});
 
 			setPhotosToVote(data);
@@ -53,14 +59,19 @@ const Vote: React.FC = () => {
 	return (
 		<div className="container">
 			<div>
-				{photosToVote.length > 0 ? (
-					<div className="imageGrid">
-						{photosToVote.map((img, index) => (
-							<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
-								<img src={img.file_path} alt={`Vote Photo ${index + 1}`} className="image" />
+				{Object.keys(photosToVote).length > 0 ? (
+					Object.keys(photosToVote).map((category_id) => (
+						<React.Fragment key={category_id}>
+							<Typography variant="h6">{photosToVote[+category_id][0].category.name}</Typography>
+							<div className="imageGrid" key={category_id}>
+								{photosToVote[+category_id].map((img, index) => (
+									<div key={index} className="imageCard" onClick={() => handleImageClick(img)}>
+										<img src={img.file_path} alt={`Vote Photo ${index + 1}`} className="image" />
+									</div>
+								))}
 							</div>
-						))}
-					</div>
+						</React.Fragment>
+					))
 				) : (
 					<div className="noImages">
 						<Typography variant="h6">No images are in voting process right now.</Typography>
