@@ -12,6 +12,7 @@ type UnitType = "day" | "hour" | "minute" | "second" | null;
 const SystemSettings: React.FC = () => {
 	const [voterCommission, setVoterCommission] = useState<number | null>(null);
 	const [photographerCommission, setPhotographerCommission] = useState<number | null>(null);
+	const [photoToAuctionPurchaseNowRatio, setPhotoToAuctionPurchaseNowRatio] = useState<number | null>(null);
 	const [timerActive, setTimerActive] = useState<boolean>(false);
 
 	const [durationStarter, setDurationStarter] = useState<number | null>(null);
@@ -35,6 +36,7 @@ const SystemSettings: React.FC = () => {
 			setTimerActive(responseData.is_timer_job_active);
 			setVoterCommission(responseData.voter_comission_percentage);
 			setPhotographerCommission(responseData.photographer_comission_percentage);
+			setPhotoToAuctionPurchaseNowRatio(responseData.photos_to_auction_percentage);
 		} catch (err) {
 			console.error(err);
 		}
@@ -112,6 +114,12 @@ const SystemSettings: React.FC = () => {
 		else setPhotographerCommission(null);
 	};
 
+	const handlePhotoToAuctionPurchaseNowRatioChange = (value: string) => {
+		const numericValue = parseFloat(value);
+		if (!isNaN(numericValue)) setPhotoToAuctionPurchaseNowRatio(numericValue);
+		else setPhotoToAuctionPurchaseNowRatio(null);
+	};
+
 	const handleTimerToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.checked;
 		setTimerActive(value);
@@ -128,7 +136,7 @@ const SystemSettings: React.FC = () => {
 	};
 
 	const handleSaveConfigs = async () => {
-		if (voterCommission === null || photographerCommission === null || timerActive === undefined) {
+		if (voterCommission === null || photographerCommission === null || timerActive === undefined || photoToAuctionPurchaseNowRatio === null) {
 			toastError("Please provide valid configuration data.");
 			return;
 		}
@@ -136,6 +144,7 @@ const SystemSettings: React.FC = () => {
 		const configData: Omit<DbConfigDto, "id"> = {
 			voter_comission_percentage: voterCommission,
 			photographer_comission_percentage: photographerCommission,
+			photos_to_auction_percentage: photoToAuctionPurchaseNowRatio,
 			is_timer_job_active: timerActive,
 		};
 
@@ -217,6 +226,14 @@ const SystemSettings: React.FC = () => {
 							type="number"
 							value={photographerCommission ?? ""}
 							onChange={(e) => handlePhotographerCommissionChange(e.target.value)}
+							sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, mt: 3 }}
+							fullWidth
+						/>
+						<TextField
+							label="Photo to Auction/Purchase Now Ratio (%)"
+							type="number"
+							value={photoToAuctionPurchaseNowRatio ?? ""}
+							onChange={(e) => handlePhotoToAuctionPurchaseNowRatioChange(e.target.value)}
 							sx={{ input: { color: "#fff" }, label: { color: "#aaa" }, mt: 3 }}
 							fullWidth
 						/>
