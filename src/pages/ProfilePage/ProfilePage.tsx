@@ -13,6 +13,7 @@ import { useAuth } from "../../providers/AuthHook";
 import getProfilePictureSrc from "../../util/getProfilePictureSrc";
 import PendingPurchase from "../PendingPurchase/PendingPurchase";
 import ProfitPage from "../ProfitPage/ProfitPage";
+import PurchasedPhotos from "../../components/PurchasedPhotos/PurchasedPhotos";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -168,31 +169,46 @@ const ProfilePage: React.FC = () => {
 
 					<Tabs value={selectedTab} onChange={handleTabChange} variant="fullWidth" centered sx={{ marginBottom: 2 }}>
 						<Tab label="Gallery" />
-						<Tab label="Statistics" />
 						<Tab label="Upload" />
 						<Tab label="Pending Purchase" />
 						<Tab label="Profit" />
+						<Tab label="Purchased Photos" />
 					</Tabs>
 
 					{/* GALLERY TAB */}
 					{selectedTab === 0 && (
-						<Grid container spacing={2}>
-							{myPhotos.length > 0 ? (
-								myPhotos.map((photo) => (
+					<Box sx={{ p: 4, bgcolor: "#f5f5f5" }}>
+						{myPhotos.length > 0 ? (
+							<Grid container spacing={3}>
+								{myPhotos.map((photo) => (
 									<Grid item xs={6} sm={4} md={3} key={photo.id}>
-										<Card onClick={() => handlePhotoClick(photo)} sx={{ cursor: "pointer" }}>
-											<CardMedia component="img" image={photo.file_path} alt={`Photo ${photo.id}`} sx={{ height: 140 }} />
+										<Card
+											onClick={() => handlePhotoClick(photo)}
+											sx={{
+												cursor: "pointer",
+												borderRadius: 2,
+												boxShadow: 3,
+												overflow: "hidden",
+												transition: "transform 0.2s",
+												"&:hover": { transform: "scale(1.03)", boxShadow: 6 },
+											}}
+										>
+											<CardMedia component="img" image={photo.file_path} alt={`Photo ${photo.id}`} sx={{ height: 200, objectFit: "cover" }} />
 										</Card>
 									</Grid>
-								))
-							) : (
-								<Typography>No photos found.</Typography>
-							)}
-						</Grid>
-					)}
+								))}
+							</Grid>
+						) : (
+							<Typography variant="h6" align="center" color="textSecondary">
+								No photos found.
+							</Typography>
+						)}
+					</Box>
+)}
+
 
 					{/* UPLOAD TAB */}
-					{selectedTab === 2 && (
+					{selectedTab === 1 && (
 						<>
 							<Typography variant="h6" sx={{ marginBottom: 2 }}>
 								Upload a Photo
@@ -245,16 +261,23 @@ const ProfilePage: React.FC = () => {
 					)}
 
 					{/* pending purchase tab */}
-					{selectedTab === 3 && (
+					{selectedTab === 2 && (
 						<Box sx={{ marginTop: 2 }}>
 							<PendingPurchase />
 						</Box>
 					)}
 
 					{/* profit tab */}
-					{selectedTab === 4 && (
+					{selectedTab === 3 && (
 						<Box sx={{ marginTop: 2 }}>
 							<ProfitPage />
+						</Box>
+					)}
+
+					{/* purchased photos tab */}
+					{selectedTab === 4 && (
+						<Box sx={{ marginTop: 2 }}>
+							<PurchasedPhotos />
 						</Box>
 					)}
 				</Paper>
