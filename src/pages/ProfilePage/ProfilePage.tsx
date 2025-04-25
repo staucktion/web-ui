@@ -1,6 +1,6 @@
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import EditIcon from "@mui/icons-material/Edit";
-import { Avatar, Box, Button, Card, CardMedia, Container, FormControl, Grid, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Tab, Tabs, Typography } from "@mui/material";
+import { Avatar, Box, Button, Container, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Tab, Tabs, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBarProfile from "../../components/NavBarProfile/NavBarProfile";
