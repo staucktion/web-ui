@@ -1,47 +1,55 @@
 import React, { useEffect, useState } from "react";
 import {
   Box,
-  Typography,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
   CircularProgress,
-  Alert,
+  Grid,
+  Card,
+  CardMedia,
+  Typography,
   Dialog,
   DialogContent,
+  Alert,
 } from "@mui/material";
+import { webApiUrl } from "../../env/envVars";
 
-interface AuctionPhoto {
+interface PhotoDto {
   id: number;
-  title: string;
-  endedAt: string;
-  finalPrice: number;
-  winner: string;
-  photoUrl: string;
+  file_path: string;
 }
 
-const EndedAuctions: React.FC = () => {
-  const [auctions, setAuctions] = useState<AuctionPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
+const FinishedPhotos: React.FC = () => {
+  const [photos, setPhotos] = useState<PhotoDto[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null); // Burayı obje yaptım
+
+  const fetchFinishedPhotos = async () => {
+    try {
+      const response = await fetch(`${webApiUrl}/photos/finished`, {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch finished photos");
+      }
+      const data: PhotoDto[] = await response.json();
+      data.forEach((photo) => {
+        photo.file_path = `${webApiUrl}/photos/${photo.id}`;
+      });
+      setPhotos(data);
+    } catch {
+      setError("Failed to load finished photos");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetch("/api/auctions?status=ended")
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((data: AuctionPhoto[]) => setAuctions(data))
-      .catch(() => setError("Failed to load ended auctions"))
-      .finally(() => setLoading(false));
+    fetchFinishedPhotos();
   }, []);
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" my={2}>
+      <Box display="flex" justifyContent="center" mt={4}>
         <CircularProgress color="inherit" />
       </Box>
     );
@@ -51,48 +59,66 @@ const EndedAuctions: React.FC = () => {
     return <Alert severity="error">{error}</Alert>;
   }
 
-  if (auctions.length === 0) {
-    return <Typography>No ended auctions found.</Typography>;
-  }
-
   return (
-    <Box>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Title</TableCell>
-            <TableCell>Ended At</TableCell>
-            <TableCell>Photo</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {auctions.map((a) => (
-            <TableRow key={a.id}>
-              <TableCell>{a.id}</TableCell>
-              <TableCell>{a.title}</TableCell>
-              <TableCell>{new Date(a.endedAt).toLocaleString()}</TableCell>
-              <TableCell>
-                <img
-                  src={a.photoUrl}
-                  alt={a.title}
-                  style={{ width: 100, cursor: "pointer" }}
-                  onClick={() => setSelectedPhoto(a.photoUrl)}
+    <Box sx={{ p: 4, bgcolor: "#121212", minHeight: "100vh" }}>
+      {photos.length === 0 ? (
+        <Typography variant="h6" align="center" color="white">
+          No finished photos found.
+        </Typography>
+      ) : (
+        <Grid container spacing={3}>
+          {photos.map((photo) => (
+            <Grid item xs={12} sm={6} md={3} key={photo.id}>
+              <Card
+                sx={{
+                  borderRadius: 2,
+                  boxShadow: 3,
+                  cursor: "pointer",
+                  bgcolor: "#1e1e1e",
+                  "&:hover": { transform: "scale(1.03)", boxShadow: 6 },
+                }}
+                onClick={() => setSelectedPhoto(photo)}
+              >
+                <CardMedia
+                  component="img"
+                  image={photo.file_path}
+                  alt={`Finished Photo ${photo.id}`}
+                  sx={{ height: 180, objectFit: "cover" }}
                 />
-              </TableCell>
-            </TableRow>
+              </Card>
+            </Grid>
           ))}
-        </TableBody>
-      </Table>
+        </Grid>
+      )}
 
-      <Dialog open={!!selectedPhoto} onClose={() => setSelectedPhoto(null)} maxWidth="md">
-        <DialogContent>
+      {/* Modal for Photo */}
+      <Dialog
+        open={!!selectedPhoto}
+        onClose={() => setSelectedPhoto(null)}
+        maxWidth="sm"
+      >
+        <DialogContent sx={{ bgcolor: "#1e1e1e", p: 2 }}>
           {selectedPhoto && (
-            <img
-              src={selectedPhoto}
-              alt="Selected Auction Photo"
-              style={{ width: "100%", height: "auto" }}
-            />
+            <>
+              <img
+                src={selectedPhoto.file_path}
+                alt={`Photo ${selectedPhoto.id}`}
+                style={{
+                  width: "100%",
+                  maxHeight: "500px",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
+              />
+              <Typography
+                variant="body2"
+                color="gray"
+                align="center"
+                mt={2}
+              >
+                {`Photo ID: ${selectedPhoto.id}`}
+              </Typography>
+            </>
           )}
         </DialogContent>
       </Dialog>
@@ -100,4 +126,4 @@ const EndedAuctions: React.FC = () => {
   );
 };
 
-export default EndedAuctions;
+export default FinishedPhotos;
