@@ -63,7 +63,7 @@ const ProfilePage: React.FC = () => {
 	useEffect(() => {
 		if (selectedTab === 0) {
 			fetchMyPhotos();
-		} else if (selectedTab === 2) {
+		} else if (selectedTab === 1 || selectedTab === 2) {
 			fetchAllCategories();
 		}
 	}, [selectedTab]);
