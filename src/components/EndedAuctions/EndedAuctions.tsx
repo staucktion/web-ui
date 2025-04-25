@@ -36,7 +36,7 @@ const FinishedPhotos: React.FC = () => {
         photo.file_path = `${webApiUrl}/photos/${photo.id}`;
       });
       setPhotos(data);
-    } catch (_err) {
+    } catch {
       setError("Failed to load finished photos");
     } finally {
       setLoading(false);
