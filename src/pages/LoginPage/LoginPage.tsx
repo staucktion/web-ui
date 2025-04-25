@@ -42,9 +42,10 @@ const LoginPage: React.FC = () => {
 
       toast.success("Login successful!");
       navigate("/home"); // yönlendiriyoruz
-    } catch (error: any) {
-      toast.error(error.message || "Login failed");
-    }
+    }  catch (error: unknown) {
+        const err = error as { message?: string }; 
+        toast.error(err.message || "Login failed");
+      }
   };
 
   return (

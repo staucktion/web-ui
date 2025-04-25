@@ -49,9 +49,10 @@ const RegisterPage: React.FC = () => {
 
       toast.success("Registration successful!");
       navigate("/home");
-    } catch (error: any) {
-      toast.error(error.message || "Registration failed");
-    }
+    } catch (error: unknown) {
+            const err = error as { message?: string }; 
+            toast.error(err.message || "Registration is failed");
+          }
   };
 
   return (
