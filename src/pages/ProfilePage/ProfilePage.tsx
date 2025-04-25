@@ -14,6 +14,7 @@ import getProfilePictureSrc from "../../util/getProfilePictureSrc";
 import PendingPurchase from "../PendingPurchase/PendingPurchase";
 import ProfitPage from "../ProfitPage/ProfitPage";
 import PurchasedPhotos from "../../components/PurchasedPhotos/PurchasedPhotos";
+import ProfileGallery from "../../components/ProfileGallery/ProfileGallery";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -177,34 +178,8 @@ const ProfilePage: React.FC = () => {
 
 					{/* GALLERY TAB */}
 					{selectedTab === 0 && (
-					<Box sx={{ p: 4, bgcolor: "#f5f5f5" }}>
-						{myPhotos.length > 0 ? (
-							<Grid container spacing={3}>
-								{myPhotos.map((photo) => (
-									<Grid item xs={6} sm={4} md={3} key={photo.id}>
-										<Card
-											onClick={() => handlePhotoClick(photo)}
-											sx={{
-												cursor: "pointer",
-												borderRadius: 2,
-												boxShadow: 3,
-												overflow: "hidden",
-												transition: "transform 0.2s",
-												"&:hover": { transform: "scale(1.03)", boxShadow: 6 },
-											}}
-										>
-											<CardMedia component="img" image={photo.file_path} alt={`Photo ${photo.id}`} sx={{ height: 200, objectFit: "cover" }} />
-										</Card>
-									</Grid>
-								))}
-							</Grid>
-						) : (
-							<Typography variant="h6" align="center" color="textSecondary">
-								No photos found.
-							</Typography>
-						)}
-					</Box>
-)}
+						<ProfileGallery myPhotos={myPhotos} onPhotoClick={handlePhotoClick} />
+					)}
 
 
 					{/* UPLOAD TAB */}
