@@ -15,7 +15,7 @@ const ProfileGallery: React.FC<ProfileGalleryProps> = ({ myPhotos, onPhotoClick 
 					{myPhotos.map((photo) => (
 						<Grid item xs={6} sm={4} md={3} key={photo.id}>
 							<Card
-								onClick={() => onPhotoClick(photo)} // 🌟 Click event parenttan!
+								onClick={() => onPhotoClick(photo)} 
 								sx={{
 									cursor: "pointer",
 									borderRadius: 2,
