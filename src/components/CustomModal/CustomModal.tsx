@@ -6,14 +6,18 @@ interface CustomModalProps {
   title: string;
   onClose: () => void;
 
-  onPrimary: () => void;
-  primaryText: string;
+  onPrimary?: () => void;
+  primaryText?: string;
 
-  onSecondary: () => void;
-  secondaryText: string;
+  onSecondary?: () => void;
+  secondaryText?: string;
 
   simpleLoginText?: string;
-  onSimpleLogin?: () => void; 
+  onSimpleLogin?: () => void;
+
+  confirmText?: string;           // 🌟 Yeni eklendi
+  onConfirm?: () => void;         // 🌟 Yeni eklendi
+  children?: React.ReactNode;     // 🌟 Yeni eklendi
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
@@ -26,6 +30,9 @@ const CustomModal: React.FC<CustomModalProps> = ({
   secondaryText,
   simpleLoginText,
   onSimpleLogin,
+  confirmText,
+  onConfirm,
+  children,
 }) => {
   return (
     <Modal
@@ -56,7 +63,14 @@ const CustomModal: React.FC<CustomModalProps> = ({
           {title}
         </Typography>
 
-        
+        {/* 🌟 Children varsa göster */}
+        {children && (
+          <Box sx={{ mb: 2 }}>
+            {children}
+          </Box>
+        )}
+
+        {/* 🌟 Simple Login */}
         {simpleLoginText && onSimpleLogin && (
           <Box
             sx={{
@@ -83,43 +97,66 @@ const CustomModal: React.FC<CustomModalProps> = ({
           </Box>
         )}
 
-        {/* first Login */}
-        <Button
-          fullWidth
-          variant="contained"
-          onClick={onPrimary}
-          sx={{
-            mb: 2,
-            backgroundColor: "#000000",
-            color: "#ffffff",
-            textTransform: "none",
-            borderRadius: "8px",
-            py: 1.5,
-            fontSize: "1rem",
-            "&:hover": { backgroundColor: "#333333" },
-          }}
-        >
-          {primaryText}
-        </Button>
+        {/* 🌟 onPrimary varsa */}
+        {onPrimary && primaryText && (
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={onPrimary}
+            sx={{
+              mb: 2,
+              backgroundColor: "#000000",
+              color: "#ffffff",
+              textTransform: "none",
+              borderRadius: "8px",
+              py: 1.5,
+              fontSize: "1rem",
+              "&:hover": { backgroundColor: "#333333" },
+            }}
+          >
+            {primaryText}
+          </Button>
+        )}
 
-        {/* second Register */}
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={onSecondary}
-          sx={{
-            mb: 2,
-            borderColor: "#000000",
-            color: "#000000",
-            textTransform: "none",
-            borderRadius: "8px",
-            py: 1.5,
-            fontSize: "1rem",
-            "&:hover": { backgroundColor: "#f5f5f5" },
-          }}
-        >
-          {secondaryText}
-        </Button>
+        {/* 🌟 onSecondary varsa */}
+        {onSecondary && secondaryText && (
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={onSecondary}
+            sx={{
+              mb: 2,
+              borderColor: "#000000",
+              color: "#000000",
+              textTransform: "none",
+              borderRadius: "8px",
+              py: 1.5,
+              fontSize: "1rem",
+              "&:hover": { backgroundColor: "#f5f5f5" },
+            }}
+          >
+            {secondaryText}
+          </Button>
+        )}
+
+        {/* 🌟 onConfirm varsa */}
+        {onConfirm && confirmText && (
+          <Button
+            fullWidth
+            variant="contained"
+            color="success"
+            onClick={onConfirm}
+            sx={{
+              mb: 2,
+              textTransform: "none",
+              borderRadius: "8px",
+              py: 1.5,
+              fontSize: "1rem",
+            }}
+          >
+            {confirmText}
+          </Button>
+        )}
 
         {/* Cancel */}
         <Button
