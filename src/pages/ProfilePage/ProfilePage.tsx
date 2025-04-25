@@ -1,6 +1,6 @@
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import EditIcon from "@mui/icons-material/Edit";
-import { Avatar, Box, Button, Card, CardMedia, Container, FormControl, Grid, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Tab, Tabs, Typography } from "@mui/material";
+import { Avatar, Box, Button, Container, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Tab, Tabs, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBarProfile from "../../components/NavBarProfile/NavBarProfile";
@@ -14,6 +14,7 @@ import getProfilePictureSrc from "../../util/getProfilePictureSrc";
 import PendingPurchase from "../PendingPurchase/PendingPurchase";
 import ProfitPage from "../ProfitPage/ProfitPage";
 import PurchasedPhotos from "../../components/PurchasedPhotos/PurchasedPhotos";
+import ProfileGallery from "../../components/ProfileGallery/ProfileGallery";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -63,7 +64,7 @@ const ProfilePage: React.FC = () => {
 	useEffect(() => {
 		if (selectedTab === 0) {
 			fetchMyPhotos();
-		} else if (selectedTab === 2) {
+		} else if (selectedTab === 1 || selectedTab === 2) {
 			fetchAllCategories();
 		}
 	}, [selectedTab]);
@@ -177,34 +178,8 @@ const ProfilePage: React.FC = () => {
 
 					{/* GALLERY TAB */}
 					{selectedTab === 0 && (
-					<Box sx={{ p: 4, bgcolor: "#f5f5f5" }}>
-						{myPhotos.length > 0 ? (
-							<Grid container spacing={3}>
-								{myPhotos.map((photo) => (
-									<Grid item xs={6} sm={4} md={3} key={photo.id}>
-										<Card
-											onClick={() => handlePhotoClick(photo)}
-											sx={{
-												cursor: "pointer",
-												borderRadius: 2,
-												boxShadow: 3,
-												overflow: "hidden",
-												transition: "transform 0.2s",
-												"&:hover": { transform: "scale(1.03)", boxShadow: 6 },
-											}}
-										>
-											<CardMedia component="img" image={photo.file_path} alt={`Photo ${photo.id}`} sx={{ height: 200, objectFit: "cover" }} />
-										</Card>
-									</Grid>
-								))}
-							</Grid>
-						) : (
-							<Typography variant="h6" align="center" color="textSecondary">
-								No photos found.
-							</Typography>
-						)}
-					</Box>
-)}
+						<ProfileGallery myPhotos={myPhotos} onPhotoClick={handlePhotoClick} />
+					)}
 
 
 					{/* UPLOAD TAB */}
