@@ -49,28 +49,31 @@ const ProfitPage: React.FC = () => {
 	};
 
 	return (
-		<>
-			<Typography variant="h6" color="textSecondary" mt={2}>
+		<Box sx={{ p: 4, bgcolor: "#f5f5f5" }}>
+			<Typography variant="h6" color="textSecondary" align="center" mb={3}>
 				You can withdraw money from the profit you make by selling photos and voting on photos that were auctioned based on your vote.
 			</Typography>
 
-			{loading && (
+			{loading ? (
 				<Box display="flex" justifyContent="center" mt={3}>
 					<CircularProgress />
 				</Box>
-			)}
-
-			{!loading && (
+			) : (
 				<Box textAlign="center" mt={3}>
 					{profit > 0 ? (
 						<>
 							<Typography variant="h5">Profit: {profit}₺</Typography>
-							<Button variant="contained" color="primary" onClick={handleWithdraw} sx={{ mt: 2 }}>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={handleWithdraw}
+								sx={{ mt: 2, borderRadius: "20px", textTransform: "none", bgcolor: "#000", "&:hover": { bgcolor: "#333" } }}
+							>
 								Withdraw
 							</Button>
 						</>
 					) : (
-						<Typography variant="h6" color="textSecondary">
+						<Typography variant="h6" align="center" color="textSecondary">
 							No profit available.
 						</Typography>
 					)}
@@ -83,7 +86,7 @@ const ProfitPage: React.FC = () => {
 					<PaymentPage photo={null} action="profit" onClose={handleCloseModal} onSuccess={onPaymentSuccess} />
 				</div>
 			</Modal>
-		</>
+		</Box>
 	);
 };
 

@@ -9,250 +9,160 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { useAuth } from "../../providers/AuthHook";
-import redirectWithPost from "../../util/redirectWithPost";
-import { Modal, Box } from "@mui/material";
 import { toastSuccess } from "../../util/toastUtil";
+import CustomModal from "../CustomModal/CustomModal";
+import useRequireAuth from "../../Hooks/useRequireAuth";
 import UserDto from "../../dto/user/UserDto";
 import { checkUserRole } from "../../util/checkUserRole";
 
-const CountdownModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
-	const [timeLeft, setTimeLeft] = React.useState(300); // 5 dakika = 300 saniye
-
-	React.useEffect(() => {
-		if (!open) return;
-		setTimeLeft(300); // Modal açıldığında geri sayımı sıfırla
-		const interval = setInterval(() => {
-			setTimeLeft((prev) => {
-				if (prev <= 1) {
-					clearInterval(interval);
-					return 0;
-				}
-				return prev - 1;
-			});
-		}, 1000);
-		return () => clearInterval(interval);
-	}, [open]);
-
-	const formatTime = (seconds: number) => {
-		const m = Math.floor(seconds / 60);
-		const s = seconds % 60;
-		return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-	};
-
-	return (
-		<Modal open={open} onClose={onClose}>
-			<Box
-				sx={{
-					position: "absolute",
-					top: "50%",
-					left: "50%",
-					transform: "translate(-50%, -50%)",
-					width: "500px", // Daha geniş kutu
-					bgcolor: "background.paper",
-					p: 6, // Daha geniş padding
-					borderRadius: 2,
-					boxShadow: 24,
-					textAlign: "center",
-				}}
-			>
-				<Typography variant="h4" gutterBottom>
-					Geri Sayım
-				</Typography>
-				<Typography variant="h2" gutterBottom>
-					{formatTime(timeLeft)}
-				</Typography>
-				<Button
-					variant="contained"
-					onClick={onClose}
-					sx={{
-						background: "linear-gradient(90deg, #ff0000, #ff4d4d)", // Gradient kırmızı
-						color: "white",
-						padding: "12px 24px",
-						fontSize: "1.2rem",
-						borderRadius: "8px",
-						mt: 2,
-						"&:hover": {
-							background: "linear-gradient(90deg, #ff4d4d, #ff0000)",
-						},
-					}}
-				>
-					Kapat
-				</Button>
-			</Box>
-		</Modal>
-	);
-};
-
 const NavBar: React.FC = () => {
-	const navigate = useNavigate();
-	const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-	const open = Boolean(anchorEl);
+  const {
+    open: authOpen,
+    requireAuth,
+    handleClose,
+    handleLogin,
+  } = useRequireAuth();
 
-	// Geri sayım modal'ının açık/kapalı durumunu yönetmek için state
-	const [openCountdown, setOpenCountdown] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
 
-	const handleExploreClick = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
+  const handleExploreClick = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+  const handleExploreClose = () => setAnchorEl(null);
 
-	const handleExploreClose = () => {
-		setAnchorEl(null);
-	};
+  const getDisplayName = (u: UserDto) =>
+    checkUserRole(u, "validator", true) ? "Vld"
+      : checkUserRole(u, "admin", true) ? "Adm"
+      : u.username.split(" ").map(w => w[0].toUpperCase()).join("");
 
-	// Profile sayfasına yönlendirme
-	const handleProfileButton = () => {
-		if (!user) {
-			redirectWithPost("/auth/google");
-		} else {
-			navigate("/profile");
-		}
-	};
+  const handleProfileButton = () => {
+    navigate("/profile");
+  };
 
-	const getDisplayName = (user: UserDto): string => {
-		if (checkUserRole(user, "validator", true)) {
-			return "Vld";
-		} else if (checkUserRole(user, "admin", true)) {
-			return "Adm";
-		} else {
-			return user.username
-				.split(" ")
-				.map((word) => word[0].toUpperCase())
-				.join("");
-		}
-	};
+  return (
+    <>
+      <AppBar position="static" elevation={0} sx={{ bgcolor: "black", color: "white" }}>
+        <Toolbar>
+          {/* Logo */}
+          <Typography
+            variant="h6"
+            sx={{ flexGrow: 1, cursor: "pointer", fontWeight: "bold", fontSize: "1.5rem" }}
+            onClick={() => navigate("/")}
+          >
+            Staucktion
+          </Typography>
 
-	return (
-		<>
-			<AppBar
-				position="static"
-				elevation={0}
-				sx={{
-					backgroundColor: "black",
-					color: "white",
-				}}
-			>
-				<Toolbar>
-					{/* Saat simgesi: Modal'ı açmak için */}
-					<IconButton onClick={() => setOpenCountdown(true)} sx={{ color: "white", mr: 1 }}>
-						<AccessTimeIcon />
-					</IconButton>
-					<Typography
-						variant="h6"
-						sx={{
-							cursor: "pointer",
-							fontWeight: "bold",
-							fontSize: "1.5rem",
-						}}
-						onClick={() => navigate("/")}
-					>
-						Staucktion
-					</Typography>
+          {/* Admin/Validator dropdown */}
+          {(checkUserRole(user, "admin") || checkUserRole(user, "validator")) && (
+            <>
+              <Button
+                id="control-panel-button"
+                aria-controls={menuOpen ? "control-panel-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={menuOpen ? "true" : undefined}
+                onClick={handleExploreClick}
+                endIcon={<ExpandMoreIcon />}
+                sx={{ textTransform: "none", color: "white", mr: 2 }}
+              >
+                Control Panel
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                open={menuOpen}
+                onClose={handleExploreClose}
+                MenuListProps={{ "aria-labelledby": "control-panel-button" }}
+              >
+                {checkUserRole(user, "validator") && (
+                  <MenuItem onClick={() => { handleExploreClose(); navigate("/validator"); }}>
+                    Validator Panel
+                  </MenuItem>
+                )}
+                {checkUserRole(user, "admin") && (
+                  <MenuItem onClick={() => { handleExploreClose(); navigate("/admin"); }}>
+                    Admin Panel
+                  </MenuItem>
+                )}
+              </Menu>
+            </>
+          )}
 
-					<Typography variant="h6" sx={{ flexGrow: 1 }}>
-						{/* Boşluk veya marka */}
-					</Typography>
+          {/* License */}
+          <Button
+            sx={{ textTransform: "none", color: "white", mr: 2 }}
+            onClick={() => navigate("/license")}
+          >
+            License
+          </Button>
 
-					{/* Control (Dropdown) */}
-					{(checkUserRole(user, "admin") || checkUserRole(user, "validator")) && (
-  <>
-						<Button
-						id="control-panel-button"
-						aria-controls={open ? "control-panel-menu" : undefined}
-						aria-haspopup="true"
-						aria-expanded={open ? "true" : undefined}
-						onClick={handleExploreClick}
-						endIcon={<ExpandMoreIcon />}
-						sx={{
-							textTransform: "none",
-							color: "white",
-							mr: 2,
-							fontSize: "1.2rem",
-							padding: "12px 25px",
-							height: "50px",
-						}}
-						>
-						Control Panel
-						</Button>
-						<Menu
-						id="control-panel-menu"
-						anchorEl={anchorEl}
-						open={open}
-						onClose={handleExploreClose}
-						MenuListProps={{ "aria-labelledby": "control-panel-button" }}
-						>
-						{checkUserRole(user, "validator") && (
-							<MenuItem
-							onClick={() => {
-								handleExploreClose();
-								navigate("/validator");
-							}}
-							>
-							Validator Panel
-							</MenuItem>
-						)}
+          {/* Overflow */}
+          <IconButton
+            sx={{ color: "white", mr: 2 }}
+            onClick={() => toastSuccess("Dummy.", { position: "bottom-center" })}
+          >
+            <MoreVertIcon />
+          </IconButton>
 
-						{checkUserRole(user, "admin") && (
-							<MenuItem
-							onClick={() => {
-								handleExploreClose();
-								navigate("/admin");
-							}}
-							>
-							Admin Panel
-							</MenuItem>
-						)}
-						</Menu>
-					</>
-					)}
+          {user ? (
+            <Button
+              variant="contained"
+              onClick={handleProfileButton}
+              sx={{
+                textTransform: "none",
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "9999px",
+                fontSize: "1rem",
+                px: 3,
+                py: 1,
+                "&:hover": { backgroundColor: "#f0f0f0" }
+              }}
+            >
+              {getDisplayName(user)}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              onClick={() => requireAuth(() => navigate("/profile"))}
+              sx={{
+                textTransform: "none",
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "9999px",
+                fontSize: "1rem",
+                px: 3,
+                py: 1,
+                "&:hover": { backgroundColor: "#f0f0f0" }
+              }}
+            >
+              Login
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
 
-					{/* License */}
-					<Button
-						sx={{
-							textTransform: "none",
-							color: "white",
-							mr: 2,
-							fontSize: "1.2rem",
-							padding: "12px 25px",
-							height: "50px",
-						}}
-					>
-						License
-					</Button>
-
-					{/* Overflow menü */}
-					<IconButton sx={{ color: "white", mr: 1 }} onClick={() => toastSuccess("Dummy.", { position: "bottom-center" })}>
-						<MoreVertIcon />
-					</IconButton>
-
-					{/* Profile Button */}
-					<Button
-						variant="contained"
-						sx={{
-							textTransform: "none",
-							backgroundColor: "white",
-							color: "black",
-							borderRadius: "9999px",
-							fontSize: "1rem",
-							padding: "8px 20px",
-							height: "45px",
-							"&:hover": {
-								backgroundColor: "#f0f0f0",
-							},
-						}}
-						onClick={handleProfileButton}
-					>
-						{user ? getDisplayName(user) : "Login"}
-					</Button>
-				</Toolbar>
-			</AppBar>
-			{/* Geri Sayım Modal'ı */}
-			<CountdownModal open={openCountdown} onClose={() => setOpenCountdown(false)} />
-		</>
-	);
+      {/* Login / Register Modal */}
+      <CustomModal
+		open={authOpen}
+		title="Login or Register?"
+		onClose={handleClose}
+		onPrimary={handleLogin}
+		primaryText="Login with Google"
+		onSecondary={() => {
+			handleClose();
+			navigate("/register");
+		}}
+		secondaryText="Register"
+		simpleLoginText="Login" 
+		onSimpleLogin={() => {
+			handleClose();
+			navigate("/login"); 
+		}}
+		/>
+    </>
+  );
 };
 
 export default NavBar;

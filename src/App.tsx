@@ -14,6 +14,8 @@ import { checkUserRole } from "./util/checkUserRole";
 import AdminPanel from "./pages/AdminPanel/AdminPanel";
 import PaymentAuction from "./pages/PaymentAuction/PaymentAuction";
 import { toastError, toastSuccess } from "./util/toastUtil";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 
 function App() {
 	const themeMode = "light";
@@ -68,6 +70,8 @@ const MainLayout: React.FC = () => {
 			<Route path="/editprofile" element={user ? <EditProfilePage /> : <Navigate to="/" />} />
 			<Route path="/categories" element={<CategoriesPage />} />
 			<Route path="/payment-auction/:photoId" element={<PaymentAuction />} />
+			<Route path="/register" element={<RegisterPage />} />
+			<Route path="/login" element={<LoginPage />} />
 
 			{/* Only for Validator's access*/}
 			<Route path="/validator" element={checkUserRole(user, "validator") ? <ValidatorPanel /> : <Navigate to="/" />} />

@@ -85,10 +85,6 @@ const PendingPurchase: React.FC = () => {
 
 	return (
 		<Box sx={{ p: 4, bgcolor: "#f5f5f5" }}>
-			<Typography variant="h5" align="center" sx={{ mb: 4, color: "#333" }}>
-				Photos available for your purchase
-			</Typography>
-
 			{photos.length === 0 ? (
 				<Typography variant="h6" align="center" color="textSecondary">
 					No photos available for purchase.
