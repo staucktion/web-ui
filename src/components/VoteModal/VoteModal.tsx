@@ -1,12 +1,15 @@
-import React from "react";
-import { Modal, Box, Typography, Button, IconButton, Divider } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { Box, Button, Divider, IconButton, Modal, Typography } from "@mui/material";
+import React from "react";
+import { toast } from "react-toastify";
+import CronDto from "../../dto/cron/CronDto";
 import PhotoDto from "../../dto/photo/PhotoDto";
+import { cronEnum } from "../../enum/cronEnum";
 import { webApiUrl } from "../../env/envVars";
-import { toastSuccess, toastError } from "../../util/toastUtil";
 import { generateLocationUrl } from "../../util/generateLocationUrl";
+import { toastError, toastSuccess } from "../../util/toastUtil";
 
 interface VoteModalProps {
 	open: boolean;
@@ -16,6 +19,36 @@ interface VoteModalProps {
 	onPrev?: () => void;
 	children?: React.ReactNode;
 }
+
+const fetchCron = async (): Promise<CronDto | null> => {
+	const responseCrons = await fetch(`${webApiUrl}/crons`);
+	if (!responseCrons.ok) throw new Error("Failed to fetch cron data");
+	const cronsData: CronDto[] = await responseCrons.json();
+	const cronData = cronsData.find((cron) => cron.id === cronEnum.VOTE);
+	if (cronData) return cronData;
+	return null;
+};
+
+const handleTimerClick = async () => {
+	const now = new Date();
+	const cron = await fetchCron();
+	if (cron?.next_trigger_time) {
+		const finishTime = new Date(cron.next_trigger_time);
+		const remainingTimeInMillis = finishTime.getTime() - now.getTime();
+		const remainingTimeInSeconds = Math.max(Math.floor(remainingTimeInMillis / 1000), 0); // 👈 always >= 0
+		const remainingTimeInMinutes = Math.floor(remainingTimeInSeconds / 60);
+		const remainingTimeInHours = Math.floor(remainingTimeInMinutes / 60);
+		const remainingTimeInDays = Math.floor(remainingTimeInHours / 24);
+		const remainingSeconds = remainingTimeInSeconds % 60;
+		const parts = [];
+		if (remainingTimeInDays > 0) parts.push(`${remainingTimeInDays} days`);
+		if (remainingTimeInHours % 24 > 0) parts.push(`${remainingTimeInHours % 24} hours`);
+		if (remainingTimeInMinutes % 60 > 0) parts.push(`${remainingTimeInMinutes % 60} minutes`);
+		parts.push(`${remainingSeconds} seconds`);
+		const timeRemaining = parts.join(" ");
+		toast(`Time remaining: ${timeRemaining}`);
+	}
+};
 
 const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, photo }) => {
 	const handleVote = async () => {
@@ -69,8 +102,8 @@ const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, ph
 				>
 					{/* Soldaki alan */}
 					<Box display="flex" alignItems="center" gap={2}>
-						<IconButton onClick={onClose} sx={{ color: "#fff" }}>
-							<CloseIcon />
+						<IconButton onClick={handleTimerClick} sx={{ color: "#fff" }}>
+							<AccessTimeIcon />
 						</IconButton>
 						<Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
 							{photo.user.username}
@@ -83,7 +116,7 @@ const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, ph
 							variant="text"
 							sx={{
 								textTransform: "none",
-								background: "linear-gradient(30deg, #ff69b4, #1e90ff)",
+								background: "linear-gradient(90deg, #ff69b4, #1e90ff)",
 								color: "#fff",
 								"&:hover": {
 									background: "linear-gradient(90deg, #ff85c0, #1eaaff)",
