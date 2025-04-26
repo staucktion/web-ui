@@ -20,37 +20,37 @@ interface VoteModalProps {
 	children?: React.ReactNode;
 }
 
-const fetchCron = async (): Promise<CronDto | null> => {
-	const responseCrons = await fetch(`${webApiUrl}/crons`);
-	if (!responseCrons.ok) throw new Error("Failed to fetch cron data");
-	const cronsData: CronDto[] = await responseCrons.json();
-	const cronData = cronsData.find((cron) => cron.id === cronEnum.VOTE);
-	if (cronData) return cronData;
-	return null;
-};
-
-const handleTimerClick = async () => {
-	const now = new Date();
-	const cron = await fetchCron();
-	if (cron?.next_trigger_time) {
-		const finishTime = new Date(cron.next_trigger_time);
-		const remainingTimeInMillis = finishTime.getTime() - now.getTime();
-		const remainingTimeInSeconds = Math.max(Math.floor(remainingTimeInMillis / 1000), 0); // 👈 always >= 0
-		const remainingTimeInMinutes = Math.floor(remainingTimeInSeconds / 60);
-		const remainingTimeInHours = Math.floor(remainingTimeInMinutes / 60);
-		const remainingTimeInDays = Math.floor(remainingTimeInHours / 24);
-		const remainingSeconds = remainingTimeInSeconds % 60;
-		const parts = [];
-		if (remainingTimeInDays > 0) parts.push(`${remainingTimeInDays} days`);
-		if (remainingTimeInHours % 24 > 0) parts.push(`${remainingTimeInHours % 24} hours`);
-		if (remainingTimeInMinutes % 60 > 0) parts.push(`${remainingTimeInMinutes % 60} minutes`);
-		parts.push(`${remainingSeconds} seconds`);
-		const timeRemaining = parts.join(" ");
-		toast(`Time remaining: ${timeRemaining}`);
-	}
-};
-
 const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, photo }) => {
+	const fetchCron = async (): Promise<CronDto | null> => {
+		const responseCrons = await fetch(`${webApiUrl}/crons`);
+		if (!responseCrons.ok) throw new Error("Failed to fetch cron data");
+		const cronsData: CronDto[] = await responseCrons.json();
+		const cronData = cronsData.find((cron) => cron.id === cronEnum.VOTE);
+		if (cronData) return cronData;
+		return null;
+	};
+
+	const handleTimerClick = async () => {
+		const now = new Date();
+		const cron = await fetchCron();
+		if (cron?.next_trigger_time) {
+			const finishTime = new Date(cron.next_trigger_time);
+			const remainingTimeInMillis = finishTime.getTime() - now.getTime();
+			const remainingTimeInSeconds = Math.max(Math.floor(remainingTimeInMillis / 1000), 0); // 👈 always >= 0
+			const remainingTimeInMinutes = Math.floor(remainingTimeInSeconds / 60);
+			const remainingTimeInHours = Math.floor(remainingTimeInMinutes / 60);
+			const remainingTimeInDays = Math.floor(remainingTimeInHours / 24);
+			const remainingSeconds = remainingTimeInSeconds % 60;
+			const parts = [];
+			if (remainingTimeInDays > 0) parts.push(`${remainingTimeInDays} days`);
+			if (remainingTimeInHours % 24 > 0) parts.push(`${remainingTimeInHours % 24} hours`);
+			if (remainingTimeInMinutes % 60 > 0) parts.push(`${remainingTimeInMinutes % 60} minutes`);
+			parts.push(`${remainingSeconds} seconds`);
+			const timeRemaining = parts.join(" ");
+			toast(`Time remaining: ${timeRemaining}`);
+		}
+	};
+	
 	const handleVote = async () => {
 		const response = await fetch(`${webApiUrl}/votes/${photo.id}`, {
 			method: "POST",
