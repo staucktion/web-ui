@@ -75,20 +75,6 @@ const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, ph
 						<Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
 							{photo.user.username}
 						</Typography>
-						<Button
-							variant="outlined"
-							sx={{
-								textTransform: "none",
-								color: "#fff",
-								borderColor: "#fff",
-								"&:hover": {
-									borderColor: "#fff",
-									backgroundColor: "rgba(255,255,255,0.1)",
-								},
-							}}
-						>
-							Follow
-						</Button>
 					</Box>
 
 					{/* Sağdaki alan */}
@@ -97,36 +83,15 @@ const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, ph
 							variant="text"
 							sx={{
 								textTransform: "none",
-								color: "#fff",
-								"&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
-							}}
-						>
-							Date
-						</Button>
-						<Button
-							variant="text"
-							sx={{
-								textTransform: "none",
-								color: "#fff",
-								"&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
-							}}
-							onClick={() => window.open(generateLocationUrl(photo.category.location), "_blank")}
-						>
-							Location
-						</Button>
-						<Button
-							variant="contained"
-							sx={{
-								textTransform: "none",
-								background: "linear-gradient(90deg, #ff69b4, #1e90ff)",
+								background: "linear-gradient(30deg, #ff69b4, #1e90ff)",
 								color: "#fff",
 								"&:hover": {
 									background: "linear-gradient(90deg, #ff85c0, #1eaaff)",
 								},
 							}}
-							onClick={handleVote}
+							onClick={() => window.open(generateLocationUrl(photo.category.location), "_blank")}
 						>
-							Vote
+							Location
 						</Button>
 					</Box>
 				</Box>
