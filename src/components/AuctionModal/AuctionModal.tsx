@@ -198,7 +198,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		if (cron?.next_trigger_time) {
 			const finishTime = new Date(cron.next_trigger_time);
 			const remainingTimeInMillis = finishTime.getTime() - now.getTime();
-			const remainingTimeInSeconds = Math.max(Math.floor(remainingTimeInMillis / 1000), 0); // 👈 always >= 0
+			const remainingTimeInSeconds = Math.max(Math.floor(remainingTimeInMillis / 1000), 0);
 			const remainingTimeInMinutes = Math.floor(remainingTimeInSeconds / 60);
 			const remainingTimeInHours = Math.floor(remainingTimeInMinutes / 60);
 			const remainingTimeInDays = Math.floor(remainingTimeInHours / 24);
