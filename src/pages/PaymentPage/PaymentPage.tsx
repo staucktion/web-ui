@@ -157,7 +157,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 				}}
 			>
 				<Typography variant="h4" align="center" gutterBottom>
-					Payment Page
+					{action === "profit" ? "Withdraw" : "Payment"} Page
 				</Typography>
 				<Typography variant="body1" align="center" sx={{ mb: 3 }}>
 					Please Enter the Card Information.
@@ -180,7 +180,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 					sx={{ mt: 3, py: 1.5 }}
 					onClick={handlePayment}
 				>
-					Pay
+					{action === "profit" ? "Withdraw" : "Pay"}
 				</Button>
 				<Button variant="text" fullWidth sx={{ mt: 1 }} onClick={onClose}>
 					Cancel
