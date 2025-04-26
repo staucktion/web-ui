@@ -31,6 +31,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 	const [isProvisionModalOpen, setIsProvisionModalOpen] = useState(false);
 	const [bidCount, setBidCount] = useState<number>(0);
 	const [isLastBidBelongToCurrentUser, setIsLastBidBelongToCurrentUser] = useState<boolean>(false);
+	const [auctionPhoto, setAuctionPhoto] = useState<AuctionPhotoDto | null>(null);
 
 	useEffect(() => {
 		let dataAuctionPhoto: AuctionPhotoDto;
@@ -39,6 +40,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			try {
 				dataAuctionPhoto = await fetchAuctionPhotoData();
 				await fetchBid(dataAuctionPhoto);
+				setAuctionPhoto(dataAuctionPhoto);
 				myPhotos = await fetchMyPhotos();
 
 				// ws implementation
@@ -78,18 +80,24 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		};
 
 		init();
-
-		// Cleanup function
-		return () => {
-			// console.log("component unmount, will leave the ws room");
-			if (socket && dataAuctionPhoto) {
-				const roomName = `auction_photo_id_${dataAuctionPhoto.id}`;
-				socket.emit("leaveRoom", roomName);
-				console.log(`[INFO] WS: leaving room: ${roomName}`);
-			}
-		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const handleBidModalClose = () => {
+		leaveRoom();
+		onClose();
+	};
+
+	const leaveRoom = (): void => {
+		if (socket && auctionPhoto) {
+			const roomName = `auction_photo_id_${auctionPhoto.id}`;
+			socket.emit("leaveRoom", roomName);
+			socket.off("new_bid");
+			socket.off("finish_auction");
+			// socket.offAny();
+			console.log(`[INFO] WS: leaving room: ${roomName}`);
+		}
+	};
 
 	const fetchAuctionPhotoData = async (): Promise<AuctionPhotoDto> => {
 		const responseAuctionPhoto = await fetch(`${webApiUrl}/auctions/photos/${photo.id}`);
@@ -223,7 +231,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			</Modal>
 
 			{/* bid modal */}
-			<Modal open={open} onClose={onClose} slotProps={{ backdrop: { style: { backgroundColor: "rgba(0, 0, 0, 0.8)" } } }}>
+			<Modal open={open} onClose={handleBidModalClose} slotProps={{ backdrop: { style: { backgroundColor: "rgba(0, 0, 0, 0.8)" } } }}>
 				<Box
 					sx={{
 						position: "absolute",
