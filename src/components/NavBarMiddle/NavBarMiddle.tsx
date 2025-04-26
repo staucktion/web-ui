@@ -32,40 +32,37 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasab
 				<CustomNavButton isActive={activeTab === "purchase"} onClick={() => handleClick("purchase", onPurchasablePhotosClick)}>
 					Purchase
 				</CustomNavButton>
-				<CustomNavButton isActive={activeTab === "auction"} onClick={() => handleClick("auction", onAuctionClick)}>
-					Auction
+				<CustomNavButton isActive={activeTab === "categories"} onClick={() => handleClick("categories", onCategoriesClick)}>
+					Categories
 				</CustomNavButton>
 				<CustomNavButton isActive={activeTab === "vote"} onClick={() => handleClick("vote", onVoteClick)}>
 					Vote
 				</CustomNavButton>
-				<CustomNavButton isActive={activeTab === "categories"} onClick={() => handleClick("categories", onCategoriesClick)}>
-					Categories
+				<CustomNavButton isActive={activeTab === "auction"} onClick={() => handleClick("auction", onAuctionClick)}>
+					Auction
 				</CustomNavButton>
 			</Box>
 
 			{/* Login Modal */}
 			<CustomModal
-        open={open}
-        title="Login or Register?"
-        onClose={handleClose}
-
-        // Login with Google 
-        onPrimary={handleLogin}
-        primaryText="Login with Google"
-
-        // Register
-        onSecondary={() => {
-          handleClose();
-          navigate("/register");
-        }}
-        secondaryText="Register"
-        simpleLoginText="Login" 
-        
-        onSimpleLogin={() => {
-          handleClose();
-          navigate("/login");
-        }}
-      />
+				open={open}
+				title="Login or Register?"
+				onClose={handleClose}
+				// Login with Google
+				onPrimary={handleLogin}
+				primaryText="Login with Google"
+				// Register
+				onSecondary={() => {
+					handleClose();
+					navigate("/register");
+				}}
+				secondaryText="Register"
+				simpleLoginText="Login"
+				onSimpleLogin={() => {
+					handleClose();
+					navigate("/login");
+				}}
+			/>
 		</>
 	);
 };
