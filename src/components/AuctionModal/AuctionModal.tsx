@@ -27,7 +27,7 @@ interface AuctionModalProps {
 const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNext, onPrev }) => {
 	const { user, socket } = useAuth();
 	const [lastBidAmount, setLastBidAmount] = useState<number>(0);
-	const [bidAmount, setBidAmount] = useState<number>(0);
+	const [bidAmount, setBidAmount] = useState<number | null>(null);
 	const [isProvisionModalOpen, setIsProvisionModalOpen] = useState(false);
 	const [bidCount, setBidCount] = useState<number>(0);
 	const [isLastBidBelongToCurrentUser, setIsLastBidBelongToCurrentUser] = useState<boolean>(false);
@@ -51,9 +51,10 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 					// 	console.log(`[INFO] Coming ws message, Event: ${event}`, args);
 					// });
 
-					socket.on(`new_bid`, (bidMessage: BidResponseDto & { room: string }) => {
+					socket.on(`new_bid`, async (bidMessage: BidResponseDto & { room: string }) => {
 						if (bidMessage?.room === roomName) {
-							fetchAuctionPhotoData();
+							const auctionPhotoData = await fetchAuctionPhotoData();
+							await fetchBid(auctionPhotoData);
 						}
 					});
 
@@ -102,7 +103,6 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		if (!responseBid.ok) throw new Error("Failed to fetch auction photo");
 		const dataBid: BidResponseDto[] = await responseBid.json();
 		setLastBidAmount(dataAuctionPhoto.last_bid_amount);
-		setBidAmount(dataAuctionPhoto.last_bid_amount + 100);
 		setBidCount(dataBid.length);
 		dataBid?.sort((b, a) => a.bid_amount - b.bid_amount);
 		if (dataBid?.[0]?.user_id === user?.id) setIsLastBidBelongToCurrentUser(true);
@@ -138,7 +138,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		}
 
 		if (bidAmount == null) {
-			toastError("Please enter an amount!");
+			toastError("Please enter bid amount!");
 			return;
 		}
 
@@ -369,12 +369,10 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 							<TextField
 								label="Enter your bid"
 								type="number"
-								value={bidAmount}
+								value={bidAmount ?? ""}
 								onChange={(e) => {
-									const newBidAmount = Number(e.target.value) || 0;
-									if (newBidAmount >= 0) {
-										setBidAmount(newBidAmount);
-									}
+									const newBidAmount = Number(e.target.value) || null;
+									setBidAmount(newBidAmount);
 								}}
 								fullWidth
 							/>
@@ -393,9 +391,6 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 								{user?.status_id !== StatusEnum.ACTIVE ? "Make Provision Before Bid" : "Place Bid"}
 							</Button>
 						</Box>
-						<Typography variant="body2" color="textSecondary" align="center">
-							{bidAmount === 0 ? "Enter bid amount above" : ""}
-						</Typography>
 					</Box>
 				</Box>
 			</Modal>
