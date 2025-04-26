@@ -53,8 +53,6 @@ const MainLayout: React.FC = () => {
 		window.history.replaceState({}, "", window.location.pathname);
 	}
 
-	console.log("User object:", user);
-
 	if (user === undefined) {
 		return <CircularProgress />;
 	}
