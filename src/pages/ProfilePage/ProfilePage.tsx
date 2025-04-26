@@ -15,6 +15,7 @@ import PendingPurchase from "../PendingPurchase/PendingPurchase";
 import ProfitPage from "../ProfitPage/ProfitPage";
 import PurchasedPhotos from "../../components/PurchasedPhotos/PurchasedPhotos";
 import ProfileGallery from "../../components/ProfileGallery/ProfileGallery";
+import { toastSuccess } from "../../util/toastUtil";
 
 const ProfilePage: React.FC = () => {
 	const { user } = useAuth();
@@ -98,7 +99,7 @@ const ProfilePage: React.FC = () => {
 				throw new Error(`File upload failed: ${responseData}`);
 			}
 
-			alert("File uploaded successfully!");
+			toastSuccess("File uploaded successfully");
 			setSelectedFile(null);
 			setUploading(false);
 			setSelectedTab(0);
@@ -177,10 +178,7 @@ const ProfilePage: React.FC = () => {
 					</Tabs>
 
 					{/* GALLERY TAB */}
-					{selectedTab === 0 && (
-						<ProfileGallery myPhotos={myPhotos} onPhotoClick={handlePhotoClick} />
-					)}
-
+					{selectedTab === 0 && <ProfileGallery myPhotos={myPhotos} onPhotoClick={handlePhotoClick} />}
 
 					{/* UPLOAD TAB */}
 					{selectedTab === 1 && (
