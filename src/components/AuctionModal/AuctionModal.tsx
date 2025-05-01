@@ -6,7 +6,9 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AuctionPhotoDto from "../../dto/auctionPhoto/AuctionPhotoDto";
 import BidResponseDto from "../../dto/bid/BidResponseDto";
+import CronDto from "../../dto/cron/CronDto";
 import PhotoDto from "../../dto/photo/PhotoDto";
+import { cronEnum } from "../../enum/cronEnum";
 import { StatusEnum } from "../../enum/statusEnum";
 import { webApiUrl } from "../../env/envVars";
 import PaymentPage from "../../pages/PaymentPage/PaymentPage";
@@ -24,12 +26,12 @@ interface AuctionModalProps {
 
 const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNext, onPrev }) => {
 	const { user, socket } = useAuth();
-	const [auctionPhoto, setAuctionPhoto] = useState<AuctionPhotoDto | null>(null);
 	const [lastBidAmount, setLastBidAmount] = useState<number>(0);
-	const [bidAmount, setBidAmount] = useState<number>(0);
+	const [bidAmount, setBidAmount] = useState<number | null>(null);
 	const [isProvisionModalOpen, setIsProvisionModalOpen] = useState(false);
 	const [bidCount, setBidCount] = useState<number>(0);
 	const [isLastBidBelongToCurrentUser, setIsLastBidBelongToCurrentUser] = useState<boolean>(false);
+	const [auctionPhoto, setAuctionPhoto] = useState<AuctionPhotoDto | null>(null);
 
 	useEffect(() => {
 		let dataAuctionPhoto: AuctionPhotoDto;
@@ -37,6 +39,8 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		const init = async () => {
 			try {
 				dataAuctionPhoto = await fetchAuctionPhotoData();
+				await fetchBid(dataAuctionPhoto);
+				setAuctionPhoto(dataAuctionPhoto);
 				myPhotos = await fetchMyPhotos();
 
 				// ws implementation
@@ -45,9 +49,14 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 					console.log(`[INFO] WS: joining room: ${roomName}`);
 					socket.emit("joinRoom", roomName);
 
-					socket.on(`new_bid`, (bidMessage: BidResponseDto & { room: string }) => {
+					// socket.onAny((event, ...args) => {
+					// 	console.log(`[INFO] Coming ws message, Event: ${event}`, args);
+					// });
+
+					socket.on(`new_bid`, async (bidMessage: BidResponseDto & { room: string }) => {
 						if (bidMessage?.room === roomName) {
-							fetchAuctionPhotoData();
+							const auctionPhotoData = await fetchAuctionPhotoData();
+							await fetchBid(auctionPhotoData);
 						}
 					});
 
@@ -55,13 +64,13 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 						onClose();
 
 						if (message?.room === roomName) {
-							if (user?.id === message.aucitonPhoto.winner_user_id_1) toastSuccess("Congratulations! You won the auction, make payment to photo as soon as possible to buy it.");
+							if (!message?.aucitonPhoto?.winner_user_id_1) toastWarning("Auction is over.");
+							else if (user?.id === message.aucitonPhoto.winner_user_id_1) toastSuccess("Congratulations! You won the auction, make payment to photo as soon as possible to buy it.");
 							else if (user?.id === message.aucitonPhoto.winner_user_id_2)
 								toast("You are the second winner. If the first winner does not purchase the photo from the auction, you would buy it.");
 							else if (user?.id === message.aucitonPhoto.winner_user_id_3)
 								toast("You are the third winner. If the second winner does not purchase the photo from the auction, you would buy it.");
 							else if (!myPhotos.some((photo) => photo.id === dataAuctionPhoto.photo_id)) toastWarning("You did not win the auction.");
-							else toastWarning("Auction is over.");
 						}
 					});
 				}
@@ -71,42 +80,41 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		};
 
 		init();
-
-		// Cleanup function
-		return () => {
-			// console.log("component unmount, will leave the ws room");
-			if (socket && dataAuctionPhoto) {
-				const roomName = `auction_photo_id_${dataAuctionPhoto.id}`;
-				socket.emit("leaveRoom", roomName);
-				console.log(`[INFO] WS: leaving room: ${roomName}`);
-			}
-		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const handleBidModalClose = () => {
+		leaveRoom();
+		onClose();
+	};
+
+	const leaveRoom = (): void => {
+		if (socket && auctionPhoto) {
+			const roomName = `auction_photo_id_${auctionPhoto.id}`;
+			socket.emit("leaveRoom", roomName);
+			socket.off("new_bid");
+			socket.off("finish_auction");
+			// socket.offAny();
+			console.log(`[INFO] WS: leaving room: ${roomName}`);
+		}
+	};
+
 	const fetchAuctionPhotoData = async (): Promise<AuctionPhotoDto> => {
 		const responseAuctionPhoto = await fetch(`${webApiUrl}/auctions/photos/${photo.id}`);
-		if (!responseAuctionPhoto.ok) {
-			throw new Error("Failed to fetch auction photo");
-		}
+		if (!responseAuctionPhoto.ok) throw new Error("Failed to fetch auction photo");
 		const dataAuctionPhoto = await responseAuctionPhoto.json();
+		return dataAuctionPhoto;
+	};
 
+	const fetchBid = async (dataAuctionPhoto: AuctionPhotoDto) => {
 		const responseBid = await fetch(`${webApiUrl}/bids/${dataAuctionPhoto.id}`);
-		if (!responseBid.ok) {
-			throw new Error("Failed to fetch auction photo");
-		}
+		if (!responseBid.ok) throw new Error("Failed to fetch auction photo");
 		const dataBid: BidResponseDto[] = await responseBid.json();
-
-		setAuctionPhoto(dataAuctionPhoto);
 		setLastBidAmount(dataAuctionPhoto.last_bid_amount);
-		setBidAmount(dataAuctionPhoto.last_bid_amount + 100);
 		setBidCount(dataBid.length);
-
 		dataBid?.sort((b, a) => a.bid_amount - b.bid_amount);
 		if (dataBid?.[0]?.user_id === user?.id) setIsLastBidBelongToCurrentUser(true);
 		else setIsLastBidBelongToCurrentUser(false);
-
-		return dataAuctionPhoto;
 	};
 
 	const fetchMyPhotos = async (): Promise<PhotoDto[]> => {
@@ -114,6 +122,15 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		if (!responseMyPhotos.ok) throw new Error("Failed to fetch photo data");
 		const myPhotos: PhotoDto[] = await responseMyPhotos.json();
 		return myPhotos;
+	};
+
+	const fetchCron = async (): Promise<CronDto | null> => {
+		const responseCrons = await fetch(`${webApiUrl}/crons`);
+		if (!responseCrons.ok) throw new Error("Failed to fetch cron data");
+		const cronsData: CronDto[] = await responseCrons.json();
+		const cronData = cronsData.find((cron) => cron.id === cronEnum.AUCTION);
+		if (cronData) return cronData;
+		return null;
 	};
 
 	const handleBidSubmit = async () => {
@@ -129,7 +146,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		}
 
 		if (bidAmount == null) {
-			toastError("Please enter an amount!");
+			toastError("Please enter bid amount!");
 			return;
 		}
 
@@ -183,17 +200,23 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 		setDetailAnchorEl(null);
 	};
 
-	const handleTimerClick = () => {
+	const handleTimerClick = async () => {
 		const now = new Date();
-		if (auctionPhoto?.finish_time) {
-			const finishTime = new Date(auctionPhoto?.finish_time);
+		const cron = await fetchCron();
+		if (cron?.next_trigger_time) {
+			const finishTime = new Date(cron.next_trigger_time);
 			const remainingTimeInMillis = finishTime.getTime() - now.getTime();
-			const remainingTimeInSeconds = Math.floor(remainingTimeInMillis / 1000);
+			const remainingTimeInSeconds = Math.max(Math.floor(remainingTimeInMillis / 1000), 0);
 			const remainingTimeInMinutes = Math.floor(remainingTimeInSeconds / 60);
 			const remainingTimeInHours = Math.floor(remainingTimeInMinutes / 60);
 			const remainingTimeInDays = Math.floor(remainingTimeInHours / 24);
 			const remainingSeconds = remainingTimeInSeconds % 60;
-			const timeRemaining = `${remainingTimeInDays} days ${remainingTimeInHours % 24} hours ${remainingTimeInMinutes % 60} minutes ${remainingSeconds} seconds.`;
+			const parts = [];
+			if (remainingTimeInDays > 0) parts.push(`${remainingTimeInDays} days`);
+			if (remainingTimeInHours % 24 > 0) parts.push(`${remainingTimeInHours % 24} hours`);
+			if (remainingTimeInMinutes % 60 > 0) parts.push(`${remainingTimeInMinutes % 60} minutes`);
+			parts.push(`${remainingSeconds} seconds`);
+			const timeRemaining = parts.join(" ");
 			toast(`Time remaining: ${timeRemaining}`);
 		}
 	};
@@ -208,7 +231,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 			</Modal>
 
 			{/* bid modal */}
-			<Modal open={open} onClose={onClose} slotProps={{ backdrop: { style: { backgroundColor: "rgba(0, 0, 0, 0.8)" } } }}>
+			<Modal open={open} onClose={handleBidModalClose} slotProps={{ backdrop: { style: { backgroundColor: "rgba(0, 0, 0, 0.8)" } } }}>
 				<Box
 					sx={{
 						position: "absolute",
@@ -248,7 +271,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 						</Box>
 						<Box display="flex" alignItems="center" gap={2}>
 							<Typography variant="h6" sx={{ fontWeight: "bold", color: "#fff" }}>
-								{bidCount === 0 ? "Initial Price" : "Last Bid"} {isLastBidBelongToCurrentUser ? "From You" : ""}: {lastBidAmount} ₺
+								{bidCount === 0 ? "Initial Price" : "Last Bid"} {isLastBidBelongToCurrentUser ? "From You" : ""}: {lastBidAmount} $
 							</Typography>
 						</Box>
 
@@ -354,12 +377,10 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 							<TextField
 								label="Enter your bid"
 								type="number"
-								value={bidAmount}
+								value={bidAmount ?? ""}
 								onChange={(e) => {
-									const newBidAmount = Number(e.target.value) || 0;
-									if (newBidAmount >= 0) {
-										setBidAmount(newBidAmount);
-									}
+									const newBidAmount = Number(e.target.value) || null;
+									setBidAmount(newBidAmount);
 								}}
 								fullWidth
 							/>
@@ -378,9 +399,6 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 								{user?.status_id !== StatusEnum.ACTIVE ? "Make Provision Before Bid" : "Place Bid"}
 							</Button>
 						</Box>
-						<Typography variant="body2" color="textSecondary" align="center">
-							{bidAmount === 0 ? "Enter bid amount above" : ""}
-						</Typography>
 					</Box>
 				</Box>
 			</Modal>

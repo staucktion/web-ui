@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { Modal, Box, Typography, Button, IconButton, Divider, Menu, MenuItem } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import CloseIcon from "@mui/icons-material/Close";
+import { Box, Button, Divider, IconButton, Menu, MenuItem, Modal, Typography } from "@mui/material";
+import React, { useState } from "react";
 import PhotoDto from "../../dto/photo/PhotoDto";
-import getPhotoDetails from "../../util/getPhotoDetails";
-import { generateLocationUrl } from "../../util/generateLocationUrl";
-import EmailButtons from "../EmailButtons/EmailButtons";
 import PaymentPage from "../../pages/PaymentPage/PaymentPage";
+import { generateLocationUrl } from "../../util/generateLocationUrl";
+import getPhotoDetails from "../../util/getPhotoDetails";
+import EmailButtons from "../EmailButtons/EmailButtons";
 
 interface PhotoDetailModalProps {
 	open: boolean;
@@ -112,15 +111,6 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 
 							{/* Sağdaki alan: Dropdown "Detail" */}
 							<Box display="flex" alignItems="center" gap={2}>
-								<Button variant="text" sx={{ textTransform: "none" }}>
-									Date
-								</Button>
-								<Box display="flex" alignItems="center" gap={1}>
-									<Typography variant="body1">{photo.vote_count} Likes</Typography>
-									<IconButton color="error" aria-label="like">
-										<FavoriteBorderIcon />
-									</IconButton>
-								</Box>
 								<Button variant="text" sx={{ textTransform: "none" }} onClick={() => window.open(generateLocationUrl(photo.category.location), "_blank")}>
 									Location
 								</Button>

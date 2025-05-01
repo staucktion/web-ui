@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import { Box, Typography as MuiTypography } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import redirectWithPost from "../../util/redirectWithPost";
-import { Box, Typography as MuiTypography } from "@mui/material";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import NotificationDto from "../../dto/notification/NotificationDto";
 import { webApiUrl } from "../../env/envVars";
 import { markNotificationSeen } from "../../util/markNotificationSeen";
+import redirectWithPost from "../../util/redirectWithPost";
 
 const NavBarProfile: React.FC = () => {
 	const navigate = useNavigate(); // Hook for navigation
@@ -65,12 +64,7 @@ const NavBarProfile: React.FC = () => {
 				<Typography variant="h6" sx={{ flexGrow: 1, cursor: "pointer" }} onClick={goToHome}>
 					Staucktion
 				</Typography>
-
-				{/* Overflow Menu */}
-				<IconButton sx={{ color: "white", mr: 1 }} onClick={() => alert("Overflow menu clicked!")}>
-					<MoreVertIcon />
-				</IconButton>
-
+				
 				{/* Notifications Button */}
 				<IconButton sx={{ color: "white", mr: 2 }} onClick={handleNotifications}>
 					<NotificationsIcon />

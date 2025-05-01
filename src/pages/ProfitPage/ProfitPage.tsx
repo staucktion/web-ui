@@ -62,7 +62,7 @@ const ProfitPage: React.FC = () => {
 				<Box textAlign="center" mt={3}>
 					{profit > 0 ? (
 						<>
-							<Typography variant="h5">Profit: {profit}₺</Typography>
+							<Typography variant="h5">Profit: ${profit}</Typography>
 							<Button
 								variant="contained"
 								color="primary"
