@@ -73,6 +73,8 @@ const ValidatePhotos: React.FC = () => {
 	const endIndex = startIndex + itemsPerPage;
 	const displayedPhotos = photos.slice(startIndex, endIndex);
 	const totalPages = Math.ceil(photos.length / itemsPerPage);
+	const displayCurrent = totalPages === 0 ? 0 : currentPage + 1;
+	const displayTotal   = totalPages;
 
 	const handlePreviousPage = () => {
 		setCurrentPage((prev) => Math.max(prev - 1, 0));
@@ -154,25 +156,33 @@ const ValidatePhotos: React.FC = () => {
 			</Grid>
 
 			<Box
-				sx={{
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					mt: 4,
-					gap: 2,
-				}}
+			sx={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				mt: 4,
+				gap: 2,
+			}}
 			>
-				<Button onClick={handlePreviousPage} disabled={currentPage === 0}>
-					<ArrowBackIosIcon />
-				</Button>
-				<Typography variant="body1" sx={{ color: "#fff" }}>
-					Page {currentPage + 1} / {totalPages}
-				</Typography>
-				<Button onClick={handleNextPage} disabled={currentPage + 1 === totalPages}>
-					<ArrowForwardIosIcon />
-				</Button>
-			</Box>
-		</>
+			<Button
+				onClick={handlePreviousPage}
+				disabled={displayTotal === 0 || currentPage === 0}
+			>
+				<ArrowBackIosIcon />
+			</Button>
+
+			<Typography variant="body1" sx={{ color: "#fff" }}>
+				Page {displayCurrent} / {displayTotal}
+			</Typography>
+
+			<Button
+				onClick={handleNextPage}
+				disabled={displayTotal === 0 || displayCurrent === displayTotal}
+			>
+			<ArrowForwardIosIcon />
+					</Button>
+				</Box>
+			</>
 	);
 };
 
