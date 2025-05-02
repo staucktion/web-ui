@@ -7,10 +7,12 @@ import PhotoDto from "../../dto/photo/PhotoDto";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 import redirectWithPost from "../../util/redirectWithPost";
 import CustomModal from "../CustomModal/CustomModal";
+import { useNavigate } from "react-router-dom";
 
 const RandomPhotos: React.FC = () => {
 	const { user } = useAuth();
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
+	const navigate = useNavigate();   
 
 	const [watermarkedImages, setWatermarkedImages] = useState<PhotoDto[]>([]);
 	const [selectedImage, setSelectedImage] = useState<PhotoDto | null>(null);
@@ -93,14 +95,49 @@ const RandomPhotos: React.FC = () => {
 				))}
 			</div>
 
-			<CustomModal open={open} title="Login to View Images" onClose={handleClose} onConfirm={handleLogin} confirmText="Login with Google" />
+			<CustomModal
+        open={open}
+        title="Login or Register?"
+        onClose={handleClose}
 
-			<CustomModal open={isModalOpen} title="Image Preview" onClose={handleCloseModal}>
-				<img src={selectedImage?.file_path || ""} alt="Selected" className="modalImage" />
-				<EmailButtons onApprove={() => selectedImage && sendApproveMail(selectedImage)} />
-			</CustomModal>
-		</div>
-	);
+        // Google ile login
+        onPrimary={handleLogin}
+        primaryText="Login with Google"
+
+        // Basit login
+        simpleLoginText="Simple Login"
+        onSimpleLogin={() => {
+          handleClose();
+          navigate("/login");
+        }}
+
+        // Yeni user register
+        secondaryText="Register"
+        onSecondary={() => {
+          handleClose();
+          navigate("/register");
+        }}
+      />
+
+      {/* === Image Preview & Approve Modal === */}
+      <CustomModal
+        open={isModalOpen}
+        title="Image Preview"
+        onClose={handleCloseModal}
+      >
+        <img
+          src={selectedImage?.file_path || ""}
+          alt="Selected"
+          className="modalImage"
+        />
+        <EmailButtons
+          onApprove={() =>
+            selectedImage && sendApproveMail(selectedImage)
+          }
+        />
+      </CustomModal>
+    </div>
+  );
 };
 
 export default RandomPhotos;

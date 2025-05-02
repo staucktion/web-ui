@@ -174,19 +174,34 @@ const ProfilePage: React.FC = () => {
 						Edit Profile
 					</Button>
 
-					<Tabs value={selectedTab} onChange={handleTabChange} variant="fullWidth" centered sx={{ marginBottom: 2 }}>
-						<Tab label="Gallery" />
-						{isAdminOrValidator && <Tab label="Upload" value={1} />}
-						<Tab label="Pending Purchase" />
-						<Tab label="Profit" />
-						<Tab label="Purchased Photos" />
+					<Tabs
+					value={selectedTab}
+					onChange={handleTabChange}
+					variant="fullWidth"
+					centered
+					sx={{ mb: 2 }}
+					>
+					<Tab label="Gallery" value={0} />
+					{isAdminOrValidator && <Tab label="Upload" value={1} />}
+					<Tab
+						label="Pending Purchase"
+						value={isAdminOrValidator ? 2 : 1}
+					/>
+					<Tab
+						label="Profit"
+						value={isAdminOrValidator ? 3 : 2}
+					/>
+					<Tab
+						label="Purchased Photos"
+						value={isAdminOrValidator ? 4 : 3}
+					/>
 					</Tabs>
 
 					{/* GALLERY TAB */}
 					{selectedTab === 0 && <ProfileGallery myPhotos={myPhotos} onPhotoClick={handlePhotoClick} />}
 
 					{/* UPLOAD TAB */}
-					{selectedTab === 1 && (
+					{isAdminOrValidator && selectedTab === 1 && (
 						<>
 							<Typography variant="h6" sx={{ marginBottom: 2 }}>
 								Upload a Photo
@@ -239,21 +254,21 @@ const ProfilePage: React.FC = () => {
 					)}
 
 					{/* pending purchase tab */}
-					{selectedTab === 2 && (
+					{selectedTab === (isAdminOrValidator ? 2 : 1) && (
 						<Box sx={{ marginTop: 2 }}>
 							<PendingPurchase />
 						</Box>
 					)}
 
 					{/* profit tab */}
-					{selectedTab === 3 && (
+					{selectedTab === (isAdminOrValidator ? 3 : 2) && (
 						<Box sx={{ marginTop: 2 }}>
 							<ProfitPage />
 						</Box>
 					)}
 
 					{/* purchased photos tab */}
-					{selectedTab === 4 && (
+					{selectedTab === (isAdminOrValidator ? 4 : 3) && (
 						<Box sx={{ marginTop: 2 }}>
 							<PurchasedPhotos />
 						</Box>
