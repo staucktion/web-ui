@@ -49,8 +49,11 @@ const NavBar: React.FC = () => {
 					</Typography>
 
 					{/* License */}
-					<Button sx={{ textTransform: "none", color: "white", mr: 2 }} onClick={() => navigate("/license")}>
-						License
+					<Button
+					sx={{ textTransform: "none", color: "white", mr: 2 }}
+					onClick={() => window.open("/license", "_blank")}
+					>
+					License
 					</Button>
 
 					{/* Admin/Validator dropdown */}
