@@ -16,6 +16,7 @@ import PaymentAuction from "./pages/PaymentAuction/PaymentAuction";
 import { toastError, toastSuccess } from "./util/toastUtil";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
+import LicensePage from "./pages/LicensePage/LicensePage";
 
 function App() {
 	const themeMode = "light";
@@ -70,6 +71,7 @@ const MainLayout: React.FC = () => {
 			<Route path="/payment-auction/:photoId" element={<PaymentAuction />} />
 			<Route path="/register" element={<RegisterPage />} />
 			<Route path="/login" element={<LoginPage />} />
+			<Route path="/license" element={<LicensePage />} />
 
 			{/* Only for Validator's access*/}
 			<Route path="/validator" element={checkUserRole(user, "validator") ? <ValidatorPanel /> : <Navigate to="/" />} />
