@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Select, MenuItem, FormControl, InputLabel, Grid, Card, CardMedia, CardContent } from "@mui/material";
+import {
+	Box,
+	Typography,
+	FormControl,
+	InputLabel,
+	Select,
+	MenuItem,
+	Grid,
+	Card,
+	CardActionArea,
+	CardMedia,
+	CardContent,
+	Chip,
+	Container,
+  } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import PhotoDto from "../../dto/photo/PhotoDto";
 import { webApiUrl } from "../../env/envVars";
 import getPhotoSrc from "../../util/getPhotoSrc";
 import CategoryDto from "../../dto/category/CategoryDto";
-import HeroBackground from "/HeroBackground.jpg";
+
 
 const CategoriesPage: React.FC = () => {
 	const [photos, setPhotos] = useState<PhotoDto[]>([]);
@@ -41,93 +55,79 @@ const CategoriesPage: React.FC = () => {
 	const filteredPhotos = selectedCategory === "All" ? photos : photos.filter((photo) => String(photo.category_id) === selectedCategory);
 
 	return (
-		<Box
-			sx={{
-				backgroundColor: "#f7f7f7",
-				minHeight: "100vh",
-				// 🔽 NavBar ile bu bölüm arasında boşluk ekliyoruz
-				mt: 4,
-			}}
-		>
-			{/* Header Bölümü */}
-			<Box
-				sx={{
-					backgroundImage: `url("${HeroBackground}")`,
-					backgroundSize: "cover",
-					backgroundPosition: "center",
-					height: "300px",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					position: "relative",
-					mb: 4,
-				}}
-			>
-				{/* Opak Katman */}
-				<Box
-					sx={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						backgroundColor: "rgba(0, 0, 0, 0.5)",
-					}}
-				/>
-				<Typography variant="h3" sx={{ color: "#fff", zIndex: 1 }}>
-					Explore Categories
-				</Typography>
-			</Box>
-
-			{/* Dropdown ile Kategori Seçimi */}
-			<Box sx={{ textAlign: "center", mb: 4 }}>
-				<FormControl variant="outlined" sx={{ minWidth: 240 }}>
-					<InputLabel id="category-select-label">Select Category</InputLabel>
-					<Select labelId="category-select-label" value={selectedCategory} onChange={handleCategoryChange} label="Select Category">
-						<MenuItem value="All">All</MenuItem>
-						{Array.from(categories.values()).map((cat) => (
-							<MenuItem key={cat.id} value={cat.id}>
-								{cat.name}
-							</MenuItem>
-						))}
-					</Select>
-				</FormControl>
-			</Box>
-
-			{/* Fotoğraf Grid'i */}
-			<Grid container spacing={3} sx={{ p: 3 }}>
-				{filteredPhotos.map((photo) => (
-					<Grid item xs={12} sm={6} md={4} lg={3} key={photo.id}>
-						<Card
-							sx={{
-								borderRadius: "16px",
-								boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-								transition: "transform 0.3s",
-								"&:hover": { transform: "scale(1.05)" },
-							}}
-						>
-							<CardMedia
-								component="img"
-								image={photo.file_path}
-								alt={`Photo ${photo.id}`}
-								sx={{
-									height: "200px",
-									objectFit: "cover",
-									borderTopLeftRadius: "16px",
-									borderTopRightRadius: "16px",
-								}}
-							/>
-							<CardContent>
-								<Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-									Category: {photo.category.name}
-								</Typography>
-							</CardContent>
-						</Card>
-					</Grid>
+		<Box sx={{ background: "#fafafa", minHeight: "100vh", py: 4 }}>
+		  {/* Simple Header */}
+		  <Container maxWidth="md" sx={{ textAlign: "center", mb: 4 }}>
+		  </Container>
+	
+		  {/* Category Selector */}
+		  <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>
+			<FormControl sx={{ minWidth: 200, background: "#fff", borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
+			  <InputLabel id="category-select-label">Category</InputLabel>
+			  <Select
+				labelId="category-select-label"
+				value={selectedCategory}
+				onChange={handleCategoryChange}
+				label="Category"
+				sx={{ borderRadius: 3 }}
+			  >
+				<MenuItem value="All">All</MenuItem>
+				{Array.from(categories.values()).map((cat) => (
+				  <MenuItem key={cat.id} value={String(cat.id)}>
+					{cat.name}
+				  </MenuItem>
 				))}
+			  </Select>
+			</FormControl>
+		  </Box>
+	
+		  {/* Photo Grid */}
+		  <Container maxWidth="lg">
+			<Grid container spacing={4}>
+			  {filteredPhotos.map((photo) => (
+				<Grid item xs={12} sm={6} md={4} lg={3} key={photo.id}>
+				  <Card
+					sx={{
+					  borderRadius: 2,
+					  overflow: "hidden",
+					  boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+					  transition: "transform 0.3s",
+					  "&:hover": { transform: "translateY(-6px)" },
+					}}
+				  >
+					<CardActionArea>
+					  <Box sx={{ position: "relative" }}>
+						<CardMedia
+						  component="img"
+						  image={photo.file_path}
+						  alt={`Photo ${photo.id}`}
+						  sx={{ height: 0, paddingTop: "75%" }}
+						/>
+						<Chip
+						  label={photo.category.name}
+						  size="small"
+						  sx={{
+							position: "absolute",
+							top: 8,
+							left: 8,
+							backgroundColor: "rgba(255,255,255,0.9)",
+							fontWeight: 600,
+						  }}
+						/>
+					  </Box>
+					  <CardContent>
+						<Typography variant="body2" noWrap>
+						  {photo.title || `Photo #${photo.id}`}
+						</Typography>
+					  </CardContent>
+					</CardActionArea>
+				  </Card>
+				</Grid>
+			  ))}
 			</Grid>
+		  </Container>
 		</Box>
-	);
-};
-
+	  );
+	};
+	  
 export default CategoriesPage;
