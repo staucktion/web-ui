@@ -27,6 +27,11 @@ const ProfilePage: React.FC = () => {
 	const [categories, setCategories] = useState<CategoryDto[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("");
 
+	const isAdminOrValidator =
+	user?.role_id === 1 /* admin */ ||
+	user?.role_id === 4 /* validator */;
+
+
 	// Photo to be displayed in modal
 	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 
@@ -171,7 +176,7 @@ const ProfilePage: React.FC = () => {
 
 					<Tabs value={selectedTab} onChange={handleTabChange} variant="fullWidth" centered sx={{ marginBottom: 2 }}>
 						<Tab label="Gallery" />
-						<Tab label="Upload" />
+						{isAdminOrValidator && <Tab label="Upload" value={1} />}
 						<Tab label="Pending Purchase" />
 						<Tab label="Profit" />
 						<Tab label="Purchased Photos" />
