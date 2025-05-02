@@ -10,6 +10,7 @@ const RegisterPage: React.FC = () => {
     firstName: "",
     lastName: "",
     email: "",
+    confirmEmail: "",
     password: "",
     confirmPassword: "",
   });
@@ -21,6 +22,11 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formValues.email !== formValues.confirmEmail) {
+      toast.error("Emails do not match!");
+      return;
+    }
 
     if (formValues.password !== formValues.confirmPassword) {
       toast.error("Passwords do not match!");
@@ -57,6 +63,23 @@ const RegisterPage: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
+      <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+        <Button
+          variant="outlined"
+          onClick={() => navigate("/home")}
+          sx={{
+            borderColor: "#000000",
+            color: "#000000",
+            '&:hover': {
+              borderColor: "#333333",
+              color: "#333333",
+            },
+          }}
+        >
+          Back to Home
+        </Button>
+      </Box>
+
       <Box sx={{ mt: 8, p: 4, borderRadius: 2, boxShadow: 3, bgcolor: 'background.paper' }}>
         <Typography variant="h4" align="center" gutterBottom>
           Create an Account
@@ -65,6 +88,7 @@ const RegisterPage: React.FC = () => {
           <TextField fullWidth margin="normal" label="First Name" name="firstName" value={formValues.firstName} onChange={handleChange} required />
           <TextField fullWidth margin="normal" label="Last Name" name="lastName" value={formValues.lastName} onChange={handleChange} required />
           <TextField fullWidth margin="normal" label="Email" name="email" type="email" value={formValues.email} onChange={handleChange} required />
+          <TextField fullWidth margin="normal" label="Confirm Email" name="confirmEmail" type="email"value={formValues.confirmEmail} onChange={handleChange} required/>
           <TextField fullWidth margin="normal" label="Password" name="password" type="password" value={formValues.password} onChange={handleChange} required />
           <TextField fullWidth margin="normal" label="Confirm Password" name="confirmPassword" type="password" value={formValues.confirmPassword} onChange={handleChange} required />
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, py: 1.5, borderRadius: 2, backgroundColor: "#000000", color: "#ffffff", "&:hover": { backgroundColor: "#333333" } }}>
