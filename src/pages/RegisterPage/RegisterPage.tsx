@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { webApiUrl } from "../../env/envVars"; 
+import { toastError, toastSuccess } from "../../util/toastUtil";
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,12 +24,12 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
 
     if (formValues.email !== formValues.confirmEmail) {
-      toast.error("Emails do not match!");
+      toastError("Emails do not match!");
       return;
     }
 
     if (formValues.password !== formValues.confirmPassword) {
-      toast.error("Passwords do not match!");
+      toastError("Passwords do not match!");
       return;
     }
 
@@ -53,11 +53,11 @@ const RegisterPage: React.FC = () => {
         throw new Error(errorData.message || "Registration failed");
       }
 
-      toast.success("Registration successful!");
+      toastSuccess("Registration successful!");
       navigate("/home");
     } catch (error: unknown) {
             const err = error as { message?: string }; 
-            toast.error(err.message || "Registration is failed");
+            toastError(err.message || "Registration is failed");
           }
   }, [formValues, navigate]);
 

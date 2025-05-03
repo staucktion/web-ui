@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { webApiUrl } from "../../env/envVars";
 import { useAuth } from "../../providers/AuthHook"; // Context'ten setUser çekiyoruz
+import { toastError, toastSuccess } from "../../util/toastUtil";
 
 const LoginPage: React.FC = () => {
 	const [email, setEmail] = useState("");
@@ -40,11 +40,11 @@ const LoginPage: React.FC = () => {
 			const userData = await userResponse.json();
 			setUser(userData.user); // 🌟 context'teki user'ı güncelliyoruz
 
-			toast.success("Login successful!");
+			toastSuccess("Login successful!");
 			navigate("/home"); // yönlendiriyoruz
 		} catch (error: unknown) {
 			const err = error as { message?: string };
-			toast.error(err.message || "Login failed");
+			toastError(err.message || "Login failed");
 		}
 	}, [email, password, navigate, setUser]);
 
