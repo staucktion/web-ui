@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Box, Card, CardMedia, CircularProgress, Grid, Typography, Modal } from "@mui/material";
-import PhotoDto from "../../dto/photo/PhotoDto";
 import { webApiUrl } from "../../env/envVars";
+import PurchasedPhotoDto from "../../dto/photo/PurchasedPhotoDto";
 
 const PurchasedPhotos: React.FC = () => {
-	const [purchasedPhotos, setPurchasedPhotos] = useState<PhotoDto[]>([]);
+	const [purchasedPhotos, setPurchasedPhotos] = useState<PurchasedPhotoDto[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null); // 🌟 Tıklanan foto
+	const [selectedPhoto, setSelectedPhoto] = useState<PurchasedPhotoDto | null>(null); // 🌟 Tıklanan foto
 
 	const fetchPurchasedPhotos = async () => {
 		try {
@@ -16,9 +16,9 @@ const PurchasedPhotos: React.FC = () => {
 			if (!response.ok) {
 				throw new Error("Failed to fetch purchased photos");
 			}
-			const data: PhotoDto[] = await response.json();
-			data.forEach((photo) => {
-				photo.file_path = `${webApiUrl}/photos/${photo.id}`;
+			const data: PurchasedPhotoDto[] = await response.json();
+			data.forEach((purchasedPhoto) => {
+				purchasedPhoto.file_path = `${webApiUrl}/photos/${purchasedPhoto.photo_id}`;
 			});
 			setPurchasedPhotos(data);
 		} catch (error) {
