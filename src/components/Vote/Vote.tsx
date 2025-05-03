@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
-import "../../styles/Styles.css";
-import { webApiUrl } from "../../env/envVars";
+import { Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import PhotoDto from "../../dto/photo/PhotoDto";
+import { webApiUrl } from "../../env/envVars";
 import useRequireAuth from "../../Hooks/useRequireAuth";
+import { useAuth } from "../../providers/AuthHook";
+import "../../styles/Styles.css";
+import { toastInfo } from "../../util/toastUtil";
 import CustomModal from "../CustomModal/CustomModal";
 import VoteModal from "../VoteModal/VoteModal";
-import { Typography } from "@mui/material";
 
 const Vote: React.FC = () => {
+	const { socket } = useAuth();
 	const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
-
 	const [photosToVote, setPhotosToVote] = useState<Record<number, PhotoDto[]>>({});
 	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -33,10 +35,39 @@ const Vote: React.FC = () => {
 					delete data[+key];
 				}
 			});
-
 			setPhotosToVote(data);
 		} catch (err) {
 			console.error(err);
+		}
+	};
+
+	const listenWsToFinishVote = () => {
+		// ws implementation
+		if (socket) {
+			const roomName = `vote`;
+			console.log(`[INFO] WS: joining room: ${roomName}`);
+			socket.emit("joinRoom", roomName);
+
+			// socket.onAny((event, ...args) => {
+			// 	console.log(`[INFO] Coming ws message, Event: ${event}`, args);
+			// });
+
+			socket.on(`vote`, async () => {
+				await fetchPhotosToVote();
+				leaveRoom();
+				setIsModalOpen(false);
+				toastInfo("Voting is over.");
+			});
+		}
+	};
+
+	const leaveRoom = (): void => {
+		if (socket) {
+			const roomName = `vote`;
+			socket.emit("leaveRoom", roomName);
+			socket.off(roomName);
+			// socket.offAny();
+			console.log(`[INFO] WS: leaving room: ${roomName}`);
 		}
 	};
 
@@ -46,12 +77,14 @@ const Vote: React.FC = () => {
 
 	const handleImageClick = (img: PhotoDto) => {
 		requireAuth(() => {
+			listenWsToFinishVote();
 			setSelectedPhoto(img);
 			setIsModalOpen(true);
 		});
 	};
 
 	const handleCloseModal = () => {
+		leaveRoom();
 		setSelectedPhoto(null);
 		setIsModalOpen(false);
 	};

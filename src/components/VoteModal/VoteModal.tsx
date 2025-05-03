@@ -50,7 +50,7 @@ const VoteModal: React.FC<VoteModalProps> = ({ open, onClose, onNext, onPrev, ph
 			toast(`Time remaining: ${timeRemaining}`);
 		}
 	};
-	
+
 	const handleVote = async () => {
 		const response = await fetch(`${webApiUrl}/votes/${photo.id}`, {
 			method: "POST",
