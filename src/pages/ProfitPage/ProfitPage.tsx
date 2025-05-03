@@ -2,16 +2,21 @@ import { Box, Button, CircularProgress, Modal, Typography } from "@mui/material"
 import React, { useEffect, useState } from "react";
 import ProfitResponseDto from "../../dto/profit/ProfitResponseDto";
 import { webApiUrl } from "../../env/envVars";
-import { toastSuccess } from "../../util/toastUtil";
+import { useAuth } from "../../providers/AuthHook";
+import { toastSuccess, toastWarning } from "../../util/toastUtil";
 import PaymentPage from "../PaymentPage/PaymentPage";
+import { useNavigate } from "react-router-dom";
 
 const ProfitPage: React.FC = () => {
+	const { user } = useAuth();
+	const navigate = useNavigate();
 	const [profit, setProfit] = useState<number>(0);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [isPaymentModalOpen, setIsPaymentModalOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		init();
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- FC equivalent of componentDidMount
 	}, []);
 
 	const init = async () => {
@@ -34,6 +39,17 @@ const ProfitPage: React.FC = () => {
 	};
 
 	const handleWithdraw = async () => {
+		if (!user) {
+			toastWarning("Please login to withdraw money");
+			return;
+		}
+
+		if (!user.tc_identity_no) {
+			toastWarning("Please update your TC Identity Number first by editing your profile");
+			navigate("/editprofile");
+			return;
+		}
+
 		setIsPaymentModalOpen(true);
 	};
 

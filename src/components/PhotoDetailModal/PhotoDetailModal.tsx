@@ -8,6 +8,9 @@ import PaymentPage from "../../pages/PaymentPage/PaymentPage";
 import { generateLocationUrl } from "../../util/generateLocationUrl";
 import getPhotoDetails from "../../util/getPhotoDetails";
 import EmailButtons from "../EmailButtons/EmailButtons";
+import { toastWarning } from "../../util/toastUtil";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../providers/AuthHook";
 
 interface PhotoDetailModalProps {
 	open: boolean;
@@ -18,7 +21,9 @@ interface PhotoDetailModalProps {
 }
 
 const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, photo, onNext, onPrev }) => {
-	// Detail dropdown için state
+	const { user } = useAuth();
+	const navigate = useNavigate();
+	
 	const [detailAnchorEl, setDetailAnchorEl] = useState<null | HTMLElement>(null);
 	const [photoDetails, setPhotoDetails] = useState<{ resolution: string; file_size_mb: number; file_format: string } | null>(null);
 	const openDetailMenu = Boolean(detailAnchorEl);
@@ -33,6 +38,18 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 
 	const handleDetailClose = () => {
 		setDetailAnchorEl(null);
+	};
+
+	const handleOnApprove = () => {
+		if (!user) {
+			toastWarning("Please login to purchase photo");
+			return;
+		}
+
+		if (!user.tc_identity_no) {
+			toastWarning("Please update your TC Identity Number first by editing your profile");
+			navigate("/editprofile");
+		}
 	};
 
 	// Swipe (kaydırma) için kendi mantığımızı yazıyoruz.
@@ -209,7 +226,7 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 						</Box>
 
 						<Box sx={{ p: 2 }}>
-							<EmailButtons onApprove={() => setIsPurchasing(true)} />
+							<EmailButtons onApprove={handleOnApprove} />
 						</Box>
 					</Box>
 				</>

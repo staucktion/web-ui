@@ -23,7 +23,7 @@ const PaymentAuction: React.FC = () => {
 
     if (!user.tc_identity_no) {
       toastWarning("Please add your T.C. identity number first.");
-      navigate("/profile");
+      navigate("/editprofile");
       return;
     }
 

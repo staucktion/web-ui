@@ -5,11 +5,13 @@ import PhotoDto from "../../dto/photo/PhotoDto";
 import { cronEnum } from "../../enum/cronEnum";
 import { webApiUrl } from "../../env/envVars";
 import { useAuth } from "../../providers/AuthHook";
-import { toastSuccess } from "../../util/toastUtil";
+import { toastSuccess, toastWarning } from "../../util/toastUtil";
 import PaymentPage from "../PaymentPage/PaymentPage";
+import { useNavigate } from "react-router-dom";
 
 const PendingPurchase: React.FC = () => {
 	const { user } = useAuth();
+	const navigate = useNavigate();
 	const [photos, setPhotos] = useState<PhotoDto[]>([]);
 	const [selectedPhoto, setSelectedPhoto] = useState<PhotoDto | null>(null);
 	const [loading, setLoading] = useState(true);
@@ -62,6 +64,17 @@ const PendingPurchase: React.FC = () => {
 	}, [user]);
 
 	const handleOpenModal = (photo: PhotoDto) => {
+		if (!user) {
+			toastWarning("Please login to purchase photo");
+			return;
+		}
+
+		if (!user.tc_identity_no) {
+			toastWarning("Please update your TC Identity Number first by editing your profile");
+			navigate("/editprofile");
+			return;
+		}
+
 		setSelectedPhoto(photo);
 		setIsPaymentModalOpen(true);
 	};
