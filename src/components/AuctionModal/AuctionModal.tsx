@@ -143,7 +143,7 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 
 		if (!user.tc_identity_no) {
 			toastWarning("Please update your TC Identity Number first by editing your profile");
-			navigate("/profile");
+			navigate("/editprofile");
 			return;
 		}
 

@@ -30,7 +30,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 
 		if (!user.tc_identity_no) {
 			toastWarning("Please update your TC Identity Number first by editing your profile");
-			navigate("/profile");
+			navigate("/editprofile");
 			return;
 		}
 

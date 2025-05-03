@@ -48,7 +48,7 @@ const PhotoDetailModal: React.FC<PhotoDetailModalProps> = ({ open, onClose, phot
 
 		if (!user.tc_identity_no) {
 			toastWarning("Please update your TC Identity Number first by editing your profile");
-			navigate("/profile");
+			navigate("/editprofile");
 		}
 	};
 
