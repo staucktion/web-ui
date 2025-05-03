@@ -49,7 +49,7 @@ const PaymentPage: React.FC<PaymentPageProps> = ({ photo, action, onClose, onSuc
 				});
 
 				if (response.ok) {
-					toastSuccess(`Your purchase has been approved! Please check your email for the purchase details.`);
+					toastSuccess(`Your purchase has been approved! Purchased photo will be sent to your email shortly.`);
 					onSuccess();
 				} else {
 					toastError(`Failed to purchase photo: ${(await response.json()).message}`);

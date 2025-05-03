@@ -83,7 +83,7 @@ const PendingPurchase: React.FC = () => {
 	};
 
 	const onPaymentSuccess = () => {
-		toastSuccess("You successfully purchased photo!");
+		toastSuccess("You successfully purchased photo! Purchased photo will be sent to your email shortly.");
 		init();
 		setIsPaymentModalOpen(false);
 	};
