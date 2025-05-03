@@ -16,6 +16,7 @@ const ProfitPage: React.FC = () => {
 
 	useEffect(() => {
 		init();
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- FC equivalent of componentDidMount
 	}, []);
 
 	const init = async () => {
