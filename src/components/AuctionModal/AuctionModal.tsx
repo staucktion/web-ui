@@ -15,6 +15,7 @@ import PaymentPage from "../../pages/PaymentPage/PaymentPage";
 import { useAuth } from "../../providers/AuthHook";
 import { generateLocationUrl } from "../../util/generateLocationUrl";
 import { toastError, toastSuccess, toastWarning } from "../../util/toastUtil";
+import { useNavigate } from "react-router-dom";
 
 interface AuctionModalProps {
 	open: boolean;
@@ -26,6 +27,7 @@ interface AuctionModalProps {
 
 const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNext, onPrev }) => {
 	const { user, socket } = useAuth();
+	const navigate = useNavigate();
 	const [lastBidAmount, setLastBidAmount] = useState<number>(0);
 	const [bidAmount, setBidAmount] = useState<number | null>(null);
 	const [isProvisionModalOpen, setIsProvisionModalOpen] = useState(false);
@@ -134,6 +136,17 @@ const AuctionModal: React.FC<AuctionModalProps> = ({ open, onClose, photo, onNex
 	};
 
 	const handleBidSubmit = async () => {
+		if (!user) {
+			toastWarning("Please login to place a bid.");
+			return;
+		}
+
+		if (!user.tc_identity_no) {
+			toastWarning("Please update your TC Identity Number first by editing your profile");
+			navigate("/profile");
+			return;
+		}
+
 		if (user?.id === photo.user_id) {
 			toast("Photo is belong to you, you cannot place bid to your photo.");
 			return;
