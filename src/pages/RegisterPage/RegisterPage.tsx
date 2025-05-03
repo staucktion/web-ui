@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Container, Box, Typography, TextField, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -20,7 +20,7 @@ const RegisterPage: React.FC = () => {
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formValues.email !== formValues.confirmEmail) {
@@ -59,7 +59,21 @@ const RegisterPage: React.FC = () => {
             const err = error as { message?: string }; 
             toast.error(err.message || "Registration is failed");
           }
-  };
+  }, [formValues, navigate]);
+
+  useEffect(() => {
+    const keyEventHandler = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleSubmit(e as unknown as React.FormEvent);
+      }
+    };
+
+    window.addEventListener("keydown", keyEventHandler);
+
+    return () => {
+      window.removeEventListener("keydown", keyEventHandler);
+    };
+  }, [handleSubmit]);
 
   return (
     <Container maxWidth="sm">
