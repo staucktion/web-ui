@@ -101,7 +101,7 @@ const ValidateCategories: React.FC = () => {
 	return (
 		<>
 			<Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold", color: "#fff", mb: 4 }}>
-				Categories
+				Themes
 			</Typography>
 			<Grid container spacing={4} justifyContent="center">
 				{displayedCategories.map((category) => {

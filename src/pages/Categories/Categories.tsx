@@ -88,12 +88,12 @@ interface CategoriesPageProps {
 		  {/* Category Selector */}
 		  <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>
 			<FormControl sx={{ minWidth: 200, background: "#fff", borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-			  <InputLabel id="category-select-label">Category</InputLabel>
+			  <InputLabel id="category-select-label">Theme</InputLabel>
 			  <Select
 				labelId="category-select-label"
 				value={selectedCategory}
 				onChange={handleCategoryChange}
-				label="Category"
+				label="Theme"
 				sx={{ borderRadius: 3 }}
 			  >
 				<MenuItem value="All">All</MenuItem>

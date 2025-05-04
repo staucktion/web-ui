@@ -1,5 +1,5 @@
+import React from "react";
 import { Box } from "@mui/material";
-import React, { useState } from "react";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 import CustomModal from "../CustomModal/CustomModal";
 import CustomNavButton from "../CustomNavButton/CustomNavButton";
@@ -20,7 +20,7 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasab
 
 	const handleClick = (tab: string, action: () => void) => {
 		requireAuth(() => {
-			action(); // ✅ setActiveTab yok çünkü artık state dışarıdan geliyor
+			action();
 		});
 	};
 
@@ -31,7 +31,7 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasab
 					Purchase
 				</CustomNavButton>
 				<CustomNavButton isActive={activeTab === "categories"} onClick={() => handleClick("categories", onCategoriesClick)}>
-					Categories
+					Themes
 				</CustomNavButton>
 				<CustomNavButton isActive={activeTab === "vote"} onClick={() => handleClick("vote", onVoteClick)}>
 					Vote
