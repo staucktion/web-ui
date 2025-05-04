@@ -18,7 +18,7 @@ const NavBarMiddle: React.FC<NavBarMiddleProps> = ({ onAuctionClick, onPurchasab
 	
 	const navigate = useNavigate();
 
-	const handleClick = (tab: string, action: () => void) => {
+	const handleClick = (_tab: string, action: () => void) => {
 		requireAuth(() => {
 			action();
 		});

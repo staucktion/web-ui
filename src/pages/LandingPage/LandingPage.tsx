@@ -8,8 +8,14 @@ const LandingPage: React.FC = () => {
 	return (
 		<div>
 			<NavBar />
-			<HeroSection />
-			<NavBarMiddle onAuctionClick={() => {}} onPurchasablePhotosClick={() => {}} onVoteClick={() => {}} onCategoriesClick={() => {}} />
+			<HeroSection onCategorySearch={() => {}} />
+			<NavBarMiddle
+			activeTab="purchasablePhotos" // veya "categories" ya da uygun olan başka bir default
+			onAuctionClick={() => {}}
+			onPurchasablePhotosClick={() => {}}
+			onVoteClick={() => {}}
+			onCategoriesClick={() => {}}
+			/>
 			<RandomPhotos />
 		</div>
 	);
