@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, InputBase} from "@mui/material";
 import CustomModal from "../CustomModal/CustomModal";
 import HeroBackground from "/HeroBackground.jpg";
 import useRequireAuth from "../../Hooks/useRequireAuth";
 import { useNavigate } from "react-router-dom";
 
-const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  onCategorySearch: (categoryName: string) => void;
+}
+
+const HeroSection: React.FC<HeroSectionProps> = ({ onCategorySearch }) => {
   const { open, requireAuth, handleClose, handleLogin } = useRequireAuth();
   const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <>
       <Box
@@ -62,10 +68,22 @@ const HeroSection: React.FC = () => {
             }}
           >
             <InputBase
-              placeholder="Search for location"
+              placeholder="Search"
               fullWidth
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const trimmed = searchValue.trim(); // ← boşlukları sil
+              
+                  if (trimmed) {
+                    requireAuth(() => {
+                      onCategorySearch(trimmed);
+                    });
+                  }
+                }
+              }}
               sx={{ textAlign: "center" }}
-              onClick={() => requireAuth()}
             />
           </Box>
         </Box>

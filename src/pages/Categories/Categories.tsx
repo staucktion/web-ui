@@ -20,11 +20,18 @@ import { webApiUrl } from "../../env/envVars";
 import getPhotoSrc from "../../util/getPhotoSrc";
 import CategoryDto from "../../dto/category/CategoryDto";
 
+interface CategoriesPageProps {
+	categorySearch: string | null;
+  }
 
-const CategoriesPage: React.FC = () => {
+
+  const CategoriesPage: React.FC<CategoriesPageProps> = ({ categorySearch }) => {
 	const [photos, setPhotos] = useState<PhotoDto[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("All");
 	const [categories, setCategories] = useState<Map<number, CategoryDto>>(new Map());
+	const searchCategory = categorySearch;
+	const [noCategoryMatch, setNoCategoryMatch] = useState<boolean>(false);
+
 
 	const fetchPhotos = async () => {
 		try {
@@ -47,6 +54,24 @@ const CategoriesPage: React.FC = () => {
 	useEffect(() => {
 		fetchPhotos();
 	}, []);
+
+	useEffect(() => {
+		if (searchCategory && categories.size > 0) {
+			const normalize = (text: string) =>
+				text.toLowerCase().replace(/\s+/g, "").trim();
+	
+			const matchingCategory = Array.from(categories.values()).find(
+				(cat) => normalize(cat.name) === normalize(searchCategory)
+			);
+	
+			if (matchingCategory) {
+				setSelectedCategory(String(matchingCategory.id));
+				setNoCategoryMatch(false);
+			} else {
+				setNoCategoryMatch(true);
+			}
+		}
+	}, [categories, searchCategory]);
 
 	const handleCategoryChange = (event: SelectChangeEvent<string>) => {
 		setSelectedCategory(event.target.value);
@@ -80,6 +105,14 @@ const CategoriesPage: React.FC = () => {
 			  </Select>
 			</FormControl>
 		  </Box>
+
+		  {noCategoryMatch && (
+		<Box sx={{ textAlign: "center", my: 4 }}>
+			<Typography variant="h6" color="error">
+			No category found matching “{searchCategory}”
+			</Typography>
+		</Box>
+		)}
 	
 		  {/* Photo Grid */}
 		  <Container maxWidth="lg">

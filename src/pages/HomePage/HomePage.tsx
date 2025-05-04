@@ -15,17 +15,32 @@ const HomePage: React.FC = () => {
 	const handleVoteClick = () => setActiveSection("vote");
 	const handleCategoriesClick = () => setActiveSection("categories");
 
+	const [searchCategory, setSearchCategory] = useState<string | null>(null);
+
 	return (
 		<div>
 			<NavBar />
-			<HeroSection />
+			<HeroSection
+				onCategorySearch={(categoryName) => {
+					setActiveSection("categories");
+					setSearchCategory(categoryName); 
+				}}
+				/>
+			
 
-			<NavBarMiddle onAuctionClick={handleAuctionClick} onPurchasablePhotosClick={onPurchasablePhotosClick} onVoteClick={handleVoteClick} onCategoriesClick={handleCategoriesClick} />
+			<NavBarMiddle
+				activeTab={activeSection}
+				onAuctionClick={handleAuctionClick}
+				onPurchasablePhotosClick={onPurchasablePhotosClick}
+				onVoteClick={handleVoteClick}
+				onCategoriesClick={handleCategoriesClick}
+			/>
 
 			{activeSection === "purchasablePhotos" && <PurchasablePhotos />}
 			{activeSection === "auctions" && <Auctions />}
 			{activeSection === "vote" && <Vote />}
-			{activeSection === "categories" && <CategoriesPage />}
+			{activeSection === "categories" && <CategoriesPage categorySearch={searchCategory} />}
+
 		</div>
 	);
 };
