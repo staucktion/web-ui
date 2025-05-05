@@ -67,7 +67,7 @@ const MainLayout: React.FC = () => {
 			<Route path="/home" element={user ? <HomePage /> : <Navigate to="/" />} />
 			<Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
 			<Route path="/editprofile" element={user ? <EditProfilePage /> : <Navigate to="/" />} />
-			<Route path="/categories" element={<CategoriesPage />} />
+			<Route path="/categories" element={<CategoriesPage categorySearch={null} />} />
 			<Route path="/payment-auction/:photoId" element={<PaymentAuction />} />
 			<Route path="/register" element={<RegisterPage />} />
 			<Route path="/login" element={<LoginPage />} />

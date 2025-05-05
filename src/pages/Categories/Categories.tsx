@@ -20,11 +20,18 @@ import { webApiUrl } from "../../env/envVars";
 import getPhotoSrc from "../../util/getPhotoSrc";
 import CategoryDto from "../../dto/category/CategoryDto";
 
+interface CategoriesPageProps {
+	categorySearch: string | null;
+  }
 
-const CategoriesPage: React.FC = () => {
+
+  const CategoriesPage: React.FC<CategoriesPageProps> = ({ categorySearch }) => {
 	const [photos, setPhotos] = useState<PhotoDto[]>([]);
 	const [selectedCategory, setSelectedCategory] = useState<string>("All");
 	const [categories, setCategories] = useState<Map<number, CategoryDto>>(new Map());
+	const searchCategory = categorySearch;
+	const [noCategoryMatch, setNoCategoryMatch] = useState<boolean>(false);
+
 
 	const fetchPhotos = async () => {
 		try {
@@ -48,6 +55,24 @@ const CategoriesPage: React.FC = () => {
 		fetchPhotos();
 	}, []);
 
+	useEffect(() => {
+		if (searchCategory && categories.size > 0) {
+			const normalize = (text: string) =>
+				text.toLowerCase().replace(/\s+/g, "").trim();
+	
+			const matchingCategory = Array.from(categories.values()).find(
+				(cat) => normalize(cat.name) === normalize(searchCategory)
+			);
+	
+			if (matchingCategory) {
+				setSelectedCategory(String(matchingCategory.id));
+				setNoCategoryMatch(false);
+			} else {
+				setNoCategoryMatch(true);
+			}
+		}
+	}, [categories, searchCategory]);
+
 	const handleCategoryChange = (event: SelectChangeEvent<string>) => {
 		setSelectedCategory(event.target.value);
 	};
@@ -63,12 +88,12 @@ const CategoriesPage: React.FC = () => {
 		  {/* Category Selector */}
 		  <Box sx={{ display: "flex", justifyContent: "center", mb: 6 }}>
 			<FormControl sx={{ minWidth: 200, background: "#fff", borderRadius: 3, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-			  <InputLabel id="category-select-label">Category</InputLabel>
+			  <InputLabel id="category-select-label">Theme</InputLabel>
 			  <Select
 				labelId="category-select-label"
 				value={selectedCategory}
 				onChange={handleCategoryChange}
-				label="Category"
+				label="Theme"
 				sx={{ borderRadius: 3 }}
 			  >
 				<MenuItem value="All">All</MenuItem>
@@ -80,6 +105,14 @@ const CategoriesPage: React.FC = () => {
 			  </Select>
 			</FormControl>
 		  </Box>
+
+		  {noCategoryMatch && (
+		<Box sx={{ textAlign: "center", my: 4 }}>
+			<Typography variant="h6" color="error">
+			No theme found matching “{searchCategory}”
+			</Typography>
+		</Box>
+		)}
 	
 		  {/* Photo Grid */}
 		  <Container maxWidth="lg">
