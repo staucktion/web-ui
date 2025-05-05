@@ -109,7 +109,7 @@ interface CategoriesPageProps {
 		  {noCategoryMatch && (
 		<Box sx={{ textAlign: "center", my: 4 }}>
 			<Typography variant="h6" color="error">
-			No category found matching “{searchCategory}”
+			No theme found matching “{searchCategory}”
 			</Typography>
 		</Box>
 		)}
