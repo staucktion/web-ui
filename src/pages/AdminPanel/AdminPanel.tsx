@@ -43,7 +43,7 @@ const AdminPanel: React.FC = () => {
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" gutterBottom>
-          Ended Auctions
+          Finished Photos
         </Typography>
         <EndedAuctions />
       </Box>
