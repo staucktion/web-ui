@@ -42,7 +42,7 @@ const ValidatePhotos: React.FC = () => {
 		}
 
 		if (photo.category.status_id !== 2)  {
-			toastWarning("Cannot approve photo. Category is not approved yet.");
+			toastWarning("Cannot approve photo. Theme is not approved yet.");
 			return;
 		}
 
@@ -65,14 +65,13 @@ const ValidatePhotos: React.FC = () => {
 
 	const handleRejectPhoto = async (id: number) => {
 		const photo = photos.find((p) => p.id === id);
-		console.log("📸 category info:", photo?.category);
 		if (!photo) {
 			toastError("Photo not found.");
 			return;
 		}
 
 		if (photo.category.status_id !== 2) {
-			toastWarning("Cannot reject photo. Category is not approved yet.");
+			toastWarning("Cannot reject photo. Theme is not approved yet.");
 			return;
 		}
 		
@@ -161,7 +160,7 @@ const ValidatePhotos: React.FC = () => {
 										<Box display="flex" alignItems="center" gap={1} mb={1}>
 											<CategoryIcon color="secondary" />
 											<Typography variant="body2" fontWeight="bold">
-												Category: {photo.category.name}
+												Theme: {photo.category.name}
 											</Typography>
 										</Box>
 									</CardContent>
