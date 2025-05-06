@@ -43,11 +43,11 @@ const ValidatorPanel: React.FC = () => {
 				Validator Panel
 			</Typography>
 
-			<ValidatePhotos />
-			<br />
-			<br />
-			<br />
 			<ValidateCategories />
+			<br />
+			<br />
+			<br />
+			<ValidatePhotos />
 		</Box>
 	);
 };

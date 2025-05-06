@@ -33,6 +33,20 @@ const ValidatePhotos: React.FC = () => {
 	}, []);
 
 	const handleApprovePhoto = async (id: number) => {
+		
+
+		const photo = photos.find((p) => p.id === id);
+		if (!photo) {
+			toastError("Photo not found.");
+			return;
+		}
+
+		if (photo.category.status_id !== 2)  {
+			toastWarning("Cannot approve photo. Theme is not approved yet.");
+			return;
+		}
+
+
 		const response = await fetch(`${webApiUrl}/photos/${id}/status`, {
 			method: "PUT",
 			body: JSON.stringify({ action: "approve" }),
@@ -42,6 +56,7 @@ const ValidatePhotos: React.FC = () => {
 		});
 		if (response.ok) {
 			toastSuccess("Photo approved successfully");
+			await fetchWaitingPhotos(); 
 		} else {
 			toastError("Failed to approve photo");
 		}
@@ -49,6 +64,17 @@ const ValidatePhotos: React.FC = () => {
 	};
 
 	const handleRejectPhoto = async (id: number) => {
+		const photo = photos.find((p) => p.id === id);
+		if (!photo) {
+			toastError("Photo not found.");
+			return;
+		}
+
+		if (photo.category.status_id !== 2) {
+			toastWarning("Cannot reject photo. Theme is not approved yet.");
+			return;
+		}
+		
 		const rejectReason = prompt("Please enter the reason for rejecting the photo");
 		if (rejectReason && !!rejectReason.trim()) {
 			const response = await fetch(`${webApiUrl}/photos/${id}/status`, {
@@ -60,6 +86,7 @@ const ValidatePhotos: React.FC = () => {
 			});
 			if (response.ok) {
 				toastSuccess("Photo rejected successfully");
+				await fetchWaitingPhotos(); 
 			} else {
 				toastError("Failed to reject photo");
 			}
@@ -71,8 +98,11 @@ const ValidatePhotos: React.FC = () => {
 
 	const startIndex = currentPage * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
-	const displayedPhotos = photos.slice(startIndex, endIndex);
-	const totalPages = Math.ceil(photos.length / itemsPerPage);
+	
+	const filteredPhotos = photos.filter((p) => p.category && p.category.status_id !== 3);
+	const totalPages = Math.ceil(filteredPhotos.length / itemsPerPage);
+	const displayedPhotos = filteredPhotos.slice(startIndex, endIndex);
+  
 	const displayCurrent = totalPages === 0 ? 0 : currentPage + 1;
 	const displayTotal   = totalPages;
 
@@ -130,7 +160,7 @@ const ValidatePhotos: React.FC = () => {
 										<Box display="flex" alignItems="center" gap={1} mb={1}>
 											<CategoryIcon color="secondary" />
 											<Typography variant="body2" fontWeight="bold">
-												Category: {photo.category.name}
+												Theme: {photo.category.name}
 											</Typography>
 										</Box>
 									</CardContent>

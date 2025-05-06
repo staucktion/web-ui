@@ -40,15 +40,15 @@ const ValidateCategories: React.FC = () => {
 			},
 		});
 		if (response.ok) {
-			toastSuccess("Category approved successfully");
+			toastSuccess("Theme approved successfully");
 		} else {
-			toastError("Failed to approve category");
+			toastError("Failed to approve Theme");
 		}
 		fetchWaitingCategories();
 	};
 
 	const handleRejectCategory = async (id: number) => {
-		const rejectReason = prompt("Please enter the reason for rejecting the category");
+		const rejectReason = prompt("Please enter the reason for rejecting the Theme");
 		if (rejectReason && !!rejectReason.trim()) {
 			const response = await fetch(`${webApiUrl}/categories/${id}/status`, {
 				method: "PUT",
@@ -58,13 +58,13 @@ const ValidateCategories: React.FC = () => {
 				},
 			});
 			if (response.ok) {
-				toastSuccess("Category rejected successfully");
+				toastSuccess("Theme rejected successfully");
 			} else {
-				toastError("Failed to reject category");
+				toastError("Failed to reject Theme");
 			}
 			fetchWaitingCategories();
 		} else {
-			toastWarning("Cancelled rejecting category");
+			toastWarning("Cancelled rejecting Theme");
 		}
 	};
 
@@ -121,14 +121,14 @@ const ValidateCategories: React.FC = () => {
 										<Box display="flex" alignItems="center" gap={1} mb={1}>
 											<PhotoCameraIcon color="primary" />
 											<Typography variant="body2" fontWeight="bold">
-												Category Status:
+												Theme Status:
 											</Typography>
 											<Chip label={category.status.status.toUpperCase()} color="warning" size="small" sx={{ fontWeight: "bold" }} />
 										</Box>
 										<Box display="flex" alignItems="center" gap={1} mb={1}>
 											<CategoryIcon color="secondary" />
 											<Typography variant="body2" fontWeight="bold">
-												Category: {category.name}
+												Theme: {category.name}
 											</Typography>
 										</Box>
 									</CardContent>
@@ -140,10 +140,10 @@ const ValidateCategories: React.FC = () => {
 										}}
 									>
 										<Button variant="contained" color="success" startIcon={<CheckIcon />} onClick={() => handleApproveCategory(category.id)}>
-											Approve Category
+											Approve Theme
 										</Button>
 										<Button variant="contained" color="error" startIcon={<ClearIcon />} onClick={() => handleRejectCategory(category.id)}>
-											Reject Category
+											Reject Theme
 										</Button>
 									</CardActions>
 								</Card>
