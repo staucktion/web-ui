@@ -61,7 +61,7 @@ const CategoriesPage: React.FC<CategoriesPageProps> = ({ categorySearch }) => {
 	const filteredPhotos = selectedCategory === "All" ? photos : photos.filter((photo) => String(photo.category_id) === selectedCategory);
 
 	return (
-		<Box sx={{ background: "#fafafa", minHeight: "100vh", pb: 4 }}>
+		<Box sx={{ minHeight: "100vh", pb: 4 }}>
 			{/* Simple Header */}
 			<Container maxWidth="md" sx={{ textAlign: "center", mb: 4 }}></Container>
 
