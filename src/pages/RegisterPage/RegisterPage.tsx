@@ -53,7 +53,7 @@ const RegisterPage: React.FC = () => {
         throw new Error(errorData.message || "Registration failed");
       }
 
-      toastSuccess("Registration successful!");
+      toastSuccess("Registration successful! Please verify your email by clicking the link in the email we sent you before logging in.");
       navigate("/home");
     } catch (error: unknown) {
             const err = error as { message?: string }; 
