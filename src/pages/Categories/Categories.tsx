@@ -130,11 +130,14 @@ interface CategoriesPageProps {
 				  >
 					<CardActionArea>
 					  <Box sx={{ position: "relative" }}>
-						<CardMedia
-						  component="img"
-						  image={photo.file_path}
-						  alt={`Photo ${photo.id}`}
-						  sx={{ height: 0, paddingTop: "75%" }}
+					  <CardMedia
+						component="img"
+						image={photo.file_path}
+						alt={`Photo ${photo.id}`}
+						sx={{
+							height: 200, // Sabit yükseklik
+							objectFit: "cover" // Oranları koruyarak taşır
+						}}
 						/>
 						<Chip
 						  label={photo.category.name}
