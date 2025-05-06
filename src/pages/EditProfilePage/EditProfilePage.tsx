@@ -10,6 +10,7 @@ const EditProfilePage: React.FC = () => {
 	const { user } = useAuth();
 	const [username, setUsername] = useState(user?.username || "");
 	const [identityNumber, setIdentityNumber] = useState(user?.tc_identity_no || "");
+	const [isIdentityNumberSet, setIsIdentityNumberSet] = useState<boolean>(identityNumber !== "");
 
 	const handleSave = async () => {
 		const formData = new FormData();
@@ -39,6 +40,7 @@ const EditProfilePage: React.FC = () => {
 					}
 					if (key === "tc_identity_no") {
 						user.tc_identity_no = value as string;
+						setIsIdentityNumberSet(true);
 					}
 				}
 			});
@@ -103,7 +105,7 @@ const EditProfilePage: React.FC = () => {
 						<TextField label="Email" variant="outlined" value={user?.email} fullWidth InputProps={{ readOnly: true }} />
 
 						{/* If user hasn't set National Identity Number before, allow them to set one. If not, show Read-Only National Identity Number */}
-						{user?.tc_identity_no ? (
+						{isIdentityNumberSet ? (
 							<TextField label="National Identity Number" variant="outlined" value={identityNumber} fullWidth InputProps={{ readOnly: true }} />
 						) : (
 							<TextField label="National Identity Number" variant="outlined" value={identityNumber} onChange={(e) => setIdentityNumber(e.target.value)} fullWidth />
