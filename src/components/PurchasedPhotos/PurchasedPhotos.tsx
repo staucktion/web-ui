@@ -18,7 +18,7 @@ const PurchasedPhotos: React.FC = () => {
 			}
 			const data: PurchasedPhotoDto[] = await response.json();
 			data.forEach((purchasedPhoto) => {
-				purchasedPhoto.file_path = `${webApiUrl}/photos/${purchasedPhoto.photo_id}`;
+				purchasedPhoto.file_path = `${webApiUrl}/photos/original/${purchasedPhoto.photo_id}`;
 			});
 			setPurchasedPhotos(data);
 		} catch (error) {
